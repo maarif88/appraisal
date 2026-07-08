@@ -170,3 +170,39 @@ Daftar kata kunci yang pernah di-crawl oleh skrip otomatisasi.
 - `shipping company`
 - `3PL Indonesia`
 - `distribution services`
+
+## Sector: Agriculture & Plantation (Date: 2026-07-08)
+- `perusahaan perkebunan`
+- `agribusiness`
+- `palm oil company`
+- `plantation management`
+- `fertilizer supplier`
+- `agriculture technology`
+- `precision farming`
+- `plantation software`
+- `agro industry`
+- `agricultural machinery`
+
+## Sector: Consumer Goods (FMCG) (Date: 2026-07-08)
+- `fmcg company`
+- `consumer goods manufacturer`
+- `food manufacturer`
+- `beverage manufacturer`
+- `private label manufacturer`
+- `distribution company`
+- `retail supplier`
+- `food processing`
+- `packaging company`
+- `consumer brand`
+
+## Sector: Education & Training (Date: 2026-07-08)
+- `corporate training`
+- `executive education`
+- `learning management system`
+- `LMS Indonesia`
+- `leadership training`
+- `employee certification`
+- `vocational training`
+- `enterprise learning`
+- `compliance training`
+- `professional development`

@@ -10,9 +10,6 @@ RUN npm run build
 FROM node:20-alpine
 WORKDIR /app
 
-# Install build dependencies for better-sqlite3 (native modules need g++, make, python3)
-RUN apk add --no-cache python3 make g++
-
 COPY backend/package*.json ./backend/
 RUN cd backend && npm ci
 
