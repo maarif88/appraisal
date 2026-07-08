@@ -2,9 +2,14 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { env } from './config/env.js';
 import { runMigrations } from './config/migrate.js';
 import { projectRouter } from './routes/project.routes.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -48,6 +53,20 @@ app.get('/api/health', (_req, res) => {
 
 // ─── API Routes ────────────────────────────────────────────
 app.use('/api/v1/projects', projectRouter);
+
+// Serve frontend static assets in production
+if (env.NODE_ENV === 'production') {
+  const frontendBuildPath = path.join(__dirname, '../../frontend/dist');
+  app.use(express.static(frontendBuildPath));
+  
+  // Handle SPA routing: redirect all non-API requests to index.html
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    res.sendFile(path.join(frontendBuildPath, 'index.html'));
+  });
+}
 
 // ─── 404 Handler ───────────────────────────────────────────
 app.use('/api', (_req, res) => {
