@@ -2,6 +2,7 @@
 FROM node:20-alpine AS frontend-builder
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
+ENV NODE_ENV=development
 RUN npm ci
 COPY frontend/ ./
 RUN npm run build
@@ -11,6 +12,7 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY backend/package*.json ./backend/
+ENV NODE_ENV=development
 RUN cd backend && npm ci
 
 # Copy backend source
@@ -20,6 +22,7 @@ COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
 WORKDIR /app/backend
 RUN npm run build
+RUN npm prune --production
 
 # Create directory for SQLite persistent database
 RUN mkdir -p /app/backend/data
