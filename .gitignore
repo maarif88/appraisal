@@ -3,6 +3,9 @@ node_modules/
 .pnp
 .pnp.js
 
+# Temporary crawled data
+scripts/temp_downloads/
+
 # Build/Dist outputs
 dist/
 build/
