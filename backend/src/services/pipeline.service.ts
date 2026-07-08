@@ -193,9 +193,9 @@ export async function runPipeline(
 
     // Feed top/rising queries back for enrichment (spec step [4] requirement)
     const newKeywordsFromTrends = [
-      ...trendsResult.data.top_queries.map(q => q.query),
-      ...trendsResult.data.rising_queries.map(q => q.query),
-    ].filter(q => q && !keywordStrings.includes(q.toLowerCase().trim()));
+      ...trendsResult.data.top_queries.map((q: any) => q.query),
+      ...trendsResult.data.rising_queries.map((q: any) => q.query),
+    ].filter((q: any) => q && !keywordStrings.includes(q.toLowerCase().trim()));
 
     let trendEnrichedKeywords = enrichedKeywords;
     if (newKeywordsFromTrends.length > 0) {
@@ -229,22 +229,22 @@ export async function runPipeline(
           };
         });
         
-      const existingKws = new Set(enrichedKeywords.map(k => k.keyword.toLowerCase().trim()));
-      const uniqueTrendKws = trendKeywordData.filter(k => !existingKws.has(k.keyword.toLowerCase().trim()));
+      const existingKws = new Set(enrichedKeywords.map((k: any) => k.keyword.toLowerCase().trim()));
+      const uniqueTrendKws = trendKeywordData.filter((k: any) => !existingKws.has(k.keyword.toLowerCase().trim()));
       trendEnrichedKeywords = [...enrichedKeywords, ...uniqueTrendKws];
     }
     report('step_trends_enrichment', 'Trends Enrichment', 55, `Total: ${trendEnrichedKeywords.length} keywords`);
 
     // ─── Step 5: Intent Classification ─────────────────────────
     report('step_intent', 'Intent', 60, 'Classifying keyword intents...');
-    const keywordsWithIntent = trendEnrichedKeywords.map(kw => ({
+    const keywordsWithIntent = trendEnrichedKeywords.map((kw: any) => ({
       ...kw,
       intent: classifyIntent(kw.keyword),
     }));
 
     // ─── Step 6: Difficulty Weighting ──────────────────────────
     report('step_difficulty', 'Difficulty', 65, 'Calculating difficulty scores...');
-    const keywordsWithDifficulty = keywordsWithIntent.map(kw => {
+    const keywordsWithDifficulty = keywordsWithIntent.map((kw: any) => {
       const wordCount = kw.keyword.split(/\s+/).length;
       const difficultyScore = calculateDifficultyScore(kw.competition_index, wordCount, kw.intent);
       const captureRateEffective = calculateCaptureRate(assumptions.capture_rate_target_pct, difficultyScore);
@@ -264,7 +264,7 @@ export async function runPipeline(
     const clusterResult = clusterKeywords(keywordsWithDifficulty);
 
     // Determine trend badge for each keyword
-    const risingSet = new Set(trendsResult.data.rising_queries.map(q => q.query.toLowerCase()));
+    const risingSet = new Set(trendsResult.data.rising_queries.map((q: any) => q.query.toLowerCase()));
     const keywordsWithBadge = clusterResult.clusteredKeywords.map((kw: any) => ({
       ...kw,
       trend_badge: risingSet.has(kw.keyword.toLowerCase()) ? 'Rising' : '',
@@ -284,7 +284,7 @@ export async function runPipeline(
       for (const kw of kws) {
         // Determine source
         const isSeed = kw.keyword.toLowerCase() === project.seed_keyword.toLowerCase();
-        const isTrendTop = trendsResult.data.top_queries.some(q => q.query.toLowerCase() === kw.keyword.toLowerCase());
+        const isTrendTop = trendsResult.data.top_queries.some((q: any) => q.query.toLowerCase() === kw.keyword.toLowerCase());
         const isTrendRising = risingSet.has(kw.keyword.toLowerCase());
         const source = isSeed ? 'seed' : isTrendRising ? 'trends_rising' : isTrendTop ? 'trends_top' : 'autocomplete';
 
