@@ -1,5 +1,5 @@
 # Stage 1: Build the frontend
-FROM node:20-alpine AS frontend-builder
+FROM node:20-slim AS frontend-builder
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
 ENV NODE_ENV=development
@@ -8,7 +8,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # Stage 2: Build and run the backend
-FROM node:20-alpine
+FROM node:20-slim
 WORKDIR /app
 
 COPY backend/package*.json ./backend/
