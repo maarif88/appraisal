@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { env } from './config/env.js';
 import { runMigrations } from './config/migrate.js';
@@ -81,6 +82,23 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 
 // ─── Start Server ──────────────────────────────────────────
 async function start() {
+  // Restore crawled_database.json from backup if masked by volume mount
+  const targetJsonPath = path.resolve('./data/crawled_database.json');
+  const backupJsonPath = path.resolve('./crawled_database.backup.json');
+  if (!fs.existsSync(targetJsonPath) && fs.existsSync(backupJsonPath)) {
+    console.log('[Startup] Copying crawled_database.json from backup to mounted data volume...');
+    try {
+      const dbDir = path.dirname(targetJsonPath);
+      if (!fs.existsSync(dbDir)) {
+        fs.mkdirSync(dbDir, { recursive: true });
+      }
+      fs.copyFileSync(backupJsonPath, targetJsonPath);
+      console.log('[Startup] crawled_database.json restored successfully.');
+    } catch (err) {
+      console.error('[Startup] Failed to restore crawled_database.json:', err);
+    }
+  }
+
   // Run database migrations
   runMigrations();
 

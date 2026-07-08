@@ -20,6 +20,9 @@ COPY backend/ ./backend/
 # Copy built frontend assets
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
+# Backup crawled_database.json to prevent volume masking
+RUN cp /app/backend/data/crawled_database.json /app/backend/crawled_database.backup.json
+
 WORKDIR /app/backend
 RUN npm run build
 RUN npm prune --production
