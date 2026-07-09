@@ -196,7 +196,8 @@ export default function LandingPage() {
         description: "Review current operational and indexing expenses. Identify cost leaks in search volume tracking and underutilized API keys.",
         tags: ["Better-SQLite3", "Cost Ledger", "Local Cache"],
         status: "3 cost leaks resolved",
-        actionText: "Read documentation"
+        actionText: "Read documentation",
+        actionUrl: "https://maarif88.github.io/ypym-company/index.html"
       },
       right: {
         title: "Margin Protection Shield",
@@ -633,9 +634,15 @@ export default function LandingPage() {
                 <span style={{ fontSize: '13px', color: '#8F90A6', fontFamily: 'var(--font-mono)' }}>
                   {tabData[activeTab].left.status}
                 </span>
-                <a href="#" onClick={(e) => e.preventDefault()} style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ypym-blue)', textDecoration: 'underline' }}>
-                  {tabData[activeTab].left.actionText}
-                </a>
+                {tabData[activeTab].left.actionUrl ? (
+                  <a href={tabData[activeTab].left.actionUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ypym-blue)', textDecoration: 'underline' }}>
+                    {tabData[activeTab].left.actionText}
+                  </a>
+                ) : (
+                  <a href="#" onClick={(e) => e.preventDefault()} style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ypym-blue)', textDecoration: 'underline' }}>
+                    {tabData[activeTab].left.actionText}
+                  </a>
+                )}
               </div>
             </div>
 

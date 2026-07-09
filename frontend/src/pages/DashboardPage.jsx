@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProject, reproject, exportProject } from '../utils/api.js';
 import { LoadingSpinner } from '../components/shared/LoadingStates.jsx';
@@ -15,7 +15,7 @@ export default function DashboardPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [pollInterval, setPollInterval] = useState(null);
+  const pollIntervalRef = useRef(null);
 
   // Editable Assumptions State
   const [captureRate, setCaptureRate] = useState(10);
@@ -74,16 +74,15 @@ export default function DashboardPage() {
         // Manage status polling
         const status = res.project.status;
         if (status !== 'completed' && status !== 'failed') {
-          if (!pollInterval) {
-            const interval = setInterval(() => {
+          if (!pollIntervalRef.current) {
+            pollIntervalRef.current = setInterval(() => {
               fetchProjectData(false);
             }, 2000);
-            setPollInterval(interval);
           }
         } else {
-          if (pollInterval) {
-            clearInterval(pollInterval);
-            setPollInterval(null);
+          if (pollIntervalRef.current) {
+            clearInterval(pollIntervalRef.current);
+            pollIntervalRef.current = null;
           }
         }
       })
@@ -91,9 +90,9 @@ export default function DashboardPage() {
         console.error(err);
         setError(err.message || 'Failed to load projection details');
         setLoading(false);
-        if (pollInterval) {
-          clearInterval(pollInterval);
-          setPollInterval(null);
+        if (pollIntervalRef.current) {
+          clearInterval(pollIntervalRef.current);
+          pollIntervalRef.current = null;
         }
       });
   };
@@ -101,16 +100,12 @@ export default function DashboardPage() {
   useEffect(() => {
     fetchProjectData();
     return () => {
-      if (pollInterval) clearInterval(pollInterval);
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+        pollIntervalRef.current = null;
+      }
     };
   }, [id]);
-
-  // Clean up interval if component unmounts
-  useEffect(() => {
-    return () => {
-      if (pollInterval) clearInterval(pollInterval);
-    };
-  }, [pollInterval]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
