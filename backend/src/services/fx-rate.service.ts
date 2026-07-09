@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { retryWithBackoff } from '../utils/retry.js';
 
 /**
@@ -12,14 +11,20 @@ export async function fetchFxRate(
   try {
     const result = await retryWithBackoff(
       async () => {
-        const response = await axios.get(
+        const response = await fetch(
           `https://open.er-api.com/v6/latest/${baseCurrency}`,
-          { timeout: 5000 }
+          { signal: AbortSignal.timeout(5000) }
         );
 
-        if (response.data?.result === 'success' && response.data?.rates?.[targetCurrency]) {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json() as any;
+
+        if (data?.result === 'success' && data?.rates?.[targetCurrency]) {
           return {
-            rate: response.data.rates[targetCurrency],
+            rate: Number(data.rates[targetCurrency]),
             source: 'open.er-api.com',
             fetchedAt: new Date().toISOString(),
           };
@@ -31,7 +36,7 @@ export async function fetchFxRate(
 
     return result;
   } catch (error) {
-    console.warn('[FX] Failed to fetch live rate, using default 16,400');
+    console.warn('[FX] Failed to fetch live rate, using default 16,400:', error);
     return {
       rate: 16400,
       source: 'fallback-default',
