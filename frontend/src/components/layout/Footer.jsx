@@ -11,7 +11,8 @@ export default function Footer() {
 
   const labels = [
     '15-Min Virtual Meeting',
-    'WhatsApp Chat',
+    'Get correct SEO question?',
+    'Start Appraisal',
     'Email for Immediate Response'
   ];
 
@@ -21,7 +22,7 @@ export default function Footer() {
       const dur = 5000 + Math.random() * 5000;
       timer = setTimeout(() => {
         setLeavingIcon(currentIcon);
-        const nextIcon = (currentIcon + 1) % 3;
+        const nextIcon = (currentIcon + 1) % 4;
         setCurrentIcon(nextIcon);
 
         // Clear leaving icon after transition completes
@@ -193,10 +194,13 @@ export default function Footer() {
           <div className={`fc-icon-face ${currentIcon === 0 ? 'active' : ''} ${leavingIcon === 0 ? 'leaving' : ''}`} data-icon="cal">
             <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/><rect x="7" y="12" width="2" height="2"/><rect x="11" y="12" width="2" height="2"/><rect x="15" y="12" width="2" height="2"/><rect x="7" y="16" width="2" height="2"/><rect x="11" y="16" width="2" height="2"/></svg>
           </div>
-          <div className={`fc-icon-face ${currentIcon === 1 ? 'active' : ''} ${leavingIcon === 1 ? 'leaving' : ''}`} data-icon="wa">
-            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12.05 21.785h-.016a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.981.998-3.648-.235-.374A9.86 9.86 0 0 1 2.15 12.01C2.153 6.578 6.587 2.15 12.065 2.15a9.84 9.84 0 0 1 6.995 2.898 9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.903 9.884zM12.05.15C5.495.15.15 5.46.15 12.01c0 2.104.549 4.16 1.595 5.977L.1 24.15l6.335-1.652A11.86 11.86 0 0 0 12.05 24.1c6.556 0 11.9-5.344 11.9-11.89 0-3.176-1.24-6.165-3.49-8.411A11.84 11.84 0 0 0 12.05.15z"/></svg>
+          <div className={`fc-icon-face ${currentIcon === 1 ? 'active' : ''} ${leavingIcon === 1 ? 'leaving' : ''}`} data-icon="di">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
           </div>
-          <div className={`fc-icon-face ${currentIcon === 2 ? 'active' : ''} ${leavingIcon === 2 ? 'leaving' : ''}`} data-icon="mail">
+          <div className={`fc-icon-face ${currentIcon === 2 ? 'active' : ''} ${leavingIcon === 2 ? 'leaving' : ''}`} data-icon="apr">
+            <svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg>
+          </div>
+          <div className={`fc-icon-face ${currentIcon === 3 ? 'active' : ''} ${leavingIcon === 3 ? 'leaving' : ''}`} data-icon="mail">
             <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
           </div>
         </div>
@@ -221,13 +225,23 @@ export default function Footer() {
           </div>
         </a>
 
-        <a className="fc-item" href="https://wa.me/6281806710862" target="_blank" rel="noopener noreferrer">
-          <div className="fc-item-icon fc-item-icon--wa">
-            <svg viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12.05 21.785h-.016a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.981.998-3.648-.235-.374A9.86 9.86 0 0 1 2.15 12.01C2.153 6.578 6.587 2.15 12.065 2.15a9.84 9.84 0 0 1 6.995 2.898 9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.903 9.884zM12.05.15C5.495.15.15 5.46.15 12.01c0 2.104.549 4.16 1.595 5.977L.1 24.15l6.335-1.652A11.86 11.86 0 0 0 12.05 24.1c6.556 0 11.9-5.344 11.9-11.89 0-3.176-1.24-6.165-3.49-8.411A11.84 11.84 0 0 0 12.05.15z"/></svg>
+        <a className="fc-item" href="https://ypym.app/decision-intelligence" target="_blank" rel="noopener noreferrer">
+          <div className="fc-item-icon fc-item-icon--di">
+            <svg viewBox="0 0 24 24" fill="#1A4BFF"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
           </div>
           <div className="fc-item-text">
-            <strong>WhatsApp Us</strong>
-            <span>Chat directly on WhatsApp</span>
+            <strong>Get correct SEO question?</strong>
+            <span>Diagnose your business challenge</span>
+          </div>
+        </a>
+
+        <a className="fc-item" href="https://appraisal.ypym.app/" target="_blank" rel="noopener noreferrer">
+          <div className="fc-item-icon fc-item-icon--apr">
+            <svg viewBox="0 0 24 24" fill="#0284C7"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg>
+          </div>
+          <div className="fc-item-text">
+            <strong>Start Appraisal</strong>
+            <span>Free instant SEO appraisal tool</span>
           </div>
         </a>
 

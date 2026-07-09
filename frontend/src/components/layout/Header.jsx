@@ -155,7 +155,7 @@ export default function Header() {
                   <h2>Adaptive SEO, ASO, AEO, and GEO systems for various industries.</h2>
                   <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                     <a href="https://ypym.app/solutions" className="drawer-btn">View Services</a>
-                    <a href="https://appraisal.ypym.app/" className="drawer-btn" style={{ background: '#1A4BFF', color: '#fff', borderColor: '#1A4BFF' }}>Start Appraisal</a>
+                    <a href="https://appraisal.ypym.app/" className="drawer-btn primary">Start Appraisal</a>
                   </div>
                 </div>
                 <div className="drawer-right">
@@ -571,7 +571,7 @@ export default function Header() {
                   <a href="https://ypym.app/venture-studio">Venture Studio</a>
                   <div style={{ display: 'flex', gap: '8px', marginTop: '8px', width: '100%' }}>
                     <a href="https://ypym.app/business" className="see-overview-pill" style={{ flex: 1, textAlign: 'center', margin: 0 }}>View Services</a>
-                    <a href="https://appraisal.ypym.app/" className="see-overview-pill" style={{ flex: 1, textAlign: 'center', margin: 0, background: '#1A4BFF', color: '#fff', borderColor: '#1A4BFF' }}>Start Appraisal</a>
+                    <a href="https://appraisal.ypym.app/" className="see-overview-pill primary" style={{ flex: 1, textAlign: 'center', margin: 0 }}>Start Appraisal</a>
                   </div>
                 </div>
               </div>

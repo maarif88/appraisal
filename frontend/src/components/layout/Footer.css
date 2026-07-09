@@ -617,6 +617,8 @@
 .fc-item-icon--cal  { background: #E8F0FE; }
 .fc-item-icon--wa   { background: #E7F9EF; }
 .fc-item-icon--mail { background: #FDECEA; }
+.fc-item-icon--di   { background: #EEF2FF; }
+.fc-item-icon--apr  { background: #E0F2FE; }
 
 .fc-item-text strong { 
   display: block; 

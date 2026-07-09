@@ -700,16 +700,37 @@ th.sortable:hover { color: var(--ypym-blue); }
   align-self: flex-start;
   display: inline-block;
   background: #f1f3f4;
-  color: #1f2023 !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
+  color: #1f2023;
+  font-size: 13px;
+  font-weight: 600;
   padding: 6px 14px;
   border-radius: 99px;
   margin-top: 6px;
   transition: background-color 0.2s;
 }
+.accordion-links .see-overview-pill {
+  color: #1f2023;
+}
 .see-overview-pill:hover {
   background: rgba(0, 0, 0, 0.08);
+}
+.see-overview-pill.primary {
+  background: #1A4BFF !important;
+  color: #ffffff !important;
+  border-color: #1A4BFF !important;
+}
+.see-overview-pill.primary:hover {
+  background: #1239CC !important;
+  color: #ffffff !important;
+}
+.drawer-btn.primary {
+  background: #1A4BFF !important;
+  color: #ffffff !important;
+  border-color: #1A4BFF !important;
+}
+.drawer-btn.primary:hover {
+  background: #1239CC !important;
+  color: #ffffff !important;
 }
 
 /* Accordion Open State */
