@@ -153,7 +153,10 @@ export default function Header() {
               <div className="drawer-inner">
                 <div className="drawer-left">
                   <h2>Adaptive SEO, ASO, AEO, and GEO systems for various industries.</h2>
-                  <a href="https://ypym.app/solutions" className="drawer-btn">View Services</a>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    <a href="https://ypym.app/solutions" className="drawer-btn">View Services</a>
+                    <a href="https://appraisal.ypym.app/" className="drawer-btn" style={{ background: '#1A4BFF', color: '#fff', borderColor: '#1A4BFF' }}>Start Appraisal</a>
+                  </div>
                 </div>
                 <div className="drawer-right">
                   <div className="solusi-grid">
@@ -359,7 +362,7 @@ export default function Header() {
               <div className="drawer-inner">
                 <div className="drawer-left">
                   <h2>Martech infrastructure supporting organic growth.</h2>
-                  <a href="https://hub.ypym.app" className="drawer-btn">Access Console</a>
+                  <a href="https://maarif88.github.io/ypym-company/index.html" className="drawer-btn">@github</a>
                 </div>
                 <div className="drawer-right">
                   <div className="martech-grid">
@@ -566,7 +569,10 @@ export default function Header() {
                   <a href="https://ypym.app/business">Business Solutions, Enterprise SEO</a>
                   <a href="https://ypym.app/technical">Technical Solutions, SEO</a>
                   <a href="https://ypym.app/venture-studio">Venture Studio</a>
-                  <a href="https://ypym.app/business" className="see-overview-pill">View Services</a>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '8px', width: '100%' }}>
+                    <a href="https://ypym.app/business" className="see-overview-pill" style={{ flex: 1, textAlign: 'center', margin: 0 }}>View Services</a>
+                    <a href="https://appraisal.ypym.app/" className="see-overview-pill" style={{ flex: 1, textAlign: 'center', margin: 0, background: '#1A4BFF', color: '#fff', borderColor: '#1A4BFF' }}>Start Appraisal</a>
+                  </div>
                 </div>
               </div>
             </div>
