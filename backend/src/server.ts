@@ -28,6 +28,14 @@ app.use(cors({
   credentials: true,
 }));
 
+// Disable caching for all API endpoints
+app.use('/api', (_req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  next();
+});
+
 // ─── Rate Limiting ─────────────────────────────────────────
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute

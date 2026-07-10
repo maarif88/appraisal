@@ -17,7 +17,7 @@ export async function listProjects() {
 }
 
 export async function getProject(id) {
-  const res = await fetch(`${API_BASE}/projects/${id}`);
+  const res = await fetch(`${API_BASE}/projects/${id}?_t=${Date.now()}`);
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
@@ -35,7 +35,7 @@ export async function startAnalysis(id) {
 }
 
 export async function getStatus(id) {
-  const res = await fetch(`${API_BASE}/projects/${id}/status`);
+  const res = await fetch(`${API_BASE}/projects/${id}/status?_t=${Date.now()}`);
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
