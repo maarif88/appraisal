@@ -60,6 +60,7 @@ export default function Header() {
   const [activeMarDesc, setActiveMarDesc] = useState('mar-desc-flow');
   const [langSearch, setLangSearch] = useState('');
   const [rotatorIndex, setRotatorIndex] = useState(0);
+  const [ctaPopupOpen, setCtaPopupOpen] = useState(false);
 
   const langRef = useRef(null);
   const isId = false;
@@ -524,7 +525,14 @@ export default function Header() {
           </button>
 
           {/* CTA Button */}
-          <a href="https://ypym.app/company/contact-us" className="cta-pill-btn">Contact Us</a>
+          <button 
+            type="button"
+            onClick={(e) => { e.preventDefault(); setCtaPopupOpen(true); }}
+            className="cta-pill-btn"
+            style={{ background: '#1d1e20', border: 'none', cursor: 'pointer' }}
+          >
+            Contact Us
+          </button>
 
           {/* Hamburger Mobile Menu Button */}
           <button className="hamburger-btn" onClick={() => setMobileMenuOpen(true)}>
@@ -694,7 +702,14 @@ export default function Header() {
           </nav>
         </div>
         <div className="mobile-drawer-footer" style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
-          <a href="https://ypym.app/company/contact-us" className="mobile-cta-btn">Contact Us</a>
+          <button 
+            type="button"
+            onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); setCtaPopupOpen(true); }}
+            className="mobile-cta-btn"
+            style={{ width: '100%', border: 'none', cursor: 'pointer', display: 'block', textAlign: 'center' }}
+          >
+            Contact Us
+          </button>
           <button 
             type="button" 
             style={{ background: 'none', border: 'none', color: '#5f6368', fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontFamily: 'inherit' }}
@@ -844,6 +859,98 @@ export default function Header() {
           </div>
         )}
       </div>
+
+      {/* FULLSCREEN CONTACT POPUP OVERLAY */}
+      {ctaPopupOpen && (
+        <div 
+          className="cta-popup-overlay is-active"
+          style={{ display: 'flex' }}
+          onClick={(e) => {
+            if (e.target.classList.contains('cta-popup-overlay')) {
+              setCtaPopupOpen(false);
+            }
+          }}
+        >
+          <button 
+            className="cta-popup-close-btn" 
+            type="button" 
+            onClick={() => setCtaPopupOpen(false)}
+            aria-label="Close popup"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+          <div className="cta-popup-content">
+            <h2 className="cta-popup-title">Contact Us</h2>
+            <p className="cta-popup-subtitle">Choose the communication channel that best suits your business needs.</p>
+            
+            <div className="cta-popup-grid">
+              {/* Card 1: WhatsApp Call */}
+              <a href="https://wa.me/6281806710862" target="_blank" rel="noopener noreferrer" className="cta-popup-card">
+                <div className="cta-card-icon-wrap wa-icon-wrap">
+                  <svg className="cta-card-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.458 5.704 1.46h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                  </svg>
+                </div>
+                <div className="cta-card-text">
+                  <div className="cta-card-title">WhatsApp Call</div>
+                  <div className="cta-card-desc">Direct chat & calls for quick response</div>
+                </div>
+              </a>
+              
+              {/* Card 2: Virtual Meeting */}
+              <a href="https://calendar.app.google/qxnKQSRehtsBW4S76" target="_blank" rel="noopener noreferrer" className="cta-popup-card">
+                <div className="cta-card-icon-wrap meeting-icon-wrap">
+                  <svg className="cta-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                    <path d="M12 14h.01M16 14h.01M8 14h.01M12 18h.01M16 18h.01M8 18h.01"/>
+                  </svg>
+                </div>
+                <div className="cta-card-text">
+                  <div className="cta-card-title">Virtual Meeting</div>
+                  <div className="cta-card-desc">Schedule a video call in Google Calendar</div>
+                </div>
+              </a>
+              
+              {/* Card 3: Email */}
+              <a href="mailto:sales@ypym.app" className="cta-popup-card">
+                <div className="cta-card-icon-wrap email-icon-wrap">
+                  <svg className="cta-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                </div>
+                <div className="cta-card-text">
+                  <div className="cta-card-title">Send Email</div>
+                  <div className="cta-card-desc">Send offers or proposals to sales@ypym.app</div>
+                </div>
+              </a>
+              
+              {/* Card 4: Contact Form */}
+              <a href="https://ypym.app/company/contact-us" target="_blank" rel="noopener noreferrer" className="cta-popup-card">
+                <div className="cta-card-icon-wrap form-icon-wrap">
+                  <svg className="cta-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                  </svg>
+                </div>
+                <div className="cta-card-text">
+                  <div className="cta-card-title">Contact Form</div>
+                  <div className="cta-card-desc">Fill in the online form for detailed B2B requests</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
