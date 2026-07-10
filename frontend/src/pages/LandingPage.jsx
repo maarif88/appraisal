@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { listProjects } from '../utils/api.js';
 import StatusBadge from '../components/shared/StatusBadge.jsx';
@@ -182,11 +182,443 @@ function CardItem({ slot }) {
   );
 }
 
+function ChatSimulator() {
+  const chatMessages = [
+    { sender: 'client', text: 'Kalian bisa kerjakan jasa SEO untuk enterprise level?' },
+    { sender: 'agency', text: 'Bisa banget, Pak! Kami terbiasa handle enterprise scale.' },
+    { sender: 'client', text: 'Keren. Bisa present credentials perusahaan sore ini?' },
+    { sender: 'agency', text: 'Safe, Pak! Kami sudah jadwalkan di Google Calendar jam 16.15 ya. See you!' },
+    { sender: 'client', text: 'Thank you, see you!' },
+    { sender: 'system', text: '— 3 hours later (Meeting Room) —' },
+    { sender: 'client', text: 'Hi, thanks for your time. Silakan presentasikan SEO agency kalian.' },
+    { sender: 'agency', text: 'Yes Pak, ini list portfolio dan client case studies kami. We have high success rates.' },
+    { sender: 'client', text: 'Amazing, portfolio kalian banyak juga ya. But wait, ini ROI-nya seperti apa? Terutama untuk target keywords "executive search" dan "eor"?' },
+    { sender: 'agency', text: 'Hmm... 🤔 Untuk details ROI, kami butuh waktu untuk assess dulu ya Pak. Kami kabari 2 hari lagi, atau selambatnya akhir minggu ini...' },
+    { sender: 'client', text: 'Okay, no problem. I\'ll continue to the second question: Berapa SEO investment-nya? Range dulu aja.' },
+    { sender: 'agency', text: 'Hmm... 😅 Actually kami butuh hitung difficulty-nya dulu Pak. Tapi kasarnya sekitar 30-50 juta per bulan.' },
+    { sender: 'client', text: 'Wait, 30-50 juta per bulan? Itu 360 juta per tahun. Sejauh yang kami check, estimasi revenue tahunan dari target keywords "executive search" dan "eor" itu nggak sampai 200 juta per tahun. Kalau budget-nya 360 juta per tahun, logically itu nggak make sense buat bisnis kami.' },
+    { sender: 'agency', text: '...' },
+    { sender: 'system', text: '💡 Brand managers today are smart. They don\'t buy outdated guesswork anymore.' },
+    { sender: 'narrator', text: 'That\'s why both brands and agencies need YPYM Appraisal. We give you instant, accurate, data-backed ROI and pricing estimates. Completely Free.' },
+    { sender: 'system', text: '✉️ Keyword not available? Contact us at sales@ypym.app' }
+  ];
+
+  const [visibleCount, setVisibleCount] = useState(1);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (visibleCount < chatMessages.length) {
+      const delay = chatMessages[visibleCount - 1].sender === 'system' ? 2000 : 4000;
+      const timer = setTimeout(() => {
+        setVisibleCount(prev => prev + 1);
+      }, delay);
+      return () => clearTimeout(timer);
+    }
+  }, [visibleCount]);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, [visibleCount]);
+
+  const isActive = visibleCount < chatMessages.length;
+
+  return (
+    <div 
+      className={isActive ? "chat-pulse-active" : ""}
+      style={{
+        width: '100%',
+        maxWidth: '600px',
+        margin: '0 auto 2.5rem',
+        background: '#ffffff',
+        border: '1px solid #EAF0FA',
+        borderRadius: '20px',
+        boxShadow: isActive ? 'none' : '0 12px 36px rgba(11, 15, 65, 0.04)',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '420px',
+        transition: 'box-shadow 0.3s ease, border-color 0.3s ease'
+      }}
+    >
+      {/* Chat header */}
+      <div style={{
+        background: '#0B0F41',
+        padding: '12px 20px',
+        color: '#ffffff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        textAlign: 'left'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ position: 'relative' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#1A4BFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
+              🤝
+            </div>
+            <span style={{ position: 'absolute', bottom: 0, right: 0, width: '10px', height: '10px', borderRadius: '50%', background: '#10B981', border: '2px solid #0B0F41' }} />
+          </div>
+          <div>
+            <span style={{ fontSize: '14px', fontWeight: 700, display: 'block' }}>Pitch Meeting Simulator</span>
+            <span style={{ fontSize: '10px', color: '#30FFFC', fontWeight: 600 }}>Active Dialogue Simulation</span>
+          </div>
+        </div>
+        <button 
+          onClick={() => setVisibleCount(1)}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: '#ffffff',
+            cursor: 'pointer',
+            fontSize: '11px',
+            opacity: 0.8,
+            fontWeight: 600,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+        >
+          <span>Reset Simulation</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" style={{ fill: '#ffffff' }}><path d="M18 2H7c-1.103 0-2 .897-2 2v3c0 1.103.897 2 2 2h11c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2z"></path><path d="M13 15v-2c0-1.103-.897-2-2-2H4V5c-1.103 0-2 .897-2 2v4c0 1.103.897 2 2 2h7v2a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1z"></path></svg>
+        </button>
+      </div>
+
+      {/* Chat messages area */}
+      <div 
+        ref={containerRef}
+        style={{
+          flex: 1,
+          padding: '20px',
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px',
+          background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
+          scrollBehavior: 'smooth'
+        }}
+      >
+        {chatMessages.slice(0, visibleCount).map((msg, i) => {
+          if (msg.sender === 'system') {
+            return (
+              <div key={i} style={{ textAlign: 'center', margin: '8px 0', fontSize: '11px', color: 'var(--text-note)', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
+                {msg.text}
+              </div>
+            );
+          }
+
+          if (msg.sender === 'narrator') {
+            return (
+              <div key={i} style={{
+                background: 'rgba(26, 75, 255, 0.05)',
+                borderLeft: '4px solid var(--ypym-blue)',
+                padding: '12px 16px',
+                borderRadius: '8px',
+                fontSize: '13px',
+                color: 'var(--ypym-black)',
+                fontWeight: 600,
+                lineHeight: '1.5',
+                margin: '8px 0',
+                textAlign: 'left'
+              }}>
+                {msg.text}
+              </div>
+            );
+          }
+
+          const isClient = msg.sender === 'client';
+          return (
+            <div 
+              key={i} 
+              style={{
+                display: 'flex',
+                justifyContent: isClient ? 'flex-start' : 'flex-end',
+                width: '100%',
+                animation: 'phoneSlideIn 0.3s ease-out',
+                textAlign: 'left'
+              }}
+            >
+              <div style={{
+                maxWidth: '85%',
+                background: isClient ? '#0B0F41' : '#1A4BFF',
+                color: '#ffffff',
+                padding: '10px 14px',
+                borderRadius: isClient ? '14px 14px 14px 4px' : '14px 14px 4px 14px',
+                fontSize: '13px',
+                lineHeight: '1.4',
+                fontWeight: 500,
+                boxShadow: isClient ? '0 8px 24px rgba(11,15,65,0.06)' : '0 8px 24px rgba(26,75,255,0.1)'
+              }}>
+                <span style={{ display: 'block', fontSize: '9px', fontWeight: 700, color: 'rgba(255,255,255,0.6)', marginBottom: '3px' }}>
+                  {isClient ? 'Brand Manager (Client)' : 'SEO Agency PIC'}
+                </span>
+                {msg.text}
+              </div>
+            </div>
+          );
+        })}
+        {visibleCount === chatMessages.length && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '8px', animation: 'phoneSlideIn 0.3s ease-out' }}>
+            <button 
+              onClick={() => setVisibleCount(1)}
+              style={{
+                borderRadius: '99px',
+                padding: '8px 20px',
+                background: 'var(--ypym-blue)',
+                color: '#ffffff',
+                fontWeight: 600,
+                fontSize: '12px',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 4px 12px rgba(26, 75, 255, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <span>Play Again</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style={{ fill: '#ffffff' }}><path d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z"></path></svg>
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function PhoneScreen1() {
+  return (
+    <div className="phone-frame animate-slide">
+      <div className="phone-island" />
+      <div className="phone-status-bar">
+        <span>9:41</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <svg width="12" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M2 22h20V2z"/></svg>
+          <svg width="12" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21l-12-18h24z"/></svg>
+          <svg width="16" height="9" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="5" width="18" height="14" rx="2" ry="2"></rect><line x1="22" y1="9" x2="22" y2="15"></line></svg>
+        </div>
+      </div>
+      
+      {/* App Content */}
+      <div style={{ padding: '16px 20px', flex: 1, display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'hidden' }}>
+        {/* Header bar */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--ypym-blue)' }}>YPYM</span>
+            <span style={{ fontSize: '10px', color: 'var(--text-note)', background: '#F1F3F4', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>appraisal</span>
+          </div>
+          <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#0B0F41', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 700 }}>
+            YA
+          </div>
+        </div>
+
+        {/* Main Card */}
+        <div style={{ background: '#0B0F41', borderRadius: '16px', padding: '16px', color: '#ffffff', boxShadow: '0 8px 24px rgba(11,15,65,0.12)' }}>
+          <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>Projected SEO Revenue</span>
+          <div style={{ fontSize: '24px', fontWeight: 700, margin: '4px 0', fontFamily: 'var(--font-display)' }}>$247,650</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ background: 'rgba(48, 255, 252, 0.15)', color: '#30FFFC', padding: '1px 6px', borderRadius: '12px', fontSize: '9px', fontWeight: 600 }}>+26.5% ROI</span>
+            <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>12 months campaign</span>
+          </div>
+        </div>
+
+        {/* Mini stats cards grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          <div style={{ background: '#F8F9FC', border: '1px solid #EAF0FA', borderRadius: '12px', padding: '10px 12px' }}>
+            <span style={{ fontSize: '10px', color: 'var(--text-note)', display: 'block' }}>Investment</span>
+            <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ypym-black)', marginTop: '2px', display: 'block' }}>$26.5k</span>
+          </div>
+          <div style={{ background: '#F8F9FC', border: '1px solid #EAF0FA', borderRadius: '12px', padding: '10px 12px' }}>
+            <span style={{ fontSize: '10px', color: 'var(--text-note)', display: 'block' }}>Net Profit</span>
+            <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ypym-blue)', marginTop: '2px', display: 'block' }}>$221.1k</span>
+          </div>
+        </div>
+
+        {/* Explore features */}
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ypym-black)' }}>Audit Engine</span>
+            <span style={{ fontSize: '10px', color: 'var(--ypym-blue)', fontWeight: 600 }}>v1.2.0</span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {[
+              { label: 'Jaccard Deduplication', val: 'Jaccard Scale' },
+              { label: 'S-Curve Forecasting', val: 'Logistic S-Curve' },
+              { label: 'Intent Capture Rules', val: 'Intent Target' }
+            ].map((f, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#ffffff', border: '1px solid #EAF0FA', borderRadius: '10px', padding: '8px 12px' }}>
+                <span style={{ fontSize: '11px', color: 'var(--ypym-black)', fontWeight: 500 }}>{f.label}</span>
+                <span style={{ fontSize: '9px', background: '#F1F3F4', color: 'var(--text-note)', padding: '1px 5px', borderRadius: '3px', fontWeight: 600 }}>{f.val}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      
+      {/* Home Indicator */}
+      <div className="phone-home-indicator" />
+    </div>
+  );
+}
+
+function PhoneScreen2() {
+  const datasets = [
+    {
+      sector: "Logistic & Supply Chain",
+      total: "$312,000",
+      items: [
+        { label: 'Transactional', share: '50% allocation', val: '$156k', color: 'var(--ypym-blue)' },
+        { label: 'Commercial', share: '30% allocation', val: '$94k', color: '#30FFFC' },
+        { label: 'Informational', share: '20% allocation', val: '$62k', color: '#DAFF01' }
+      ],
+      gradient: 'conic-gradient(var(--ypym-blue) 0% 50%, #30FFFC 50% 80%, #DAFF01 80% 100%)'
+    },
+    {
+      sector: "SaaS & FinTech Hub",
+      total: "$580,000",
+      items: [
+        { label: 'Transactional', share: '60% allocation', val: '$348k', color: 'var(--ypym-blue)' },
+        { label: 'Commercial', share: '20% allocation', val: '$116k', color: '#30FFFC' },
+        { label: 'Informational', share: '20% allocation', val: '$116k', color: '#DAFF01' }
+      ],
+      gradient: 'conic-gradient(var(--ypym-blue) 0% 60%, #30FFFC 60% 80%, #DAFF01 80% 100%)'
+    },
+    {
+      sector: "E-Commerce Retail",
+      total: "$195,000",
+      items: [
+        { label: 'Transactional', share: '70% allocation', val: '$136.5k', color: 'var(--ypym-blue)' },
+        { label: 'Commercial', share: '20% allocation', val: '$39k', color: '#30FFFC' },
+        { label: 'Informational', share: '10% allocation', val: '$19.5k', color: '#DAFF01' }
+      ],
+      gradient: 'conic-gradient(var(--ypym-blue) 0% 70%, #30FFFC 70% 90%, #DAFF01 90% 100%)'
+    }
+  ];
+
+  const [datasetIdx, setDatasetIdx] = useState(0);
+  const [fade, setFade] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFade(false);
+      setTimeout(() => {
+        setDatasetIdx(prev => (prev + 1) % datasets.length);
+        setFade(true);
+      }, 300);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const current = datasets[datasetIdx];
+
+  return (
+    <div className="phone-frame animate-slide">
+      <div className="phone-island" />
+      <div className="phone-status-bar">
+        <span>9:41</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <svg width="12" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M2 22h20V2z"/></svg>
+          <svg width="12" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21l-12-18h24z"/></svg>
+          <svg width="16" height="9" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="5" width="18" height="14" rx="2" ry="2"></rect><line x1="22" y1="9" x2="22" y2="15"></line></svg>
+        </div>
+      </div>
+
+      {/* App Content */}
+      <div style={{ padding: '16px 20px', flex: 1, display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'hidden' }}>
+        {/* Header bar */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--ypym-black)', opacity: fade ? 1 : 0.6, transition: 'opacity 0.3s' }}>
+            {current.sector}
+          </span>
+          <span style={{ fontSize: '10px', color: '#10B981', background: '#E6F4EA', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>Live Data</span>
+        </div>
+
+        {/* Circular Donut Chart */}
+        <div style={{
+          width: '120px',
+          height: '120px',
+          borderRadius: '50%',
+          background: current.gradient,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '4px auto',
+          position: 'relative',
+          transition: 'background 0.5s ease'
+        }}>
+          {/* Slowly spinning dashed overlay ring */}
+          <div style={{
+            position: 'absolute',
+            width: '106%',
+            height: '106%',
+            borderRadius: '50%',
+            border: '2px dashed rgba(26, 75, 255, 0.25)',
+            animation: 'spinDonut 20s linear infinite',
+            pointerEvents: 'none'
+          }} />
+          <div style={{
+            width: '88px',
+            height: '88px',
+            borderRadius: '50%',
+            background: '#ffffff',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2,
+            opacity: fade ? 1 : 0.5,
+            transition: 'opacity 0.3s'
+          }}>
+            <span style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ypym-black)' }}>{current.total}</span>
+            <span style={{ fontSize: '9px', color: 'var(--text-note)' }}>Organic Value</span>
+          </div>
+        </div>
+
+        {/* Assets Breakdown */}
+        <div>
+          <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ypym-black)', marginBottom: '8px' }}>
+            Search Intent Breakdown
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', opacity: fade ? 1 : 0.5, transition: 'opacity 0.3s' }}>
+            {current.items.map((item, idx) => (
+              <div key={idx} style={{ background: '#F8F9FC', border: '1px solid #EAF0FA', borderRadius: '12px', padding: '10px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: item.color }} />
+                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--ypym-black)' }}>{item.label}</span>
+                  </div>
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ypym-black)' }}>{item.val}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '9px', color: 'var(--text-note)' }}>{item.share}</span>
+                  <span style={{ fontSize: '9px', color: '#10B981', fontWeight: 600 }}>Active</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Home Indicator */}
+      <div className="phone-home-indicator" />
+    </div>
+  );
+}
+
 export default function LandingPage() {
   const [recentProjects, setRecentProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [heroSlide, setHeroSlide] = useState(0);
   const [activeTab, setActiveTab] = useState('audit');
+  const [activePhoneSlide, setActivePhoneSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActivePhoneSlide(prev => (prev === 0 ? 1 : 0));
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
 
   const tabData = {
     audit: {
@@ -440,6 +872,194 @@ export default function LandingPage() {
         )}
       </section>
 
+      {/* Core Mission / Main Idea Section */}
+      <section className="section core-mission-section" style={{ padding: '4rem 24px', borderRadius: '24px' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
+          <span className="eyebrow" style={{ color: 'var(--ypym-blue)', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600, fontSize: '12px' }}>
+            Solving the Hardest Questions in SEO
+          </span>
+          <h2 style={{ fontSize: '32px', fontWeight: 700, marginTop: '0.5rem', marginBottom: '1.5rem', color: 'var(--ypym-black)', letterSpacing: '-0.02em' }}>
+            Published to Answer the Trickiest Challenges in the Search Industry
+          </h2>
+          <p style={{ fontSize: '16px', color: 'var(--text-note)', lineHeight: '1.6', maxWidth: '680px', margin: '0 auto 2.5rem' }}>
+            YPYM Appraisal acts as an independent audit instrument to provide transparent answers to the two most crucial questions often avoided by marketers and SEO agencies:
+          </p>
+
+          {/* Active dialogue pitch meeting chat simulator */}
+          <ChatSimulator />
+
+          {/* Phone simulation container */}
+          <div className="phones-desktop-container">
+            <PhoneScreen1 />
+            <PhoneScreen2 />
+          </div>
+
+          <div className="phones-mobile-container">
+            {activePhoneSlide === 0 ? <PhoneScreen1 /> : <PhoneScreen2 />}
+            
+            {/* Dot indicators */}
+            <div style={{ display: 'flex', gap: '8px', marginTop: '1.25rem' }}>
+              {[0, 1].map(i => (
+                <span
+                  key={i}
+                  onClick={() => setActivePhoneSlide(i)}
+                  style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    background: activePhoneSlide === i ? 'var(--ypym-blue)' : '#DADCE0',
+                    cursor: 'pointer',
+                    transition: 'background 0.3s ease'
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <a 
+              href="https://ypym.app/company/press/ypym-appraisal-framework" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                color: 'var(--ypym-blue)',
+                fontWeight: 600,
+                fontSize: '14px',
+                textDecoration: 'none',
+                transition: 'all 0.2s ease',
+              }}
+              className="press-release-link"
+            >
+              <span>Learn more about YPYM Appraisal Framework</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 0.2s' }} className="link-arrow"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+          </div>
+        </div>
+        <style>{`
+          @keyframes shadowPulse {
+            0% {
+              box-shadow: 0 12px 36px rgba(26, 75, 255, 0.08), 0 0 0 0px rgba(26, 75, 255, 0.15);
+            }
+            50% {
+              box-shadow: 0 20px 48px rgba(26, 75, 255, 0.15), 0 0 0 12px rgba(26, 75, 255, 0);
+            }
+            100% {
+              box-shadow: 0 12px 36px rgba(26, 75, 255, 0.08), 0 0 0 0px rgba(26, 75, 255, 0);
+            }
+          }
+          .chat-pulse-active {
+            animation: shadowPulse 2.2s infinite ease-in-out;
+            border-color: rgba(26, 75, 255, 0.25) !important;
+          }
+          .core-mission-section {
+            background: transparent;
+            border: 1px solid transparent;
+            transition: all 0.4s ease;
+          }
+          .core-mission-section:hover {
+            background: rgba(26, 75, 255, 0.02);
+            border: 1px solid rgba(26, 75, 255, 0.06);
+          }
+          .press-release-link:hover {
+            color: #0b228f;
+          }
+          .press-release-link:hover .link-arrow {
+            transform: translateX(4px);
+          }
+          
+          /* Phone mockups styles */
+          .phone-frame {
+            width: 290px;
+            height: 560px;
+            background: #ffffff;
+            border: 10px solid #0B0F41;
+            border-radius: 36px;
+            box-shadow: 0 15px 40px rgba(11, 15, 65, 0.12);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            font-family: var(--font-body);
+            user-select: none;
+            text-align: left;
+            box-sizing: border-box;
+          }
+          .phone-frame * {
+            box-sizing: border-box;
+          }
+          .phone-island {
+            width: 90px;
+            height: 22px;
+            background: #0B0F41;
+            border-radius: 99px;
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+          }
+          .phone-status-bar {
+            height: 38px;
+            padding: 10px 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: #0B0F41;
+            background: #ffffff;
+            z-index: 5;
+          }
+          .phone-home-indicator {
+            width: 100px;
+            height: 4px;
+            background: #DADCE0;
+            border-radius: 99px;
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+          }
+
+          .phones-desktop-container {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            margin-bottom: 2.5rem;
+            margin-top: 1.5rem;
+          }
+          .phones-mobile-container {
+            display: none;
+          }
+
+          @keyframes phoneSlideIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+          }
+          .animate-slide {
+            animation: phoneSlideIn 0.4s ease-out forwards;
+          }
+
+          @media (max-width: 768px) {
+            .phones-desktop-container {
+              display: none !important;
+            }
+            .phones-mobile-container {
+              display: flex !important;
+              flex-direction: column;
+              align-items: center;
+              margin-bottom: 2.5rem;
+              margin-top: 1.5rem;
+              position: relative;
+            }
+          }
+        `}</style>
+      </section>
+
       {/* Features Grid */}
       <section className="section" style={{ padding: '2rem 0' }}>
         <h2 style={{ marginBottom: '2rem', textAlign: 'center' }}>How It Works</h2>
@@ -507,11 +1127,11 @@ export default function LandingPage() {
       <section className="section" id="how-it-works-ref" style={{ padding: '2rem 0 4rem 0' }}>
         <h2 style={{ marginBottom: '1.5rem' }}>Ecosystem Capabilities</h2>
         <div style={{
-          background: '#ffffff',
-          borderRadius: '24px',
-          border: '1px solid var(--border-light)',
-          padding: '40px',
-          boxShadow: '0 12px 40px rgba(11,15,65,0.04)',
+          background: 'transparent',
+          borderRadius: '0',
+          border: 'none',
+          padding: '0',
+          boxShadow: 'none',
           display: 'flex',
           flexDirection: 'column',
           gap: '32px'

@@ -55,6 +55,20 @@ export default function NewProjectPage() {
       .catch(err => console.error('Error fetching crawled keywords:', err));
   }, []);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const kwParam = params.get('keyword');
+    if (kwParam) {
+      setKeyword(kwParam);
+      if (crawledKeywords.length > 0) {
+        const match = crawledKeywords.find(k => (k.keyword || '').toLowerCase().trim() === kwParam.toLowerCase().trim());
+        if (match) {
+          setSector(match.sector || 'General');
+        }
+      }
+    }
+  }, [crawledKeywords]);
+
   // Assumptions defaults
   const [sector, setSector] = useState('General');
   const [captureRate, setCaptureRate] = useState(10);

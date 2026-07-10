@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { listProjects, deleteProject } from '../utils/api.js';
+import { listProjects, deleteProject, getProject, getCrawledKeywords, formatCurrency, formatNumber } from '../utils/api.js';
 import StatusBadge from '../components/shared/StatusBadge.jsx';
-import { formatNumber } from '../utils/api.js';
+import SearchAutocomplete from '../components/shared/SearchAutocomplete.jsx';
 
 export default function ProjectListPage() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [expandedGroups, setExpandedGroups] = useState({});
+  const [crawledCount, setCrawledCount] = useState(0);
+  const [randomProject, setRandomProject] = useState(null);
+  const [loadingRandom, setLoadingRandom] = useState(false);
+  const [showAllKeywords, setShowAllKeywords] = useState(false);
 
   const fetchProjects = () => {
     setLoading(true);
@@ -25,7 +30,34 @@ export default function ProjectListPage() {
 
   useEffect(() => {
     fetchProjects();
+    
+    // Fetch crawled keywords count
+    getCrawledKeywords()
+      .then(res => setCrawledCount(res.keywords ? res.keywords.length : 0))
+      .catch(err => console.error('[ProjectListPage] Failed to fetch crawled count:', err));
   }, []);
+
+  // Fetch details for a random completed project once projects load
+  useEffect(() => {
+    if (projects && projects.length > 0) {
+      const completed = projects.filter(p => p.status === 'completed');
+      if (completed.length > 0) {
+        const randomIdx = Math.floor(Math.random() * completed.length);
+        const selectedProj = completed[randomIdx];
+        
+        setLoadingRandom(true);
+        getProject(selectedProj.id)
+          .then(res => {
+            setRandomProject(res);
+            setLoadingRandom(false);
+          })
+          .catch(err => {
+            console.error('[ProjectListPage] Failed to fetch details for random project:', err);
+            setLoadingRandom(false);
+          });
+      }
+    }
+  }, [projects]);
 
   const handleDelete = async (id, keyword) => {
     if (!window.confirm(`Are you sure you want to delete the projection for keyword "${keyword}"?`)) {
@@ -41,6 +73,35 @@ export default function ProjectListPage() {
     }
   };
 
+  const toggleGroup = (keyword) => {
+    const key = (keyword || '').toLowerCase().trim();
+    setExpandedGroups(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  // Group projects by seed keyword (case-insensitive)
+  const groupedProjects = useMemo(() => {
+    const groups = {};
+    projects.forEach(p => {
+      const key = (p.seed_keyword || '').toLowerCase().trim();
+      if (!key) return;
+      if (!groups[key]) {
+        groups[key] = {
+          seed_keyword: p.seed_keyword,
+          items: []
+        };
+      }
+      groups[key].items.push(p);
+    });
+
+    // Sort the unique groups by the latest created_at date of their first item
+    return Object.values(groups).sort((a, b) => {
+      return new Date(b.items[0].created_at) - new Date(a.items[0].created_at);
+    });
+  }, [projects]);
+
   const pageUrl = window.location.href;
   const pageTitle = "YPYM Appraisal - Keyword Projection History";
   const encUrl = encodeURIComponent(pageUrl);
@@ -51,6 +112,36 @@ export default function ProjectListPage() {
     wa:       `https://wa.me/?text=${encTxt}%20${encUrl}`,
     tg:       `https://t.me/share/url?url=${encUrl}&text=${encTxt}`,
   };
+
+  // Calculate randomized/simulated projection details
+  const { simulatedKeyword, simulatedFee, simulatedRoi, simulatedRoiPct, simulatedProjectUrl } = useMemo(() => {
+    let simulatedKeyword = "jasa seo jakarta";
+    let simulatedFee = "Rp 45.000.000";
+    let simulatedRoi = "Rp 135.000.000";
+    let simulatedRoiPct = 300;
+    let simulatedProjectUrl = "/projects/new";
+
+    if (randomProject && randomProject.project) {
+      const proj = randomProject.project;
+      simulatedKeyword = proj.seed_keyword;
+      const kwSlug = encodeURIComponent((proj.seed_keyword || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+      simulatedProjectUrl = `/projects/${proj.id}${kwSlug ? '/' + kwSlug : ''}`;
+      
+      // Find the 12-month horizon or first available
+      const proj12 = randomProject.projections?.find(p => p.horizon_months === 12) || randomProject.projections?.[0];
+      if (proj12) {
+        const isUSD = proj.currency_base === 'USD';
+        const feeVal = isUSD ? proj12.recommended_service_fee_usd : proj12.recommended_service_fee_idr;
+        const revVal = isUSD ? proj12.revenue_usd : proj12.revenue_idr;
+        
+        simulatedFee = formatCurrency(feeVal, proj.currency_base).split(',')[0];
+        simulatedRoi = formatCurrency(revVal, proj.currency_base).split(',')[0];
+        simulatedRoiPct = feeVal > 0 ? Math.round((revVal / feeVal) * 100) : 0;
+      }
+    }
+
+    return { simulatedKeyword, simulatedFee, simulatedRoi, simulatedRoiPct, simulatedProjectUrl };
+  }, [randomProject]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%', marginTop: '1rem' }}>
@@ -81,15 +172,261 @@ export default function ProjectListPage() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-        <div>
-          <span className="eyebrow" style={{ color: 'var(--ypym-blue)' }}>Projection History</span>
-          <h1 style={{ marginTop: '0.25rem', marginBottom: '0.25rem' }}>All Keyword Projections</h1>
-          <p style={{ color: 'var(--text-note)', fontSize: '15px' }}>
-            List of all target keywords that have been analyzed and had their investment value audited.
-          </p>
+      <style>{`
+        .search-tag-chip {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 16px;
+          border: 1px solid #DADCE0;
+          border-radius: 99px;
+          font-size: 13px;
+          font-weight: 500;
+          color: #5F6368;
+          background: #ffffff;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .search-tag-chip:hover {
+          background: #F8F9FA;
+          border-color: #BEC1C5;
+          color: var(--ypym-black);
+        }
+        .hover-blue-arrow:hover {
+          color: var(--ypym-blue) !important;
+          transform: translateX(2px);
+        }
+      `}</style>
+
+      {/* Google-like Dashboard Search Header Section */}
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center',
+        padding: '2rem 1rem 1rem',
+        background: 'transparent',
+        width: '100%',
+        maxWidth: '900px',
+        margin: '0 auto',
+        gap: '1.25rem'
+      }}>
+        <h1 style={{
+          fontSize: '32px',
+          fontWeight: 700,
+          color: 'var(--ypym-black)',
+          letterSpacing: '-0.02em',
+          margin: 0
+        }}>
+          What projection will you audit today?
+        </h1>
+
+        <p style={{
+          fontSize: '14px',
+          color: '#5f6368',
+          margin: 0,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          flexWrap: 'wrap',
+          justifyContent: 'center'
+        }}>
+          You have{' '}
+          <span style={{ background: '#E8F0FE', color: '#1A73E8', padding: '2px 8px', borderRadius: '4px', fontWeight: 600 }}>
+            {projects.filter(p => p.status === 'completed').length} completed audits
+          </span>
+          ,{' '}
+          <span style={{ background: '#FEF7E0', color: '#B06000', padding: '2px 8px', borderRadius: '4px', fontWeight: 600 }}>
+            {crawledCount} crawled keywords
+          </span>{' '}
+          and{' '}
+          <span style={{ background: '#F3E8FF', color: '#6B21A8', padding: '2px 8px', borderRadius: '4px', fontWeight: 600 }}>
+            {projects.filter(p => p.status === 'pending' || p.status === 'processing').length} active tasks
+          </span>
+          . Let's review them!
+        </p>
+
+        {/* Search input container */}
+        <div style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: '680px',
+          margin: '0.5rem 0',
+          boxShadow: '0 4px 20px rgba(11, 15, 65, 0.05)',
+          borderRadius: '99px',
+          border: '1px solid #DADCE0',
+          background: '#ffffff',
+          display: 'flex',
+          alignItems: 'center'
+        }} className="search-bar-pill">
+          <SearchAutocomplete 
+            placeholder="Search or analyze keyword..." 
+            containerStyle={{ maxWidth: '100%' }}
+            inputStyle={{
+              width: '100%',
+              padding: '14px 110px 14px 54px',
+              fontSize: '15px',
+              fontWeight: 500,
+              color: 'var(--ypym-black)',
+              background: 'transparent',
+              border: 'none',
+              borderRadius: '99px',
+              outline: 'none',
+              fontFamily: 'var(--font-body)'
+            }}
+          />
+          <div style={{
+            position: 'absolute',
+            right: '18px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            pointerEvents: 'none'
+          }}>
+            <span style={{ fontSize: '11px', color: '#8F90A6', fontWeight: 500 }}>Ask AI</span>
+            <span style={{
+              background: '#F1F3F4',
+              border: '1px solid #DADCE0',
+              borderRadius: '4px',
+              padding: '2px 6px',
+              fontSize: '10px',
+              color: '#5F6368',
+              fontWeight: 700,
+              boxShadow: '0 1px 0 rgba(0,0,0,0.05)'
+            }}>Tab</span>
+          </div>
         </div>
-        <Link to="/projects/new" className="btn btn-solid">New Projection</Link>
+
+        {/* Action tags */}
+        <div style={{
+          display: 'flex',
+          gap: '8px',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          marginTop: '0.25rem',
+          marginBottom: '1rem'
+        }}>
+          <Link to="/projects/new" className="search-tag-chip" style={{ textDecoration: 'none' }}>
+            <span style={{ color: '#FF5E3A' }}>⊕</span> Generate projection
+          </Link>
+          <a href="https://maarif88.github.io/ypym-company/index.html" target="_blank" rel="noopener noreferrer" className="search-tag-chip" style={{ textDecoration: 'none' }}>
+            <span>📖</span> Read documentation
+          </a>
+          <div className="search-tag-chip" style={{ cursor: 'pointer' }} onClick={() => fetchProjects()}>
+            <span>🔄</span> Refresh list
+          </div>
+        </div>
+      </div>
+
+      {/* 2 Simulation Cards Side-by-Side */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        gap: '1.5rem',
+        width: '100%',
+        maxWidth: '900px',
+        margin: '0 auto 1.5rem'
+      }}>
+        {/* Card 1: Investasi SEO */}
+        <div className="card" style={{
+          background: '#ffffff',
+          borderRadius: '16px',
+          border: '1px solid #EAF0FA',
+          padding: '20px 24px',
+          boxShadow: '0 8px 20px rgba(11,15,65,0.015)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          minHeight: '160px',
+          position: 'relative'
+        }}>
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: '#5f6368' }}>Berapa Investasi SEO?</span>
+              {simulatedProjectUrl !== "/projects/new" ? (
+                <Link to={simulatedProjectUrl} style={{ color: '#5f6368', display: 'flex', alignItems: 'center', transition: 'all 0.2s ease' }} className="hover-blue-arrow">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </Link>
+              ) : (
+                <span style={{ color: '#5f6368', display: 'flex', alignItems: 'center' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </span>
+              )}
+            </div>
+            
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: '28px', fontWeight: 700, color: 'var(--ypym-black)', letterSpacing: '-0.02em', fontFamily: 'var(--font-display)' }}>
+                {loadingRandom ? (
+                  <span style={{ fontSize: '16px', color: 'var(--text-note)' }}>Calculating...</span>
+                ) : simulatedFee}
+              </div>
+              
+              {/* Miniature Sparkline Charts */}
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: '3px', height: '36px', paddingRight: '8px' }}>
+                <span style={{ width: '8px', height: '14px', background: '#F1F3F4', borderRadius: '1px' }} />
+                <span style={{ width: '8px', height: '22px', background: '#F1F3F4', borderRadius: '1px' }} />
+                <span style={{ width: '8px', height: '18px', background: '#F1F3F4', borderRadius: '1px' }} />
+                <span style={{ width: '8px', height: '32px', background: '#F1F3F4', borderRadius: '1px' }} />
+                <span style={{ width: '8px', height: '26px', background: '#FF5E3A', borderRadius: '1px' }} />
+              </div>
+            </div>
+          </div>
+          
+          <div style={{ fontSize: '12px', color: '#8F90A6', marginTop: '1rem', lineHeight: 1.4 }}>
+            Rekomendasi nilai investasi untuk kata kunci: <strong style={{ color: 'var(--ypym-black)' }}>"{simulatedKeyword}"</strong>
+          </div>
+        </div>
+
+        {/* Card 2: ROI SEO */}
+        <div className="card" style={{
+          background: '#ffffff',
+          borderRadius: '16px',
+          border: '1px solid #EAF0FA',
+          padding: '20px 24px',
+          boxShadow: '0 8px 20px rgba(11,15,65,0.015)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          minHeight: '160px'
+        }}>
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: '#5f6368' }}>Berapa ROI dari SEO?</span>
+              {simulatedProjectUrl !== "/projects/new" ? (
+                <Link to={simulatedProjectUrl} style={{ color: '#5f6368', display: 'flex', alignItems: 'center', transition: 'all 0.2s ease' }} className="hover-blue-arrow">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </Link>
+              ) : (
+                <span style={{ color: '#5f6368', display: 'flex', alignItems: 'center' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </span>
+              )}
+            </div>
+            
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: '28px', fontWeight: 700, color: 'var(--ypym-black)', letterSpacing: '-0.02em', fontFamily: 'var(--font-display)' }}>
+                {loadingRandom ? (
+                  <span style={{ fontSize: '16px', color: 'var(--text-note)' }}>Calculating...</span>
+                ) : simulatedRoi}
+              </div>
+
+              {/* Circular Progress Ring */}
+              <div style={{ position: 'relative', width: '48px', height: '48px', flexShrink: 0, marginRight: '4px' }}>
+                <svg width="48" height="48" viewBox="0 0 36 36">
+                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#F1F3F4" strokeWidth="3.5" />
+                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--ypym-blue)" strokeWidth="3.5" strokeDasharray={`${Math.min(simulatedRoiPct, 100)}, 100`} />
+                </svg>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: '9px', fontWeight: 700, color: 'var(--ypym-blue)' }}>{simulatedRoiPct}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div style={{ fontSize: '12px', color: '#8F90A6', marginTop: '1rem', lineHeight: 1.4 }}>
+            Proyeksi estimasi organic value untuk kata kunci: <strong style={{ color: 'var(--ypym-black)' }}>"{simulatedKeyword}"</strong>
+          </div>
+        </div>
       </div>
 
       {loading ? (
@@ -110,66 +447,227 @@ export default function ProjectListPage() {
           <Link to="/projects/new" className="btn btn-solid">Create First Projection</Link>
         </div>
       ) : (
-        <div className="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Seed Keyword</th>
-                <th>Sector</th>
-                <th>Target Locale</th>
-                <th>Status</th>
-                <th className="text-right">Raw SV Pool</th>
-                <th className="text-right">Effective SV Pool</th>
-                <th>Created Date</th>
-                <th className="text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {projects.map(p => {
-                const kwSlug = encodeURIComponent((p.seed_keyword || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'));
-                const projectUrl = `/projects/${p.id}${kwSlug ? '/' + kwSlug : ''}`;
-                return (
-                  <tr key={p.id}>
-                    <td>
-                      <Link to={projectUrl} style={{ fontWeight: 600, textDecoration: 'none' }}>
-                        {p.seed_keyword}
-                      </Link>
-                    </td>
-                    <td>
-                      <span style={{ padding: '3px 8px', background: 'rgba(0,102,204,0.06)', border: '1px solid rgba(0,102,204,0.12)', borderRadius: '4px', fontSize: '11px', fontWeight: 600, color: 'var(--ypym-blue)' }}>
-                        {p.sector || 'General'}
-                      </span>
-                    </td>
-                    <td className="font-mono" style={{ fontSize: '12px' }}>
-                      {p.locale_language}-{p.locale_country} ({p.currency_base})
-                    </td>
-                    <td>
-                      <StatusBadge status={p.status} />
-                    </td>
-                    <td className="text-right font-mono">
-                      {p.status === 'completed' ? formatNumber(p.raw_sv_pool) : '-'}
-                    </td>
-                    <td className="text-right font-mono" style={{ color: 'var(--ypym-blue)', fontWeight: 600 }}>
-                      {p.status === 'completed' ? formatNumber(p.effective_sv_pool) : '-'}
-                    </td>
-                    <td style={{ fontSize: '13px', color: 'var(--text-note)' }}>
-                      {new Date(p.created_at).toLocaleString('en-US')}
-                    </td>
-                    <td className="text-right" style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                      <Link to={projectUrl} className="btn btn-ghost btn-sm">Dashboard</Link>
-                      <button 
-                        onClick={() => handleDelete(p.id, p.seed_keyword)} 
-                        className="btn btn-light btn-sm"
-                        style={{ color: '#dc2626', borderColor: 'rgba(220,38,38,0.2)' }}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div style={{ position: 'relative', overflow: 'hidden', paddingBottom: !showAllKeywords && groupedProjects.length > 10 ? '120px' : '0' }}>
+          <div className="table-wrap">
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  <th style={{ width: '40px' }}></th>
+                  <th>Seed Keyword</th>
+                  <th>Sector</th>
+                  <th>Target Locale</th>
+                  <th>Status</th>
+                  <th className="text-right">Raw SV Pool</th>
+                  <th className="text-right">Effective SV Pool</th>
+                  <th>Created Date</th>
+                  <th className="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(() => {
+                  const visibleGroups = showAllKeywords ? groupedProjects : groupedProjects.slice(0, 10);
+                  
+                  return visibleGroups.map((group, groupIdx) => {
+                    const latest = group.items[0];
+                    const key = group.seed_keyword.toLowerCase().trim();
+                    const isExpanded = !!expandedGroups[key];
+                    const hasMultiple = group.items.length > 1;
+                    
+                    const kwSlug = encodeURIComponent((latest.seed_keyword || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+                    const latestProjectUrl = `/projects/${latest.id}${kwSlug ? '/' + kwSlug : ''}`;
+
+                    let blurAmount = 0;
+                    if (!showAllKeywords && groupIdx >= 2) {
+                      // We have 8 items starting from index 2 to 9
+                      const steps = [0.5, 1.2, 2.0, 3.2, 4.5, 6.0, 8.0, 10.0];
+                      blurAmount = steps[groupIdx - 2] || 10.0;
+                    }
+
+                    const groupStyle = {
+                      filter: blurAmount > 0 ? `blur(${blurAmount}px)` : 'none',
+                      opacity: blurAmount > 0 ? Math.max(0.12, 1 - blurAmount / 11) : 1,
+                      pointerEvents: blurAmount > 4 ? 'none' : 'auto',
+                      transition: 'filter 0.3s ease, opacity 0.3s ease'
+                    };
+
+                    return (
+                      <React.Fragment key={key}>
+                        {/* Main/Latest Row */}
+                        <tr style={{ background: hasMultiple ? 'rgba(26, 75, 255, 0.02)' : 'transparent', ...groupStyle }}>
+                          <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                            {hasMultiple && (
+                              <button
+                                onClick={() => toggleGroup(group.seed_keyword)}
+                                style={{
+                                  background: 'transparent',
+                                  border: 'none',
+                                  color: 'var(--ypym-blue)',
+                                  cursor: 'pointer',
+                                  fontSize: '11px',
+                                  padding: '4px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  transition: 'transform 0.15s ease',
+                                  transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
+                                }}
+                              >
+                                ▶
+                              </button>
+                            )}
+                          </td>
+                          <td>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <Link to={latestProjectUrl} style={{ fontWeight: 600, textDecoration: 'none' }}>
+                                {group.seed_keyword}
+                              </Link>
+                              {hasMultiple && (
+                                <span
+                                  style={{
+                                    fontSize: '11px',
+                                    background: '#E2E8FF',
+                                    color: 'var(--ypym-blue)',
+                                    padding: '2px 6px',
+                                    borderRadius: '99px',
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  {group.items.length} runs
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td>
+                            <span style={{ padding: '3px 8px', background: 'rgba(0,102,204,0.06)', border: '1px solid rgba(0,102,204,0.12)', borderRadius: '4px', fontSize: '11px', fontWeight: 600, color: 'var(--ypym-blue)' }}>
+                              {latest.sector || 'General'}
+                            </span>
+                          </td>
+                          <td className="font-mono" style={{ fontSize: '12px' }}>
+                            {latest.locale_language}-{latest.locale_country} ({latest.currency_base})
+                          </td>
+                          <td>
+                            <StatusBadge status={latest.status} />
+                          </td>
+                          <td className="text-right font-mono">
+                            {latest.status === 'completed' ? formatNumber(latest.raw_sv_pool) : '-'}
+                          </td>
+                          <td className="text-right font-mono" style={{ color: 'var(--ypym-blue)', fontWeight: 600 }}>
+                            {latest.status === 'completed' ? formatNumber(latest.effective_sv_pool) : '-'}
+                          </td>
+                          <td style={{ fontSize: '13px', color: 'var(--text-note)' }}>
+                            {new Date(latest.created_at).toLocaleString('en-US')}
+                          </td>
+                          <td className="text-right">
+                            <Link to={latestProjectUrl} className="btn btn-ghost btn-sm">Dashboard</Link>
+                          </td>
+                        </tr>
+
+                        {/* Child Rows (Older versions) */}
+                        {isExpanded && group.items.slice(1).map((p, idx) => {
+                          const childKwSlug = encodeURIComponent((p.seed_keyword || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+                          const childProjectUrl = `/projects/${p.id}${childKwSlug ? '/' + childKwSlug : ''}`;
+                          const versionNum = group.items.length - (idx + 1);
+
+                          return (
+                            <tr key={p.id} style={{ background: '#f8fafc', ...groupStyle }}>
+                              <td></td>
+                              <td>
+                                <div style={{ display: 'flex', alignItems: 'center', paddingLeft: '16px', color: 'var(--text-note)' }}>
+                                  <span style={{ marginRight: '8px', color: '#cbd5e1' }}>↳</span>
+                                  <Link to={childProjectUrl} style={{ textDecoration: 'none', color: 'var(--text-note)', fontSize: '13px', fontWeight: 500 }}>
+                                    Scenario #{versionNum}
+                                  </Link>
+                                </div>
+                              </td>
+                              <td>
+                                <span style={{ opacity: 0.5, padding: '3px 8px', background: 'rgba(0,102,204,0.06)', border: '1px solid rgba(0,102,204,0.12)', borderRadius: '4px', fontSize: '11px', fontWeight: 600, color: 'var(--ypym-blue)' }}>
+                                  {p.sector || 'General'}
+                                </span>
+                              </td>
+                              <td className="font-mono" style={{ fontSize: '12px', opacity: 0.7 }}>
+                                {p.locale_language}-{p.locale_country} ({p.currency_base})
+                              </td>
+                              <td>
+                                <StatusBadge status={p.status} />
+                              </td>
+                              <td className="text-right font-mono" style={{ opacity: 0.8 }}>
+                                {p.status === 'completed' ? formatNumber(p.raw_sv_pool) : '-'}
+                              </td>
+                              <td className="text-right font-mono" style={{ color: 'rgba(26, 75, 255, 0.7)', fontWeight: 600 }}>
+                                {p.status === 'completed' ? formatNumber(p.effective_sv_pool) : '-'}
+                              </td>
+                              <td style={{ fontSize: '13px', color: 'var(--text-note)', opacity: 0.8 }}>
+                                {new Date(p.created_at).toLocaleString('en-US')}
+                              </td>
+                              <td className="text-right">
+                                <Link to={childProjectUrl} className="btn btn-ghost btn-sm" style={{ borderColor: 'rgba(26,75,255,0.15)', color: 'rgba(26, 75, 255, 0.8)' }}>Dashboard</Link>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </React.Fragment>
+                    );
+                  });
+                })()}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Translucent gradient overlay with floating button */}
+          {!showAllKeywords && groupedProjects.length > 10 && (
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: '220px',
+              background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.95) 70%, rgba(255, 255, 255, 1) 100%)',
+              display: 'flex',
+              alignItems: 'flex-end',
+              justifyContent: 'center',
+              paddingBottom: '32px',
+              pointerEvents: 'none'
+            }}>
+              <button 
+                onClick={() => setShowAllKeywords(true)}
+                className="btn btn-solid"
+                style={{
+                  borderRadius: '99px',
+                  padding: '12px 28px',
+                  background: 'var(--ypym-blue)',
+                  color: '#ffffff',
+                  fontWeight: 600,
+                  boxShadow: '0 8px 24px rgba(26, 75, 255, 0.25)',
+                  border: 'none',
+                  cursor: 'pointer',
+                  pointerEvents: 'auto',
+                  transform: 'translateY(-10px)'
+                }}
+              >
+                View All Keywords ({groupedProjects.length})
+              </button>
+            </div>
+          )}
+
+          {/* Show Less button when expanded */}
+          {showAllKeywords && groupedProjects.length > 10 && (
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem', marginBottom: '1rem' }}>
+              <button 
+                onClick={() => setShowAllKeywords(false)}
+                className="btn btn-ghost"
+                style={{
+                  borderRadius: '99px',
+                  padding: '10px 24px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  borderColor: 'rgba(26, 75, 255, 0.2)',
+                  color: 'var(--ypym-blue)'
+                }}
+              >
+                Show Less Keywords
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProject, reproject, exportProject } from '../utils/api.js';
 import { LoadingSpinner } from '../components/shared/LoadingStates.jsx';
@@ -7,6 +7,7 @@ import CurrencyDisplay from '../components/shared/CurrencyDisplay.jsx';
 import { formatNumber, formatCurrency } from '../utils/api.js';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
+import SearchAutocomplete from '../components/shared/SearchAutocomplete.jsx';
 
 import { LineChart, Line, BarChart, Bar, AreaChart, Area, Cell, RadialBarChart, RadialBar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -47,6 +48,18 @@ export default function DashboardPage() {
   };
 
   // Table filters & sorting
+  const [selectedKeywords, setSelectedKeywords] = useState({});
+  const getGoogleAdsSvRange = (sv) => {
+    if (sv === undefined || sv === null) return '—';
+    if (sv < 10) return '0 - 10';
+    if (sv < 100) return '10 - 100';
+    if (sv < 1000) return '100 - 1K';
+    if (sv < 10000) return '1K - 10K';
+    if (sv < 100000) return '10K - 100K';
+    if (sv < 1000000) return '100K - 1M';
+    return '1M+';
+  };
+
   const [keywordSearch, setKeywordSearch] = useState('');
   const [intentFilter, setIntentFilter] = useState('');
   const [sourceFilter, setSourceFilter] = useState('');
@@ -302,6 +315,25 @@ export default function DashboardPage() {
   }
 
   const { project, keywords, trends, projections, cost_ledger } = data;
+
+  const broadenSuggestions = useMemo(() => {
+    let list = [];
+    if (trends?.rising_queries?.length) {
+      list = trends.rising_queries.map(q => q.Query || q.query).filter(Boolean);
+    }
+    if (list.length < 3 && trends?.top_queries?.length) {
+      const topList = trends.top_queries.map(q => q.Query || q.query).filter(Boolean);
+      list = [...list, ...topList];
+    }
+    if (list.length < 3 && keywords?.length) {
+      const kwList = keywords.filter(k => !k.is_cluster_primary).map(k => k.keyword);
+      list = [...list, ...kwList];
+    }
+    const seed = (project?.seed_keyword || '').toLowerCase().trim();
+    return Array.from(new Set(list))
+      .filter(item => item.toLowerCase().trim() !== seed)
+      .slice(0, 8);
+  }, [trends, keywords, project]);
 
   const pageUrl = window.location.href;
   const pageTitle = `YPYM Appraisal - SEO Projection for ${project.seed_keyword}`;
@@ -915,9 +947,8 @@ export default function DashboardPage() {
           from { opacity: 0; }
           to { opacity: 1; }
         }
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
+        .google-ads-row:hover {
+          background: #f4f7fb !important;
         }
       `}</style>
 
@@ -950,26 +981,98 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Hero Title & Actions */}
-        <div className="hero-header-bar">
-          <div>
-            <h1 className="hero-title">{project.seed_keyword}</h1>
-            <div className="hero-subtitle" style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap', marginTop: '6px' }}>
-              <span className="badge badge-neutral" style={{ fontSize: '10px', fontFamily: 'var(--font-mono)', padding: '2px 8px', background: '#e4e4e7', color: '#3f3f46', border: 'none', textTransform: 'none' }}>
-                ID: {project.id.substring(0, 8)}
-              </span>
-              <span style={{ color: '#a1a1aa' }}>•</span>
-              <span style={{ padding: '2px 8px', background: 'rgba(0,102,204,0.06)', border: '1px solid rgba(0,102,204,0.12)', borderRadius: '4px', fontSize: '11px', fontWeight: 600, color: 'var(--ypym-blue)' }}>
-                Sector: {project.sector || 'General'}
-              </span>
-              <span style={{ color: '#a1a1aa' }}>•</span>
-              <span style={{ color: '#71717a', fontSize: '12px', fontWeight: 500 }}>
-                Created: {new Date(project.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+        {/* Google Ads style Tabs Row */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E0E0E0', background: '#F8F9FA', marginTop: '1rem', borderTopLeftRadius: '8px', borderTopRightRadius: '8px', flexWrap: 'wrap', paddingRight: '16px' }}>
+          <div style={{ display: 'flex' }}>
+            <div style={{ padding: '12px 20px', fontWeight: 600, borderBottom: '3px solid #1A73E8', color: '#1A73E8', cursor: 'pointer', fontSize: '13px' }}>Keyword ideas</div>
+            <div style={{ padding: '12px 20px', fontWeight: 500, color: '#5F6368', cursor: 'pointer', fontSize: '13px' }}>Forecast</div>
+            <div style={{ padding: '12px 20px', fontWeight: 500, color: '#5F6368', cursor: 'pointer', fontSize: '13px' }}>Saved keywords</div>
+            <div style={{ padding: '12px 20px', fontWeight: 500, color: '#5F6368', cursor: 'pointer', fontSize: '13px' }}>Negative keywords</div>
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '6px 0' }}>
+            {/* Action Dropdown Menu */}
+            <div style={{ position: 'relative' }}>
+              <button 
+                className="btn btn-ghost btn-sm" 
+                onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
+                style={{ gap: '6px', background: '#ffffff', borderColor: '#DADCE0' }}
+              >
+                <span>Export Report</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" style={{ fill: 'currentColor', transition: 'transform 0.2s', transform: exportDropdownOpen ? 'rotate(180deg)' : 'none' }}>
+                  <path d="M12 16l-6-6h12z"></path>
+                </svg>
+              </button>
+              {exportDropdownOpen && (
+                <div className="export-menu-dropdown" style={{ right: 0, top: '100%' }}>
+                  <button className="export-menu-item" onClick={() => { handleExport('csv'); setExportDropdownOpen(false); }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zm-5 14h-4v-2h4v2zm3-4H7V7h10v6z"/></svg>
+                    <span>Export CSV</span>
+                  </button>
+                  <button className="export-menu-item" onClick={() => { handleExport('json'); setExportDropdownOpen(false); }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="m11.293 17.293-1.414 1.414L4.586 13l5.293-5.293 1.414 1.414L7.414 13l3.879 4.293zm1.414 0 3.879-4.293-3.879-4.293 1.414-1.414L19.414 13l-5.293 5.293-1.414-1.414z"/></svg>
+                    <span>Export JSON</span>
+                  </button>
+                  <button className="export-menu-item" onClick={handleDownloadPDF}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M8.293 12.293 11 9.586V15h2V9.586l2.707 2.707 1.414-1.414L12 5.758l-5.121 5.121zm10.707 3.707V18H5v-2H3v2c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2v-2h-2z"/></svg>
+                    <span>Download PDF</span>
+                  </button>
+                  <button className="export-menu-item" onClick={handleDownloadJPEG}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M4 4h16c1.103 0 2 .897 2 2v12c0 1.103-.897 2-2 2H4c-1.103 0-2-.897-2-2V6c0-1.103.897-2 2-2zm16 14.002V6H4v12h16zM6 15h3v2H6v-2zm12-4-3 4H9l3-4 6 4z"/></svg>
+                    <span>Download JPEG (5 Cards)</span>
+                  </button>
+                  <button className="export-menu-item" onClick={() => { setEmailModalOpen(true); setExportDropdownOpen(false); }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    <span>Send to Email (PDF)</span>
+                  </button>
+                </div>
+              )}
+            </div>
+            <Link to="/projects" className="btn btn-light btn-sm" style={{ background: '#ffffff', borderColor: '#DADCE0' }}>All Projections</Link>
+          </div>
+        </div>
+
+        {/* Google Ads style Settings Bar */}
+        <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '1.25rem', padding: '12px 20px', background: '#ffffff', borderBottom: '1px solid #E0E0E0' }}>
+          <div style={{ flex: 1, minWidth: '280px' }}>
+            <SearchAutocomplete placeholder="Search or analyze keyword..." defaultValue={project.seed_keyword} />
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', fontSize: '13px', color: '#5f6368' }}>
+            {/* Location */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: '#f1f3f4', borderRadius: '4px' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <span style={{ fontWeight: 500 }}>{project.locale_country === 'ID' ? 'Indonesia' : project.locale_country || 'United States'}</span>
+            </div>
+            {/* Language */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: '#f1f3f4', borderRadius: '4px' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 5h12M7 2h2m-4 3c0 4.418 3.582 8 8 8m-2-12c0 2.209-1.791 4-4 4"></path></svg>
+              <span style={{ fontWeight: 500 }}>{project.locale_language === 'id' ? 'Indonesian' : 'English'}</span>
+            </div>
+            {/* Search Network */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: '#f1f3f4', borderRadius: '4px' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <span style={{ fontWeight: 500 }}>Google</span>
+            </div>
+            {/* Timeframe */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: '#f1f3f4', borderRadius: '4px' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <span style={{ fontWeight: 500 }}>
+                {(() => {
+                  const createdDate = new Date(project.created_at);
+                  const startYear = createdDate.getFullYear() - 1;
+                  const endYear = createdDate.getFullYear();
+                  const months = ["Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May"];
+                  const startMonthStr = months[createdDate.getMonth() % 12];
+                  const endMonthStr = months[(createdDate.getMonth() - 1 + 12) % 12];
+                  return `${startMonthStr} ${startYear} - ${endMonthStr} ${endYear}`;
+                })()}
               </span>
             </div>
-          </div>
-          <div className="hero-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-            {/* Timeframe Selector */}
+            
+            <div style={{ width: '1px', height: '16px', background: 'var(--border-light)', margin: '0 6px' }} />
+            
+            {/* Timeframe Slider Selector */}
             <div style={{ display: 'inline-flex', gap: '2px', background: '#F1F5F9', padding: '2px', borderRadius: '6px', height: '30px', alignItems: 'center', boxSizing: 'border-box' }}>
               {[1, 3, 6, 8, 12, 24].map(h => {
                 const isDisabled = h <= 6;
@@ -1002,11 +1105,10 @@ export default function DashboardPage() {
                 );
               })}
             </div>
-
-            {/* Delimiter 1 */}
+            
             <div style={{ width: '1px', height: '16px', background: 'var(--border-light)', margin: '0 6px' }} />
-
-            {/* Currency Switcher */}
+            
+            {/* Currency Selector */}
             <div style={{ display: 'inline-flex', gap: '2px', background: '#F1F5F9', padding: '2px', borderRadius: '6px', height: '30px', alignItems: 'center', boxSizing: 'border-box' }}>
               {['USD', 'IDR'].map(curr => {
                 const isSelected = primaryCurrency === curr;
@@ -1035,50 +1137,43 @@ export default function DashboardPage() {
                 );
               })}
             </div>
-
-            {/* Right Aligned Actions */}
-            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              {/* Action Dropdown Menu */}
-              <div style={{ position: 'relative' }}>
-                <button 
-                  className="btn btn-ghost btn-sm" 
-                  onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
-                  style={{ gap: '6px' }}
-                >
-                  <span>Export Report</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" style={{ fill: 'currentColor', transition: 'transform 0.2s', transform: exportDropdownOpen ? 'rotate(180deg)' : 'none' }}>
-                    <path d="M12 16l-6-6h12z"></path>
-                  </svg>
-                </button>
-                {exportDropdownOpen && (
-                  <div className="export-menu-dropdown">
-                    <button className="export-menu-item" onClick={() => { handleExport('csv'); setExportDropdownOpen(false); }}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zm-5 14h-4v-2h4v2zm3-4H7V7h10v6z"/></svg>
-                      <span>Export CSV</span>
-                    </button>
-                    <button className="export-menu-item" onClick={() => { handleExport('json'); setExportDropdownOpen(false); }}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="m11.293 17.293-1.414 1.414L4.586 13l5.293-5.293 1.414 1.414L7.414 13l3.879 4.293zm1.414 0 3.879-4.293-3.879-4.293 1.414-1.414L19.414 13l-5.293 5.293-1.414-1.414z"/></svg>
-                      <span>Export JSON</span>
-                    </button>
-                    <button className="export-menu-item" onClick={handleDownloadPDF}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M8.293 12.293 11 9.586V15h2V9.586l2.707 2.707 1.414-1.414L12 5.758l-5.121 5.121zm10.707 3.707V18H5v-2H3v2c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2v-2h-2z"/></svg>
-                      <span>Download PDF</span>
-                    </button>
-                    <button className="export-menu-item" onClick={handleDownloadJPEG}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M4 4h16c1.103 0 2 .897 2 2v12c0 1.103-.897 2-2 2H4c-1.103 0-2-.897-2-2V6c0-1.103.897-2 2-2zm16 14.002V6H4v12h16zM6 15h3v2H6v-2zm12-4-3 4H9l3-4 6 4z"/></svg>
-                      <span>Download JPEG (5 Cards)</span>
-                    </button>
-                    <button className="export-menu-item" onClick={() => { setEmailModalOpen(true); setExportDropdownOpen(false); }}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                      <span>Send to Email (PDF)</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-              <Link to="/projects" className="btn btn-light btn-sm">All Projections</Link>
-            </div>
           </div>
         </div>
+
+        {/* Broaden suggestions */}
+        {broadenSuggestions.length > 0 && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px', background: '#ffffff', borderBottom: '1px solid #E0E0E0', overflowX: 'auto', whiteSpace: 'nowrap' }}>
+            <span style={{ fontSize: '13px', color: '#5f6368', marginRight: '8px', flexShrink: 0, fontWeight: 500 }}>Broaden your search:</span>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              {broadenSuggestions.map((sug, idx) => (
+                <Link
+                  key={idx}
+                  to={`/projects/new?keyword=${encodeURIComponent(sug)}`}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    padding: '4px 10px',
+                    background: '#ffffff',
+                    border: '1px solid #DADCE0',
+                    borderRadius: '16px',
+                    fontSize: '12px',
+                    color: '#3C4043',
+                    cursor: 'pointer',
+                    fontWeight: 500,
+                    textDecoration: 'none',
+                    transition: 'all 0.15s ease'
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = '#F8F9FC'; e.currentTarget.style.borderColor = '#1A73E8'; e.currentTarget.style.color = '#1A73E8'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = '#ffffff'; e.currentTarget.style.borderColor = '#DADCE0'; e.currentTarget.style.color = '#3C4043'; }}
+                >
+                  <span style={{ color: '#1A73E8', fontWeight: 'bold' }}>+</span>
+                  <span>{sug}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {(() => {
           const p24 = projections?.find(p => p.horizon_months === 24) || projections?.[projections.length - 1];
@@ -1651,9 +1746,9 @@ export default function DashboardPage() {
 
       </div>
 
-      <section className="card">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.25rem' }}>
-          <h3 style={{ fontSize: '20px', fontWeight: 600, margin: 0 }}>
+      <section className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', padding: '1.25rem 1.5rem', borderBottom: '1px solid #DADCE0' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 600, margin: 0, color: 'var(--ypym-black)' }}>
             Keyword Ideas & Value Metrics Breakdown
           </h3>
           <span style={{ padding: '4px 10px', background: 'rgba(0,102,204,0.06)', border: '1px solid rgba(0,102,204,0.12)', borderRadius: '4px', fontSize: '12px', fontWeight: 600, color: 'var(--ypym-blue)' }}>
@@ -1666,21 +1761,28 @@ export default function DashboardPage() {
           display: 'flex',
           gap: '1rem',
           flexWrap: 'wrap',
-          marginBottom: '1.5rem',
-          alignItems: 'center'
+          padding: '12px 20px',
+          alignItems: 'center',
+          background: '#f8fafc',
+          borderBottom: '1px solid #DADCE0'
         }}>
-          <input 
-            type="text" 
-            placeholder="Search keywords..." 
-            value={keywordSearch}
-            onChange={(e) => setKeywordSearch(e.target.value)}
-            style={{ flex: 1, minWidth: '200px', padding: '8px 12px' }}
-          />
+          <div style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
+            <input 
+              type="text" 
+              placeholder="Search keywords..." 
+              value={keywordSearch}
+              onChange={(e) => setKeywordSearch(e.target.value)}
+              style={{ width: '100%', padding: '8px 12px 8px 36px', borderRadius: '4px', border: '1px solid #DADCE0', fontSize: '13px' }}
+            />
+            <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#8F90A6', display: 'flex', alignItems: 'center' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </span>
+          </div>
 
           <select 
             value={intentFilter} 
             onChange={(e) => setIntentFilter(e.target.value)}
-            style={{ width: '160px', padding: '8px 12px' }}
+            style={{ width: '160px', padding: '8px 12px', borderRadius: '4px', border: '1px solid #DADCE0', fontSize: '13px', background: '#ffffff' }}
           >
             <option value="">All Intents</option>
             <option value="transactional">Transactional</option>
@@ -1692,7 +1794,7 @@ export default function DashboardPage() {
           <select 
             value={sourceFilter} 
             onChange={(e) => setSourceFilter(e.target.value)}
-            style={{ width: '160px', padding: '8px 12px' }}
+            style={{ width: '160px', padding: '8px 12px', borderRadius: '4px', border: '1px solid #DADCE0', fontSize: '13px', background: '#ffffff' }}
           >
             <option value="">All Sources</option>
             <option value="seed">Seed Keyword</option>
@@ -1702,97 +1804,241 @@ export default function DashboardPage() {
           </select>
         </div>
 
-        {/* Table representation */}
-        <div className="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th className="sortable" onClick={() => handleSort('keyword')}>Keyword {getSortIcon('keyword')}</th>
-                <th className="sortable" onClick={() => handleSort('source')}>Source {getSortIcon('source')}</th>
-                <th>Cluster ID</th>
-                <th className="sortable text-right" onClick={() => handleSort('avg_monthly_sv')}>Avg SV {getSortIcon('avg_monthly_sv')}</th>
-                <th className="sortable text-right" onClick={() => handleSort('three_month_change')}>3Mo Chg {getSortIcon('three_month_change')}</th>
-                <th className="sortable text-right" onClick={() => handleSort('yoy_change')}>YoY Chg {getSortIcon('yoy_change')}</th>
-                <th className="sortable" onClick={() => handleSort('competition')}>Competition {getSortIcon('competition')}</th>
-                <th className="sortable text-right" onClick={() => handleSort('low_bid_micros')}>Low CPC {getSortIcon('low_bid_micros')}</th>
-                <th className="sortable text-right" onClick={() => handleSort('high_bid_micros')}>High CPC {getSortIcon('high_bid_micros')}</th>
-                <th className="sortable" onClick={() => handleSort('intent')}>Intent {getSortIcon('intent')}</th>
-                <th className="sortable text-right" onClick={() => handleSort('difficulty_score')}>Difficulty {getSortIcon('difficulty_score')}</th>
-                <th className="sortable text-right" onClick={() => handleSort('capture_rate_effective')}>Capture Rate {getSortIcon('capture_rate_effective')}</th>
-                <th>Status</th>
+        {/* Google Ads style status / filter display */}
+        {(() => {
+          const allChecked = sortedKeywords.length > 0 && sortedKeywords.every(k => !!selectedKeywords[k.keyword]);
+          const handleToggleAll = () => {
+            if (allChecked) {
+              setSelectedKeywords({});
+            } else {
+              const next = {};
+              sortedKeywords.forEach(k => {
+                next[k.keyword] = true;
+              });
+              setSelectedKeywords(next);
+            }
+          };
+          const handleToggleOne = (keyword) => {
+            setSelectedKeywords(prev => ({
+              ...prev,
+              [keyword]: !prev[keyword]
+            }));
+          };
+
+          const keywordsProvided = sortedKeywords.filter(kw => kw.source === 'seed');
+          const keywordIdeas = sortedKeywords.filter(kw => kw.source !== 'seed');
+
+          const renderRow = (kw, idx) => {
+            const isChecked = !!selectedKeywords[kw.keyword];
+            const cpcLow = kw.low_bid_micros ? kw.low_bid_micros / 1000000 : 0;
+            const cpcHigh = kw.high_bid_micros ? kw.high_bid_micros / 1000000 : 0;
+            const displayLow = primaryCurrency === 'USD' 
+              ? formatCurrency(cpcLow / (project.fx_rate_usd_idr || 16400), 'USD') 
+              : formatCurrency(cpcLow, 'IDR').split(',')[0];
+            const displayHigh = primaryCurrency === 'USD' 
+              ? formatCurrency(cpcHigh / (project.fx_rate_usd_idr || 16400), 'USD') 
+              : formatCurrency(cpcHigh, 'IDR').split(',')[0];
+
+            return (
+              <tr 
+                key={idx} 
+                style={{ 
+                  background: isChecked ? '#E8F0FE' : (kw.is_cluster_primary ? 'transparent' : '#fcfcfd'),
+                  borderBottom: '1px solid #E0E0E0',
+                  transition: 'background 0.15s ease'
+                }}
+                className="google-ads-row"
+              >
+                <td style={{ padding: '10px 16px', verticalAlign: 'middle' }}>
+                  <input 
+                    type="checkbox" 
+                    checked={isChecked} 
+                    onChange={() => handleToggleOne(kw.keyword)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                </td>
+                <td style={{ padding: '10px 16px', verticalAlign: 'middle' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ fontWeight: kw.is_cluster_primary ? 600 : 400, color: '#3c4043' }}>{kw.keyword}</span>
+                    {kw.is_cluster_primary && <span style={{ padding: '2px 6px', background: 'rgba(0,102,204,0.06)', borderRadius: '4px', fontSize: '9px', fontWeight: 600, color: 'var(--ypym-blue)' }}>Cluster Primary</span>}
+                  </div>
+                </td>
+                <td className="text-right font-mono" style={{ padding: '10px 16px', verticalAlign: 'middle', color: '#3c4043' }}>
+                  <div style={{ fontWeight: 600 }}>{getGoogleAdsSvRange(kw.avg_monthly_sv)}</div>
+                  <div style={{ fontSize: '10px', color: 'var(--text-note)' }}>({formatNumber(kw.avg_monthly_sv)})</div>
+                </td>
+                <td className="text-right font-mono" style={{ 
+                  padding: '10px 16px', 
+                  verticalAlign: 'middle',
+                  color: kw.three_month_change > 0 ? '#137333' : kw.three_month_change < 0 ? '#c5221f' : '#3c4043',
+                  fontWeight: 500
+                }}>
+                  {kw.three_month_change > 0 ? '+' : ''}{kw.three_month_change}%
+                </td>
+                <td className="text-right font-mono" style={{ 
+                  padding: '10px 16px', 
+                  verticalAlign: 'middle',
+                  color: kw.yoy_change > 0 ? '#137333' : kw.yoy_change < 0 ? '#c5221f' : '#3c4043',
+                  fontWeight: 500
+                }}>
+                  {kw.yoy_change > 0 ? '+' : ''}{kw.yoy_change}%
+                </td>
+                <td style={{ padding: '10px 16px', verticalAlign: 'middle' }}>
+                  <span style={{ 
+                    fontSize: '11px', 
+                    fontWeight: 600,
+                    color: kw.competition === 'HIGH' ? '#c5221f' : kw.competition === 'MEDIUM' ? '#b06000' : '#137333',
+                    background: kw.competition === 'HIGH' ? '#fce8e6' : kw.competition === 'MEDIUM' ? '#fef7e0' : '#e6f4ea',
+                    padding: '2px 8px',
+                    borderRadius: '4px'
+                  }}>
+                    {kw.competition.toLowerCase()}
+                  </span>
+                </td>
+                <td className="text-right font-mono" style={{ padding: '10px 16px', verticalAlign: 'middle', color: '#5f6368' }}>
+                  —
+                </td>
+                <td className="text-right font-mono" style={{ padding: '10px 16px', verticalAlign: 'middle', color: '#3c4043' }}>
+                  {displayLow}
+                </td>
+                <td className="text-right font-mono" style={{ padding: '10px 16px', verticalAlign: 'middle', color: '#3c4043' }}>
+                  {displayHigh}
+                </td>
+                <td style={{ padding: '10px 16px', verticalAlign: 'middle' }}>
+                  <span style={{ textTransform: 'capitalize', fontSize: '11px', fontWeight: 500 }} className={`badge ${
+                    kw.intent === 'transactional' ? 'badge-success' : 
+                    kw.intent === 'commercial' ? 'badge-info' : 
+                    kw.intent === 'informational' ? 'badge-warning' : 'badge-neutral'
+                  }`}>
+                    {kw.intent}
+                  </span>
+                </td>
+                <td className="text-right font-mono" style={{ padding: '10px 16px', verticalAlign: 'middle', color: '#3c4043' }}>
+                  {kw.difficulty_score}
+                </td>
+                <td className="text-right font-mono" style={{ padding: '10px 16px', verticalAlign: 'middle', color: 'var(--ypym-blue)', fontWeight: 600 }}>
+                  {kw.capture_rate_effective}%
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {sortedKeywords.length === 0 ? (
-                <tr>
-                  <td colSpan={13} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
-                    No keywords match the filter criteria.
-                  </td>
-                </tr>
-              ) : (
-                sortedKeywords.map((kw, idx) => {
-                  const cpcLow = kw.low_bid_micros ? kw.low_bid_micros / 1000000 : 0;
-                  const cpcHigh = kw.high_bid_micros ? kw.high_bid_micros / 1000000 : 0;
-                  const displayLow = primaryCurrency === 'USD' 
-                    ? formatCurrency(cpcLow / (project.fx_rate_usd_idr || 16400), 'USD') 
-                    : formatCurrency(cpcLow, 'IDR').split(',')[0];
-                  const displayHigh = primaryCurrency === 'USD' 
-                    ? formatCurrency(cpcHigh / (project.fx_rate_usd_idr || 16400), 'USD') 
-                    : formatCurrency(cpcHigh, 'IDR').split(',')[0];
-                    
-                  return (
-                    <tr key={idx} style={{ 
-                      opacity: kw.is_cluster_primary ? 1 : 0.65,
-                      background: kw.is_cluster_primary ? 'transparent' : '#fcfcfd'
-                    }}>
-                      <td>
-                        <span style={{ fontWeight: kw.is_cluster_primary ? 600 : 400 }}>{kw.keyword}</span>
-                        {kw.is_cluster_primary && <span style={{ marginLeft: '6px', fontSize: '10px', verticalAlign: 'middle' }} className="badge badge-info">Cluster Primary</span>}
-                      </td>
-                      <td><span style={{ fontSize: '12px' }} className="badge badge-neutral">{kw.source}</span></td>
-                      <td className="font-mono" style={{ fontSize: '12px', color: 'var(--text-note)' }}>{kw.cluster_id || '-'}</td>
-                      <td className="text-right font-mono" style={{ fontWeight: 600 }}>{formatNumber(kw.avg_monthly_sv)}</td>
-                      <td className="text-right font-mono" style={{ 
-                        color: kw.three_month_change > 0 ? '#10b981' : kw.three_month_change < 0 ? '#ef4444' : 'var(--text-note)' 
-                      }}>
-                        {kw.three_month_change > 0 ? '+' : ''}{kw.three_month_change}%
-                      </td>
-                      <td className="text-right font-mono" style={{ 
-                        color: kw.yoy_change > 0 ? '#10b981' : kw.yoy_change < 0 ? '#ef4444' : 'var(--text-note)' 
-                      }}>
-                        {kw.yoy_change > 0 ? '+' : ''}{kw.yoy_change}%
-                      </td>
-                      <td>
-                        <span style={{ fontSize: '11px', fontWeight: 600 }} className={`badge ${
-                          kw.competition === 'HIGH' ? 'badge-error' : 
-                          kw.competition === 'MEDIUM' ? 'badge-warning' : 'badge-success'
-                        }`}>
-                          {kw.competition} ({kw.competition_index})
-                        </span>
-                      </td>
-                      <td className="text-right font-mono">{displayLow}</td>
-                      <td className="text-right font-mono">{displayHigh}</td>
-                      <td>
-                        <span style={{ textTransform: 'capitalize', fontSize: '12px' }} className={`badge ${
-                          kw.intent === 'transactional' ? 'badge-success' : 
-                          kw.intent === 'commercial' ? 'badge-info' : 
-                          kw.intent === 'informational' ? 'badge-warning' : 'badge-neutral'
-                        }`}>
-                          {kw.intent}
-                        </span>
-                      </td>
-                      <td className="text-right font-mono">{kw.difficulty_score}</td>
-                      <td className="text-right font-mono" style={{ color: 'var(--ypym-blue)', fontWeight: 600 }}>{kw.capture_rate_effective}%</td>
-                      <td>
-                        {kw.trend_badge === 'Rising' && <span className="badge badge-rising">Rising</span>}
-                      </td>
+            );
+          };
+
+          return (
+            <>
+              {/* Google Ads Filter Info Header */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 20px', background: '#ffffff', borderBottom: '1px solid #DADCE0', flexWrap: 'wrap' }}>
+                <span style={{ color: '#5f6368', display: 'flex', alignItems: 'center' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                </span>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '2px 8px 2px 12px', background: '#F1F3F4', borderRadius: '16px', fontSize: '12px', color: '#3C4043' }}>
+                  <span>Exclude adult ideas</span>
+                  <span style={{ cursor: 'pointer', marginLeft: '6px', fontWeight: 'bold' }}>✕</span>
+                </div>
+                <div style={{ width: '1px', height: '16px', background: '#DADCE0', margin: '0 8px' }} />
+                <span style={{ fontSize: '13px', color: '#3c4043', fontWeight: 500 }}>
+                  {sortedKeywords.length.toLocaleString('en-US')} keyword ideas available
+                </span>
+                
+                <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <button style={{ background: 'transparent', border: 'none', color: '#5f6368', fontSize: '13px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+                    Columns
+                  </button>
+                  <button style={{ background: 'transparent', border: 'none', color: '#5f6368', fontSize: '13px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                    Keyword view
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"></path></svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Table representation */}
+              <div className="table-wrap">
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: '#ffffff', borderBottom: '2px solid #DADCE0' }}>
+                      <th style={{ width: '40px', padding: '12px 16px' }}>
+                        <input 
+                          type="checkbox" 
+                          checked={allChecked} 
+                          onChange={handleToggleAll} 
+                          style={{ cursor: 'pointer' }}
+                        />
+                      </th>
+                      <th className="sortable" onClick={() => handleSort('keyword')} style={{ padding: '12px 16px', fontSize: '12px', color: '#3c4043', fontWeight: 600 }}>
+                        Keyword (by relevance) {getSortIcon('keyword')}
+                      </th>
+                      <th className="sortable text-right" onClick={() => handleSort('avg_monthly_sv')} style={{ padding: '12px 16px', fontSize: '12px', color: '#3c4043', fontWeight: 600 }}>
+                        Avg. monthly searches {getSortIcon('avg_monthly_sv')}
+                      </th>
+                      <th className="sortable text-right" onClick={() => handleSort('three_month_change')} style={{ padding: '12px 16px', fontSize: '12px', color: '#3c4043', fontWeight: 600 }}>
+                        Three month change {getSortIcon('three_month_change')}
+                      </th>
+                      <th className="sortable text-right" onClick={() => handleSort('yoy_change')} style={{ padding: '12px 16px', fontSize: '12px', color: '#3c4043', fontWeight: 600 }}>
+                        YoY change {getSortIcon('yoy_change')}
+                      </th>
+                      <th className="sortable" onClick={() => handleSort('competition')} style={{ padding: '12px 16px', fontSize: '12px', color: '#3c4043', fontWeight: 600 }}>
+                        Competition {getSortIcon('competition')}
+                      </th>
+                      <th style={{ padding: '12px 16px', fontSize: '12px', color: '#3c4043', fontWeight: 600 }}>
+                        Ad impression share
+                      </th>
+                      <th className="sortable text-right" onClick={() => handleSort('low_bid_micros')} style={{ padding: '12px 16px', fontSize: '12px', color: '#3c4043', fontWeight: 600 }}>
+                        Top of page bid (low range) {getSortIcon('low_bid_micros')}
+                      </th>
+                      <th className="sortable text-right" onClick={() => handleSort('high_bid_micros')} style={{ padding: '12px 16px', fontSize: '12px', color: '#3c4043', fontWeight: 600 }}>
+                        Top of page bid (high range) {getSortIcon('high_bid_micros')}
+                      </th>
+                      <th className="sortable" onClick={() => handleSort('intent')} style={{ padding: '12px 16px', fontSize: '12px', color: '#3c4043', fontWeight: 600 }}>
+                        Intent {getSortIcon('intent')}
+                      </th>
+                      <th className="sortable text-right" onClick={() => handleSort('difficulty_score')} style={{ padding: '12px 16px', fontSize: '12px', color: '#3c4043', fontWeight: 600 }}>
+                        Difficulty {getSortIcon('difficulty_score')}
+                      </th>
+                      <th className="sortable text-right" onClick={() => handleSort('capture_rate_effective')} style={{ padding: '12px 16px', fontSize: '12px', color: '#3c4043', fontWeight: 600 }}>
+                        Capture Rate {getSortIcon('capture_rate_effective')}
+                      </th>
                     </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+                  </thead>
+                  <tbody>
+                    {sortedKeywords.length === 0 ? (
+                      <tr>
+                        <td colSpan={12} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
+                          No keywords match the filter criteria.
+                        </td>
+                      </tr>
+                    ) : (
+                      <>
+                        {/* Keywords you provided */}
+                        {keywordsProvided.length > 0 && (
+                          <>
+                            <tr style={{ background: '#f1f3f4', borderBottom: '1px solid #DADCE0' }}>
+                              <td colSpan={12} style={{ fontSize: '11px', fontWeight: 700, color: '#3c4043', padding: '8px 16px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                Keywords you provided
+                              </td>
+                            </tr>
+                            {keywordsProvided.map((kw, idx) => renderRow(kw, `provided-${idx}`))}
+                          </>
+                        )}
+
+                        {/* Keyword ideas */}
+                        {keywordIdeas.length > 0 && (
+                          <>
+                            <tr style={{ background: '#f1f3f4', borderBottom: '1px solid #DADCE0' }}>
+                              <td colSpan={12} style={{ fontSize: '11px', fontWeight: 700, color: '#3c4043', padding: '8px 16px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                Keyword ideas
+                              </td>
+                            </tr>
+                            {keywordIdeas.map((kw, idx) => renderRow(kw, `ideas-${idx}`))}
+                          </>
+                        )}
+                      </>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          );
+        })()}
       </section>
 
       {/* Email Modal Overlay */}
