@@ -356,7 +356,7 @@ export default function Header() {
             <button className="nav-btn" onClick={() => toggleDropdown('martech')}>
               Martech Platform
               <svg className="chevron" width="10" height="10" viewBox="0 0 10 10" fill="none">
-                <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
             <div className={`dropdown-drawer ${activeDropdown === 'martech' ? 'is-open' : ''}`}>
@@ -414,7 +414,7 @@ export default function Header() {
             <button className="nav-btn" onClick={() => toggleDropdown('perusahaan')}>
               Company
               <svg className="chevron" width="10" height="10" viewBox="0 0 10 10" fill="none">
-                <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
             <div className={`dropdown-drawer ${activeDropdown === 'perusahaan' ? 'is-open' : ''}`}>
@@ -445,7 +445,7 @@ export default function Header() {
             <button className="nav-btn" onClick={() => toggleDropdown('sektor')}>
               Sectors
               <svg className="chevron" width="10" height="10" viewBox="0 0 10 10" fill="none">
-                <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
             <div className={`dropdown-drawer ${activeDropdown === 'sektor' ? 'is-open' : ''}`}>
@@ -693,7 +693,7 @@ export default function Header() {
                     <span style={{ marginLeft: '8px' }}>Monaco</span>
                   </a>
                   <a href="https://ypym.app/en-hk/" className="lang-list-item" style={{ textDecoration: 'none', color: '#5f6368', display: 'flex', alignItems: 'center', padding: '6px 8px' }}>
-                    <svg width="18" height="12" viewBox="0 0 20 14" style={{ borderRadius: '2px', display: 'inline-block', verticalAlign: 'middle' }}><rect width="20" height="14" fill="#DE2910"/><circle cx="10" cy="7" r="3.8" stroke="rgba(255,255,255,0.45)" strokeWidth="1.2" fill="none" stroke-dasharray="2.8 2.8"/></svg>
+                    <svg width="18" height="12" viewBox="0 0 20 14" style={{ borderRadius: '2px', display: 'inline-block', verticalAlign: 'middle' }}><rect width="20" height="14" fill="#DE2910"/><circle cx="10" cy="7" r="3.8" stroke="rgba(255,255,255,0.45)" strokeWidth="1.2" fill="none" strokeDasharray="2.8 2.8"/></svg>
                     <span style={{ marginLeft: '8px' }}>Hong Kong</span>
                   </a>
                 </div>
@@ -741,7 +741,7 @@ export default function Header() {
           <div id="ck-main" className="ck-screen">
             <button className="ck-close-btn" id="ck-close" type="button" aria-label="Close" onClick={() => setCookieOpen(false)}>
               <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
-                <path d="M1 1l9 9M10 1L1 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                <path d="M1 1l9 9M10 1L1 10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
               </svg>
             </button>
 
@@ -777,7 +777,7 @@ export default function Header() {
           <div id="ck-manage" className="ck-screen">
             <button className="ck-back-btn" id="ck-back" type="button" aria-label="Back" onClick={() => setCookieScreen('main')}>
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
               <span>{isId ? 'Kembali' : 'Back'}</span>
             </button>

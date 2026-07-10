@@ -1400,7 +1400,7 @@ export default function DashboardPage() {
               arrowClass: 'blue',
               showArrow: false,
               visual: (
-                <ResponsiveContainer width="100%" height={80}>
+                <ResponsiveContainer width="100%" height={80} minWidth={0} minHeight={0}>
                   <AreaChart data={sparklineData.filter(p => p.month <= selectedHorizon)} margin={{ top: 10, bottom: 0, left: 0, right: 0 }}>
                     <defs>
                       <linearGradient id="colorVolume" x1="0" y1="0" x2="0" y2="1">
@@ -1425,7 +1425,7 @@ export default function DashboardPage() {
               visual: (
                 <div style={{ width: '100%', height: '80px' }}>
                   {trends?.monthly_index_5y && (
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                       <AreaChart data={trends.monthly_index_5y.slice(-24)} margin={{ top: 10, bottom: 0, left: 0, right: 0 }}>
                         <defs>
                           <linearGradient id="colorTrend" x1="0" y1="0" x2="0" y2="1">
