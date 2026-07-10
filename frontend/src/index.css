@@ -261,6 +261,7 @@ p {
 }
 .btn-solid:hover {
   background: #1239CC;
+  color: #ffffff;
 }
 .btn-ghost {
   background: transparent;
@@ -270,6 +271,7 @@ p {
 .btn-ghost:hover {
   background: rgba(26,75,255,0.05);
   border-color: var(--ypym-blue);
+  color: var(--ypym-blue);
 }
 .btn-light {
   background: #ffffff;
@@ -279,6 +281,7 @@ p {
 .btn-light:hover {
   background: var(--ypym-white);
   border-color: var(--border-hover);
+  color: var(--ypym-black);
 }
 .btn-sm {
   height: 30px;
