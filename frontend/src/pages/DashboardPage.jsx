@@ -300,23 +300,9 @@ export default function DashboardPage() {
     }
   };
 
-  if (loading && !data) {
-    return <LoadingSpinner message="Connecting to server & loading projection details..." />;
-  }
-
-  if (error) {
-    return (
-      <div className="callout callout-error" style={{ marginTop: '2rem' }}>
-        <span className="callout-title">Failed to Load Projection</span>
-        <p>{error}</p>
-        <Link to="/" className="btn btn-solid mt-4">Back to Home</Link>
-      </div>
-    );
-  }
-
-  const { project, keywords, trends, projections, cost_ledger } = data;
-
   const broadenSuggestions = useMemo(() => {
+    if (!data) return [];
+    const { project, keywords, trends } = data;
     let list = [];
     if (trends?.rising_queries?.length) {
       list = trends.rising_queries.map(q => q.Query || q.query).filter(Boolean);
@@ -333,7 +319,23 @@ export default function DashboardPage() {
     return Array.from(new Set(list))
       .filter(item => item.toLowerCase().trim() !== seed)
       .slice(0, 8);
-  }, [trends, keywords, project]);
+  }, [data]);
+
+  if (loading && !data) {
+    return <LoadingSpinner message="Connecting to server & loading projection details..." />;
+  }
+
+  if (error) {
+    return (
+      <div className="callout callout-error" style={{ marginTop: '2rem' }}>
+        <span className="callout-title">Failed to Load Projection</span>
+        <p>{error}</p>
+        <Link to="/" className="btn btn-solid mt-4">Back to Home</Link>
+      </div>
+    );
+  }
+
+  const { project, keywords, trends, projections, cost_ledger } = data;
 
   const pageUrl = window.location.href;
   const pageTitle = `YPYM Appraisal - SEO Projection for ${project.seed_keyword}`;
