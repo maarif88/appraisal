@@ -403,7 +403,6 @@ export default function Header() {
                       <a href="https://flow.ypym.app" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-flow')}>YPYM Flow</a>
                       <a href="https://query-mapping.ypym.app" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-query')}>Query Mapping</a>
                       <a href="https://web-sitemap.ypym.app" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-sitemap')}>Web Sitemap</a>
-                      <a href="https://tessera-notes.ypym.app" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-tessera')}>Tessera Notes</a>
                     </div>
                     <div className="mar-details-col">
                       {activeMarDesc === 'mar-desc-flow' && (
@@ -424,12 +423,7 @@ export default function Header() {
                           <p className="mar-desc-text">Smart sitemap generator that manages crawl priority and indexing of large-scale dynamic web pages. Guarantees search engines crawl your latest pages instantly.</p>
                         </div>
                       )}
-                      {activeMarDesc === 'mar-desc-tessera' && (
-                        <div className="mar-desc-item active">
-                          <h3 className="mar-desc-title">Tessera Notes</h3>
-                          <p className="mar-desc-text">Collaborative workspace and internal knowledge base to efficiently record tactics, research, and organic SEO strategy documentation for your marketing team.</p>
-                        </div>
-                      )}
+
                     </div>
                   </div>
                 </div>
@@ -630,7 +624,6 @@ export default function Header() {
                   <a href="https://flow.ypym.app">YPYM Flow</a>
                   <a href="https://query-mapping.ypym.app">Query Mapping</a>
                   <a href="https://web-sitemap.ypym.app">Web Sitemap</a>
-                  <a href="https://tessera-notes.ypym.app">Tessera Notes</a>
                 </div>
               </div>
             </div>

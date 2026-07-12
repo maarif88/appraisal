@@ -86,12 +86,17 @@ def load_crawled_history(history_path):
             content = f.read()
         matches = re.findall(r"-\s*[`]?([^`\n\r]+)[`]?", content)
         for m in matches:
-            crawled.add(m.strip().lower())
+            parts = m.strip().lower().split('|')
+            if len(parts) == 3:
+                crawled.add((parts[0].strip(), parts[1].strip(), parts[2].strip()))
+            else:
+                # Fallback for old entries without locale separator (defaults to ID/Indonesian)
+                crawled.add((parts[0].strip(), 'id', 'indonesian'))
     except Exception as e:
         print(f"[!] Error loading history file: {e}")
     return crawled
 
-def save_crawled_history(history_path, keywords_list, sector="General"):
+def save_crawled_history(history_path, keywords_list, sector="General", geo="ID", lang="Indonesian"):
     existed = os.path.exists(history_path)
     try:
         with open(history_path, 'a', encoding='utf-8') as f:
@@ -100,7 +105,7 @@ def save_crawled_history(history_path, keywords_list, sector="General"):
                 f.write("Daftar kata kunci yang pernah di-crawl oleh skrip otomatisasi.\n\n")
             f.write(f"\n## Sector: {sector} (Date: {datetime.date.today().isoformat()})\n")
             for kw in keywords_list:
-                f.write(f"- `{kw}`\n")
+                f.write(f"- `{kw.strip()}|{geo.upper().strip()}|{lang.title().strip()}`\n")
         print(f"[SUCCESS] Updated crawling history tracker at: {history_path}")
     except Exception as e:
         print(f"[!] Error saving history file: {e}")
@@ -144,14 +149,17 @@ ARGS_TIMEFRAME = args.timeframe
 ARGS_GPROP = args.gprop
 ARGS_SECTOR = args.sector
 
-# Load history and filter duplicate keywords
+# Load history and filter duplicate keywords based on keyword, location, and language
 HISTORY_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "crawled_keywords.md")
 already_crawled = load_crawled_history(HISTORY_FILE)
 
 active_keywords = []
 skipped_keywords = []
 for kw in KEYWORDS:
-    if kw.lower().strip() in already_crawled:
+    kw_clean = kw.lower().strip()
+    geo_clean = ARGS_GEO.lower().strip()
+    lang_clean = ARGS_LANG.lower().strip()
+    if (kw_clean, geo_clean, lang_clean) in already_crawled:
         skipped_keywords.append(kw)
     else:
         active_keywords.append(kw.strip())
@@ -331,7 +339,7 @@ async def run_scraper():
     # 2. Start Playwright and connect over CDP
     try:
         pw = await async_playwright().start()
-        browser = await pw.chromium.connect_over_cdp(f"http://localhost:{PORT}")
+        browser = await pw.chromium.connect_over_cdp(f"http://localhost:{PORT}", timeout=20000)
     except Exception as e:
         print(f"[ERROR] Could not connect to Chrome on port {PORT}!")
         print("Please follow these steps:")
@@ -729,7 +737,7 @@ async def run_scraper():
     
     # Save keywords list to crawled history tracker
     if KEYWORDS:
-        save_crawled_history(HISTORY_FILE, KEYWORDS, sector=ARGS_SECTOR)
+        save_crawled_history(HISTORY_FILE, KEYWORDS, sector=ARGS_SECTOR, geo=ARGS_GEO, lang=ARGS_LANG)
         
     # Compile Excel files to JSON database
     print("\n[*] Recompiling crawling results into central JSON database...")
@@ -746,6 +754,15 @@ async def run_scraper():
     
     await browser.close()
     await pw.stop()
+    
+    # Clean up temporary downloads directory
+    if os.path.exists(TEMP_DIR):
+        try:
+            import shutil
+            shutil.rmtree(TEMP_DIR)
+            print("[*] Temporary downloads folder cleaned up successfully.")
+        except Exception as e:
+            print(f"[!] Warning: Could not clean up temporary downloads directory: {e}")
 
 if __name__ == "__main__":
     asyncio.run(run_scraper())

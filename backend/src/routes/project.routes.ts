@@ -92,13 +92,16 @@ projectRouter.get('/crawled-keywords', (req: Request, res: Response) => {
       const kw = item["Seed/Main Keyword"];
       if (!kw || kw === "Related/Alternative") continue;
       
-      const key = kw.toLowerCase().trim();
+      const location = item["Location"] || "ID";
+      const lang = item["Language"] || "Indonesian";
+      const key = `${kw.toLowerCase().trim()}_${location.toLowerCase().trim()}_${lang.toLowerCase().trim()}`;
+      
       if (!kwMap.has(key)) {
         kwMap.set(key, {
           keyword: kw,
           sector: item["Sector"] || "General",
-          lang: item["Language"] || "Indonesian",
-          location: item["Location"] || "ID"
+          lang: lang,
+          location: location
         });
       }
     }

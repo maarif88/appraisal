@@ -65,20 +65,29 @@ export async function runPipeline(
     const dbContent = fs.readFileSync(jsonPath, 'utf-8');
     const crawledDb = JSON.parse(dbContent);
     
-    // Check if the seed keyword exists in the crawled database
+    // Check if the seed keyword exists in the crawled database with matching location/language
     const seedKeywordLower = project.seed_keyword.toLowerCase().trim();
+    const targetCountry = (project.locale_country || 'ID').toUpperCase();
+    const targetLang = (project.locale_language === 'id' ? 'Indonesian' : (project.locale_language === 'en' ? 'English' : project.locale_language)).toLowerCase();
+
     const hasData = (crawledDb.ads || []).some(
-      (a: any) => a["Seed/Main Keyword"]?.toLowerCase().trim() === seedKeywordLower
+      (a: any) => 
+        a["Seed/Main Keyword"]?.toLowerCase().trim() === seedKeywordLower &&
+        (a["Location"] || 'ID').toUpperCase() === targetCountry &&
+        (a["Language"] || 'Indonesian').toLowerCase() === targetLang
     );
     
     if (!hasData) {
-      throw new Error(`Keyword "${project.seed_keyword}" has not been crawled yet. Please run the crawler script first.`);
+      throw new Error(`Keyword "${project.seed_keyword}" has not been crawled for ${targetCountry} (${targetLang}) yet. Please run the crawler script first.`);
     }
 
     // Determine the sector of this seed keyword
     let sector = project.sector || 'General';
     const matchingAd = (crawledDb.ads || []).find(
-      (a: any) => a["Seed/Main Keyword"]?.toLowerCase().trim() === seedKeywordLower
+      (a: any) => 
+        a["Seed/Main Keyword"]?.toLowerCase().trim() === seedKeywordLower &&
+        (a["Location"] || 'ID').toUpperCase() === targetCountry &&
+        (a["Language"] || 'Indonesian').toLowerCase() === targetLang
     );
     if (matchingAd) {
       sector = matchingAd["Sector"] || sector;
@@ -93,7 +102,11 @@ export async function runPipeline(
     // ─── Step 2: Autocomplete Expansion ────────────────────────
     report('step_autocomplete', 'Autocomplete', 10, 'Expanding seed keyword...');
     const autocompleteResults = (crawledDb.suggestions || [])
-      .filter((s: any) => s["Seed/Main Keyword"]?.toLowerCase().trim() === seedKeywordLower)
+      .filter((s: any) => 
+        s["Seed/Main Keyword"]?.toLowerCase().trim() === seedKeywordLower &&
+        (s["Location"] || 'ID').toUpperCase() === targetCountry &&
+        (s["Language"] || 'Indonesian').toLowerCase() === targetLang
+      )
       .map((s: any) => ({
         keyword: s["Suggestion"],
         position: parseInt(s["Position"]) || 1
@@ -104,9 +117,13 @@ export async function runPipeline(
     report('step_enrichment', 'Enrichment', 25, 'Fetching search volume data...');
     const keywordStrings = autocompleteResults.map((r: any) => r.keyword.toLowerCase().trim());
     
-    // Filter ads strictly for matches to the target Seed/Main Keyword
+    // Filter ads strictly for matches to the target Seed/Main Keyword and target geocoding locale
     const adsRows = (crawledDb.ads || [])
-      .filter((a: any) => a["Seed/Main Keyword"]?.toLowerCase().trim() === seedKeywordLower);
+      .filter((a: any) => 
+        a["Seed/Main Keyword"]?.toLowerCase().trim() === seedKeywordLower &&
+        (a["Location"] || 'ID').toUpperCase() === targetCountry &&
+        (a["Language"] || 'Indonesian').toLowerCase() === targetLang
+      );
       
     const enrichedKeywords = adsRows.map((a: any) => {
       const compVal = a["Competition"] || "LOW";
@@ -142,14 +159,20 @@ export async function runPipeline(
     report('step_trends', 'Trends', 45, 'Fetching 5-year trend data...');
     
     const topQueries = (crawledDb.trends_top || [])
-      .filter((t: any) => t["Seed/Main Keyword"]?.toLowerCase().trim() === seedKeywordLower)
+      .filter((t: any) => 
+        t["Seed/Main Keyword"]?.toLowerCase().trim() === seedKeywordLower &&
+        (t["Location"] || 'ID').toUpperCase() === targetCountry
+      )
       .map((t: any) => ({
         query: t["query"],
         value: parseInt(t["search interest index"]) || 100
       }));
       
     const risingQueries = (crawledDb.trends_rising || [])
-      .filter((t: any) => t["Seed/Main Keyword"]?.toLowerCase().trim() === seedKeywordLower)
+      .filter((t: any) => 
+        t["Seed/Main Keyword"]?.toLowerCase().trim() === seedKeywordLower &&
+        (t["Location"] || 'ID').toUpperCase() === targetCountry
+      )
       .map((t: any) => ({
         query: t["Query"] || t["query"],
         value: parseInt(t["search interest"] || t["increase percent"]) || 100

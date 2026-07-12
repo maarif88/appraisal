@@ -30,8 +30,8 @@ const sectorsData = [
 export default function NewProjectPage() {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState('');
-  const [localeCountry, setLocaleCountry] = useState('ID');
-  const [localeLanguage, setLocaleLanguage] = useState('id');
+  const [localeCountry, setLocaleCountry] = useState('US');
+  const [localeLanguage, setLocaleLanguage] = useState('en');
   const [currency, setCurrency] = useState('USD');
   const [submitting, setSubmitting] = useState(false);
 
@@ -142,6 +142,15 @@ export default function NewProjectPage() {
     wa:       `https://wa.me/?text=${encTxt}%20${encUrl}`,
     tg:       `https://t.me/share/url?url=${encUrl}&text=${encTxt}`,
   };
+  const filteredKeywords = crawledKeywords.filter(k => {
+    const isCountryMatch = (k.location || '').toLowerCase().trim() === localeCountry.toLowerCase().trim();
+    const isLangMatch = localeLanguage === 'en'
+      ? (k.lang || '').toLowerCase().trim() === 'english'
+      : localeLanguage === 'id'
+        ? (k.lang || '').toLowerCase().trim() === 'indonesian'
+        : true;
+    return isCountryMatch && isLangMatch;
+  });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%', paddingBottom: '4rem' }}>
@@ -404,7 +413,6 @@ export default function NewProjectPage() {
       </div>
 
       <div style={{ marginBottom: '2.5rem' }}>
-        <span className="eyebrow" style={{ color: 'var(--ypym-blue)', textTransform: 'uppercase', fontWeight: 600 }}>Phase 1: Setup Projection</span>
         <h1 style={{ marginTop: '0.5rem', marginBottom: '0.5rem', fontSize: '32px', fontWeight: 700, color: 'var(--ypym-black)' }}>Start New Keyword Analysis</h1>
         <p style={{ color: 'var(--text-note)', fontSize: '15px', maxWidth: '680px', lineHeight: '1.5' }}>
           Input your target seed keyword below. The system will automatically retrieve Google Autocomplete variations, search interest trends, cluster keywords, and calculate estimated ROI.
@@ -418,18 +426,18 @@ export default function NewProjectPage() {
         <div className="stepper-sidebar">
           <div className="stepper-title">Analysis Steps</div>
           <div className="stepper-items">
-            <div className={`stepper-item ${keyword.trim() ? 'completed' : 'active'}`}>
+            {/* Step 1: Location & Language */}
+            <div className="stepper-item completed">
               <div className="stepper-icon">
-                {keyword.trim() ? (
-                  <svg className="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
-                ) : '1'}
+                <svg className="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
               <div className="stepper-text">
                 <div className="stepper-label">Step 1</div>
-                <div className="stepper-desc">Select Keyword Target</div>
+                <div className="stepper-desc">Location & Language</div>
               </div>
             </div>
             
+            {/* Step 2: Target Keyword */}
             <div className={`stepper-item ${keyword.trim() ? 'completed' : 'active'}`}>
               <div className="stepper-icon">
                 {keyword.trim() ? (
@@ -438,18 +446,32 @@ export default function NewProjectPage() {
               </div>
               <div className="stepper-text">
                 <div className="stepper-label">Step 2</div>
-                <div className="stepper-desc">Locale & Currency</div>
+                <div className="stepper-desc">Select Keyword Target</div>
               </div>
             </div>
 
-            <div className={`stepper-item ${sector !== 'General' ? 'completed' : 'active'}`}>
+            {/* Step 3: Projection Currency */}
+            <div className={`stepper-item ${currency ? 'completed' : 'active'}`}>
               <div className="stepper-icon">
-                {sector !== 'General' ? (
+                {currency ? (
                   <svg className="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
                 ) : '3'}
               </div>
               <div className="stepper-text">
                 <div className="stepper-label">Step 3</div>
+                <div className="stepper-desc">Projection Currency</div>
+              </div>
+            </div>
+
+            {/* Step 4: Audit Assumptions */}
+            <div className={`stepper-item ${sector !== 'General' ? 'completed' : 'active'}`}>
+              <div className="stepper-icon">
+                {sector !== 'General' ? (
+                  <svg className="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                ) : '4'}
+              </div>
+              <div className="stepper-text">
+                <div className="stepper-label">Step 4</div>
                 <div className="stepper-desc">Audit Assumptions</div>
               </div>
             </div>
@@ -465,14 +487,48 @@ export default function NewProjectPage() {
         {/* Right: Main Form Body */}
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
-          {/* Step 1: Target Keyword Selection Panel */}
+          {/* Step 1: Target Location & Language Panel */}
+          <div className="card">
+            <div style={{ marginBottom: '1.5rem' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '0.25rem', color: 'var(--ypym-black)' }}>
+                Step 1: Select Location & Language
+              </h3>
+              <p style={{ fontSize: '13px', color: 'var(--text-note)', margin: 0 }}>
+                Choose the target geocoding country and language. This will automatically filter the available crawled keywords database.
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="locale" style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>Target Location & Language</label>
+              <select
+                id="locale"
+                value={`${localeLanguage}-${localeCountry}`}
+                onChange={(e) => {
+                  const [lang, country] = e.target.value.split('-');
+                  setLocaleLanguage(lang);
+                  setLocaleCountry(country);
+                }}
+                disabled={submitting}
+                style={{ fontSize: '14px', padding: '10px', borderRadius: '8px', width: '100%', border: '1px solid #DADCE0' }}
+              >
+                <option value="en-US">United States (English - US)</option>
+                <option value="id-ID">Indonesia (Indonesian - ID)</option>
+                <option value="en-GB">United Kingdom (English - GB)</option>
+                <option value="en-SG">Singapore (English - SG)</option>
+                <option value="en-NL">Netherlands (English - NL)</option>
+                <option value="en-HK">Hong Kong (English - HK)</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Step 2: Target Keyword Selection Panel */}
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div>
               <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '0.25rem', color: 'var(--ypym-black)' }}>
-                Step 1: Select Keyword Target
+                Step 2: Select Keyword Target
               </h3>
               <p style={{ fontSize: '13px', color: 'var(--text-note)', margin: 0 }}>
-                Choose an existing crawled keyword from the local database or enter a custom seed keyword.
+                Choose from the crawled keywords matching your selected location & language, or enter a custom seed keyword.
               </p>
             </div>
 
@@ -480,21 +536,21 @@ export default function NewProjectPage() {
             <div style={{ border: '1px solid rgba(0, 102, 204, 0.12)', backgroundColor: 'rgba(0, 102, 204, 0.01)', padding: '1.25rem', borderRadius: '12px' }}>
               <h4 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--ypym-blue)' }}>
                 <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--ypym-blue)' }}></span>
-                Available Crawled Keywords (Ready to Analyze)
+                Available Crawled Keywords for {localeCountry} ({localeLanguage.toUpperCase()})
               </h4>
               <p style={{ fontSize: '12px', color: 'var(--text-note)', marginBottom: '1rem' }}>
-                These keywords have pre-fetched dataset ideas, click to auto-fill locales and preset assumptions.
+                These keywords have pre-fetched dataset ideas for your selected locale. Click to auto-fill preset assumptions.
               </p>
               
-              {crawledKeywords.length === 0 ? (
+              {filteredKeywords.length === 0 ? (
                 <p style={{ fontSize: '13px', color: 'var(--text-note)', fontStyle: 'italic', margin: 0 }}>
-                  No crawled keywords found. Please run the crawler script first.
+                  No crawled keywords found for {localeCountry} ({localeLanguage.toUpperCase()}) in the database. Enter a custom target seed keyword below to proceed.
                 </p>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                   {/* Filter Tabs by Sector */}
                   <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', borderBottom: '1px solid rgba(0,0,0,0.06)', paddingBottom: '0.5rem' }}>
-                    {['All', ...Array.from(new Set(crawledKeywords.map(k => k.sector)))].map(sec => (
+                    {['All', ...Array.from(new Set(filteredKeywords.map(k => k.sector)))].map(sec => (
                       <button
                         key={sec}
                         type="button"
@@ -531,48 +587,43 @@ export default function NewProjectPage() {
                   
                   {/* Keywords grid */}
                   <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', maxHeight: '160px', overflowY: 'auto', padding: '2px' }}>
-                    {crawledKeywords
+                    {filteredKeywords
                       .filter(k => selectedSector === 'All' || k.sector === selectedSector)
-                      .map(k => (
-                        <button
-                          key={k.keyword}
-                          type="button"
-                          onClick={() => {
-                            setKeyword(k.keyword);
-                            if (k.lang.toLowerCase() === 'indonesian' || k.lang.toLowerCase() === 'id') {
-                              setLocaleLanguage('id');
-                              setLocaleCountry('ID');
-                            } else {
-                              setLocaleLanguage('en');
-                              setLocaleCountry(k.location || 'US');
-                            }
-                            
-                            const preset = sectorsData.find(s => s.name.toLowerCase() === k.sector.toLowerCase()) || 
-                                           sectorsData.find(s => s.name === 'Financials');
-                            if (preset) {
-                              handleSelectSector(preset);
-                            }
-                          }}
-                          className="btn"
-                          style={{
-                            padding: '6px 12px',
-                            fontSize: '13px',
-                            border: '1px solid',
-                            borderRadius: '8px',
-                            background: keyword === k.keyword ? 'rgba(0,102,204,0.08)' : '#ffffff',
-                            borderColor: keyword === k.keyword ? 'var(--ypym-blue)' : '#e5e5ea',
-                            color: keyword === k.keyword ? 'var(--ypym-blue)' : 'var(--text-main)',
-                            fontWeight: keyword === k.keyword ? '600' : 'normal',
-                            cursor: 'pointer',
-                            transition: 'all 0.15s'
-                          }}
-                        >
-                          {k.keyword}
-                          <span style={{ fontSize: '10px', opacity: 0.6, marginLeft: '6px', padding: '1px 5px', background: '#f2f2f7', borderRadius: '4px', color: '#555' }}>
-                            {k.sector}
-                          </span>
-                        </button>
-                      ))}
+                      .map(k => {
+                        const isActive = keyword === k.keyword;
+                        return (
+                          <button
+                            key={`${k.keyword}_${k.location}_${k.lang}`}
+                            type="button"
+                            onClick={() => {
+                              setKeyword(k.keyword);
+                              const preset = sectorsData.find(s => s.name.toLowerCase() === k.sector.toLowerCase()) || 
+                                             sectorsData.find(s => s.name === 'Financials');
+                              if (preset) {
+                                handleSelectSector(preset);
+                              }
+                            }}
+                            className="btn"
+                            style={{
+                              padding: '6px 12px',
+                              fontSize: '13px',
+                              border: '1px solid',
+                              borderRadius: '8px',
+                              background: isActive ? 'rgba(0,102,204,0.08)' : '#ffffff',
+                              borderColor: isActive ? 'var(--ypym-blue)' : '#e5e5ea',
+                              color: isActive ? 'var(--ypym-blue)' : 'var(--text-main)',
+                              fontWeight: isActive ? '600' : 'normal',
+                              cursor: 'pointer',
+                              transition: 'all 0.15s'
+                            }}
+                          >
+                            {k.keyword}
+                            <span style={{ fontSize: '10px', opacity: 0.6, marginLeft: '6px', padding: '1px 5px', background: '#f2f2f7', borderRadius: '4px', color: '#555' }}>
+                              {k.sector}
+                            </span>
+                          </button>
+                        );
+                      })}
                   </div>
                 </div>
               )}
@@ -594,64 +645,41 @@ export default function NewProjectPage() {
             </div>
           </div>
 
-          {/* Step 2: Target Location & Base Currency Panel */}
+          {/* Step 3: Base Projection Currency Panel */}
           <div className="card">
             <div style={{ marginBottom: '1.5rem' }}>
               <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '0.25rem', color: 'var(--ypym-black)' }}>
-                Step 2: Configure Location, Language & Currency
+                Step 3: Base Projection Currency
               </h3>
               <p style={{ fontSize: '13px', color: 'var(--text-note)', margin: 0 }}>
-                Set the local language, target geocoding country, and base display currency for ROI projections.
+                Choose the display currency for financial ROI modeling and projections.
               </p>
             </div>
 
-            <div className="grid-2">
-              <div>
-                <label htmlFor="locale" style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>Target Location & Language</label>
-                <select
-                  id="locale"
-                  value={`${localeLanguage}-${localeCountry}`}
-                  onChange={(e) => {
-                    const [lang, country] = e.target.value.split('-');
-                    setLocaleLanguage(lang);
-                    setLocaleCountry(country);
-                  }}
-                  disabled={submitting}
-                  style={{ fontSize: '14px', padding: '10px', borderRadius: '8px', width: '100%', border: '1px solid #DADCE0' }}
-                >
-                  <option value="id-ID">Indonesia (Indonesian - ID)</option>
-                  <option value="en-US">United States (English - US)</option>
-                  <option value="en-GB">United Kingdom (English - GB)</option>
-                  <option value="en-SG">Singapore (English - SG)</option>
-                  <option value="en-NL">Netherlands (English - NL)</option>
-                </select>
-              </div>
-
-              <div>
-                <label htmlFor="currency" style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>Base Projection Currency</label>
-                <select
-                  id="currency"
-                  value={currency}
-                  onChange={(e) => {
-                    setCurrency(e.target.value);
-                    setValueCurrency(e.target.value);
-                  }}
-                  disabled={submitting}
-                  style={{ fontSize: '14px', padding: '10px', borderRadius: '8px', width: '100%', border: '1px solid #DADCE0' }}
-                >
-                  <option value="USD">USD ($) - Dollar</option>
-                  <option value="IDR">IDR (Rp) - Rupiah</option>
-                </select>
-              </div>
+            <div>
+              <label htmlFor="currency" style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>Base Projection Currency</label>
+              <select
+                id="currency"
+                value={currency}
+                onChange={(e) => {
+                  setCurrency(e.target.value);
+                  setValueCurrency(e.target.value);
+                }}
+                disabled={submitting}
+                style={{ fontSize: '14px', padding: '10px', borderRadius: '8px', width: '100%', border: '1px solid #DADCE0' }}
+              >
+                <option value="USD">USD ($) - Dollar</option>
+                <option value="IDR">IDR (Rp) - Rupiah</option>
+              </select>
             </div>
           </div>
 
-          {/* Step 3: Assumptions Panel (Black Card) */}
+          {/* Step 4: Assumptions Panel (Black Card) */}
           <div className="card assumption-dark-card">
             <div className="dark-card-header">
               <div>
                 <h3 style={{ fontSize: '18px', fontWeight: 600, margin: 0, color: '#ffffff' }}>
-                  Step 3: Audit Assumption Parameters & Modeling
+                  Step 4: Audit Assumption Parameters & Modeling
                 </h3>
                 <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: '0.25rem 0 0 0' }}>
                   Adjust conversion rates, average transaction values, capture targets, and service fees.
