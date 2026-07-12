@@ -1030,7 +1030,7 @@ export default function DashboardPage() {
                 </div>
               )}
             </div>
-            <Link to="/projects" className="btn btn-light btn-sm" style={{ background: '#ffffff', borderColor: '#DADCE0' }}>All Projections</Link>
+            <Link to="/query-planner" className="btn btn-light btn-sm" style={{ background: '#ffffff', borderColor: '#DADCE0' }}>All Projections</Link>
           </div>
         </div>
 
@@ -1062,11 +1062,18 @@ export default function DashboardPage() {
               <span style={{ fontWeight: 500 }}>
                 {(() => {
                   const createdDate = new Date(project.created_at);
-                  const startYear = createdDate.getFullYear() - 1;
-                  const endYear = createdDate.getFullYear();
-                  const months = ["Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May"];
-                  const startMonthStr = months[createdDate.getMonth() % 12];
-                  const endMonthStr = months[(createdDate.getMonth() - 1 + 12) % 12];
+                  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                  
+                  // Google Ads historical data is typically delayed by 1-2 months.
+                  // For a project created in July 2026, the 12-month period is June 2025 - May 2026.
+                  const endMonthIdx = (createdDate.getMonth() - 2 + 12) % 12;
+                  const startMonthIdx = (endMonthIdx + 1) % 12;
+                  
+                  const endYear = createdDate.getMonth() < 2 ? createdDate.getFullYear() - 1 : createdDate.getFullYear();
+                  const startYear = endYear - 1;
+                  
+                  const startMonthStr = months[startMonthIdx];
+                  const endMonthStr = months[endMonthIdx];
                   return `${startMonthStr} ${startYear} - ${endMonthStr} ${endYear}`;
                 })()}
               </span>
@@ -1150,7 +1157,7 @@ export default function DashboardPage() {
               {broadenSuggestions.map((sug, idx) => (
                 <Link
                   key={idx}
-                  to={`/projects/new?keyword=${encodeURIComponent(sug)}`}
+                  to={`/query-planner/new?keyword=${encodeURIComponent(sug)}`}
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',

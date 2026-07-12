@@ -79,6 +79,8 @@ export default function SearchAutocomplete({ placeholder = "Search or analyze ke
       .map(k => ({
         keyword: k.keyword,
         sector: k.sector,
+        lang: k.lang,
+        location: k.location,
         type: 'crawled',
         label: 'Run Analysis'
       }));
@@ -93,14 +95,14 @@ export default function SearchAutocomplete({ placeholder = "Search or analyze ke
     
     if (item.type === 'project') {
       const kwSlug = encodeURIComponent((item.keyword || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'));
-      navigate(`/projects/${item.id}${kwSlug ? '/' + kwSlug : ''}`);
+      navigate(`/query-planner/${item.id}${kwSlug ? '/' + kwSlug : ''}`);
     } else if (item.type === 'crawled') {
       setSubmitting(true);
       try {
         const projectData = {
           seed_keyword: item.keyword,
-          locale_country: 'ID',
-          locale_language: 'id',
+          locale_country: item.location || 'ID',
+          locale_language: item.lang === 'English' ? 'en' : (item.lang === 'Indonesian' ? 'id' : item.lang || 'id'),
           currency_base: 'USD',
           currency_display: ['USD', 'IDR'],
           sector: item.sector || 'General',
@@ -118,7 +120,7 @@ export default function SearchAutocomplete({ placeholder = "Search or analyze ke
         await startAnalysis(res.id);
         
         const kwSlug = encodeURIComponent((res.seed_keyword || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'));
-        navigate(`/projects/${res.id}${kwSlug ? '/' + kwSlug : ''}`);
+        navigate(`/query-planner/${res.id}${kwSlug ? '/' + kwSlug : ''}`);
       } catch (err) {
         console.error(err);
         alert('Failed to generate projection: ' + (err.message || 'Unknown error'));

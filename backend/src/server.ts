@@ -63,6 +63,26 @@ app.get('/api/health', (_req, res) => {
 // ─── API Routes ────────────────────────────────────────────
 app.use('/api/v1/projects', projectRouter);
 
+// ─── 301 Redirects for Old URLs ───────────────────────────
+app.get('/projects', (req, res) => {
+  const queryStr = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+  res.redirect(301, `/query-planner${queryStr}`);
+});
+app.get('/projects/new', (req, res) => {
+  const queryStr = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+  res.redirect(301, `/query-planner/new${queryStr}`);
+});
+app.get('/projects/:id', (req, res) => {
+  const { id } = req.params as any;
+  const queryStr = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+  res.redirect(301, `/query-planner/${id}${queryStr}`);
+});
+app.get('/projects/:id/:keywordSlug', (req, res) => {
+  const { id, keywordSlug } = req.params as any;
+  const queryStr = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+  res.redirect(301, `/query-planner/${id}/${keywordSlug}${queryStr}`);
+});
+
 // Serve frontend static assets in production
 if (env.NODE_ENV === 'production') {
   const frontendBuildPath = path.join(__dirname, '../../frontend/dist');

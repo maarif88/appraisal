@@ -723,7 +723,7 @@ export default function LandingPage() {
             </p>
 
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', marginBottom: '3rem' }}>
-              <Link to="/projects/new" className="btn btn-solid" style={{
+              <Link to="/query-planner/new" className="btn btn-solid" style={{
                 background: 'var(--ypym-black)',
                 color: '#ffffff',
                 fontWeight: 600,
@@ -812,7 +812,7 @@ export default function LandingPage() {
       <section className="section" style={{ padding: '1rem 0 3rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <h2>Recent Projections</h2>
-          <Link to="/projects" style={{ fontSize: '14px', fontWeight: 600 }}>View All</Link>
+          <Link to="/query-planner" style={{ fontSize: '14px', fontWeight: 600 }}>View All</Link>
         </div>
 
         {loading ? (
@@ -823,13 +823,13 @@ export default function LandingPage() {
         ) : recentProjects.length === 0 ? (
           <div className="card" style={{ padding: '3rem', textAlign: 'center' }}>
             <p style={{ color: 'var(--text-note)', marginBottom: '1.5rem' }}>No SEO projections have been generated yet.</p>
-            <Link to="/projects/new" className="btn btn-solid">Generate First Projection</Link>
+            <Link to="/query-planner/new" className="btn btn-solid">Generate First Projection</Link>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {recentProjects.map(p => {
               const kwSlug = encodeURIComponent((p.seed_keyword || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'));
-              const projectUrl = `/projects/${p.id}${kwSlug ? '/' + kwSlug : ''}`;
+              const projectUrl = `/query-planner/${p.id}${kwSlug ? '/' + kwSlug : ''}`;
               return (
                 <div key={p.id} className="card" style={{
                   display: 'flex',

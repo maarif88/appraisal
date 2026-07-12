@@ -206,3 +206,78 @@ Daftar kata kunci yang pernah di-crawl oleh skrip otomatisasi.
 - `enterprise learning`
 - `compliance training`
 - `professional development`
+
+## Sector: General (Date: 2026-07-12)
+- `strata and body corporate insurance`
+
+## Sector: Executive Search & Recruitment (Date: 2026-07-12)
+- `executive search`
+- `employer on record`
+- `talent management consultancy`
+- `talent strategy consulting`
+- `expert network`
+- `expert network consulting`
+- `best expert networks`
+- `employer of record`
+- `employer of record services`
+- `eor services`
+- `recruitment process outsourcing`
+- `rpo recruitment`
+- `workforce analytics`
+- `leadership development`
+- `leadership training programs`
+- `leadership development program`
+- `executive leadership training`
+- `talent strategy`
+- `employee retention strategies`
+- `talent acquisition strategy`
+- `talent management strategy`
+- `talent retention strategy`
+- `professional employer organization`
+- `peo companies`
+- `peo services`
+- `best peo`
+- `peo organization`
+- `top peo companies`
+- `peo hr`
+- `recruitment agency`
+- `staffing agency`
+- `temp agencies near me`
+- `staffing agencies near me`
+- `temp agency`
+- `job agencies near me`
+- `employment agencies`
+- `employment agency near me`
+- `recruitment agencies near me`
+- `executive search firms`
+- `job agency`
+- `headhunters near me`
+- `medical staffing agencies`
+- `medical staffing solutions`
+- `nurse staffing agency`
+- `marketing recruitment agencies`
+- `it recruiter`
+- `job recruiters near me`
+- `staffing companies near me`
+- `hiring agency`
+- `workforce solutions`
+- `human capital consulting`
+- `hr consulting firms near me`
+- `top hr consulting firms`
+- `best hr consulting firms`
+- `talent solutions`
+- `talent acquisition platform`
+- `talent management platforms`
+- `talent intelligence platform`
+- `leadership consulting`
+- `leadership development consultant`
+- `leadership development consulting firms`
+- `leadership consulting firms`
+- `leadership training consultants`
+- `leadership consulting companies`
+- `consulting training program`
+- `global employment solutions`
+- `global employment platform`
+- `global hiring platform`
+- `global hiring solutions`
+- `global hr jobs`

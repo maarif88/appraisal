@@ -119,13 +119,13 @@ export default function ProjectListPage() {
     let simulatedFee = "Rp 45.000.000";
     let simulatedRoi = "Rp 135.000.000";
     let simulatedRoiPct = 300;
-    let simulatedProjectUrl = "/projects/new";
+    let simulatedProjectUrl = "/query-planner/new";
 
     if (randomProject && randomProject.project) {
       const proj = randomProject.project;
       simulatedKeyword = proj.seed_keyword;
       const kwSlug = encodeURIComponent((proj.seed_keyword || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'));
-      simulatedProjectUrl = `/projects/${proj.id}${kwSlug ? '/' + kwSlug : ''}`;
+      simulatedProjectUrl = `/query-planner/${proj.id}${kwSlug ? '/' + kwSlug : ''}`;
       
       // Find the 12-month horizon or first available
       const proj12 = randomProject.projections?.find(p => p.horizon_months === 12) || randomProject.projections?.[0];
@@ -306,7 +306,7 @@ export default function ProjectListPage() {
           marginTop: '0.25rem',
           marginBottom: '1rem'
         }}>
-          <Link to="/projects/new" className="search-tag-chip" style={{ textDecoration: 'none' }}>
+          <Link to="/query-planner/new" className="search-tag-chip" style={{ textDecoration: 'none' }}>
             <span style={{ color: '#FF5E3A' }}>⊕</span> Generate projection
           </Link>
           <a href="https://maarif88.github.io/ypym-company/index.html" target="_blank" rel="noopener noreferrer" className="search-tag-chip" style={{ textDecoration: 'none' }}>
@@ -343,7 +343,7 @@ export default function ProjectListPage() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
               <span style={{ fontSize: '13px', fontWeight: 600, color: '#5f6368' }}>Berapa Investasi SEO?</span>
-              {simulatedProjectUrl !== "/projects/new" ? (
+              {simulatedProjectUrl !== "/query-planner/new" ? (
                 <Link to={simulatedProjectUrl} style={{ color: '#5f6368', display: 'flex', alignItems: 'center', transition: 'all 0.2s ease' }} className="hover-blue-arrow">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </Link>
@@ -392,7 +392,7 @@ export default function ProjectListPage() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
               <span style={{ fontSize: '13px', fontWeight: 600, color: '#5f6368' }}>Berapa ROI dari SEO?</span>
-              {simulatedProjectUrl !== "/projects/new" ? (
+              {simulatedProjectUrl !== "/query-planner/new" ? (
                 <Link to={simulatedProjectUrl} style={{ color: '#5f6368', display: 'flex', alignItems: 'center', transition: 'all 0.2s ease' }} className="hover-blue-arrow">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </Link>
@@ -444,7 +444,7 @@ export default function ProjectListPage() {
           <p style={{ color: 'var(--text-note)', marginBottom: '1.5rem', fontSize: '16px' }}>
             No projections have been generated yet. Get started by creating a new projection.
           </p>
-          <Link to="/projects/new" className="btn btn-solid">Create First Projection</Link>
+          <Link to="/query-planner/new" className="btn btn-solid">Create First Projection</Link>
         </div>
       ) : (
         <div style={{ position: 'relative', overflow: 'hidden', paddingBottom: !showAllKeywords && groupedProjects.length > 10 ? '120px' : '0' }}>
@@ -474,7 +474,7 @@ export default function ProjectListPage() {
                     const hasMultiple = group.items.length > 1;
                     
                     const kwSlug = encodeURIComponent((latest.seed_keyword || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'));
-                    const latestProjectUrl = `/projects/${latest.id}${kwSlug ? '/' + kwSlug : ''}`;
+                    const latestProjectUrl = `/query-planner/${latest.id}${kwSlug ? '/' + kwSlug : ''}`;
 
                     let blurAmount = 0;
                     if (!showAllKeywords && groupIdx >= 2) {
@@ -565,7 +565,7 @@ export default function ProjectListPage() {
                         {/* Child Rows (Older versions) */}
                         {isExpanded && group.items.slice(1).map((p, idx) => {
                           const childKwSlug = encodeURIComponent((p.seed_keyword || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'));
-                          const childProjectUrl = `/projects/${p.id}${childKwSlug ? '/' + childKwSlug : ''}`;
+                          const childProjectUrl = `/query-planner/${p.id}${childKwSlug ? '/' + childKwSlug : ''}`;
                           const versionNum = group.items.length - (idx + 1);
 
                           return (

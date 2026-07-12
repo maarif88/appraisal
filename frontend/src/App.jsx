@@ -11,9 +11,9 @@ export default function App() {
     <AppShell>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/projects" element={<ProjectListPage />} />
-        <Route path="/projects/new" element={<NewProjectPage />} />
-        <Route path="/projects/:id/:keywordSlug?" element={<DashboardPage />} />
+        <Route path="/query-planner" element={<ProjectListPage />} />
+        <Route path="/query-planner/new" element={<NewProjectPage />} />
+        <Route path="/query-planner/:id/:keywordSlug?" element={<DashboardPage />} />
       </Routes>
     </AppShell>
   );
