@@ -34,6 +34,7 @@ export default function NewProjectPage() {
   const [localeLanguage, setLocaleLanguage] = useState('en');
   const [currency, setCurrency] = useState('USD');
   const [submitting, setSubmitting] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
 
   // Randomize 2 buttons + 18 dropdown on mount
   const [predefinedSectors] = useState(() => {
@@ -366,6 +367,14 @@ export default function NewProjectPage() {
           line-height: 1.4;
         }
         
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.3s ease-out forwards;
+        }
+        
         @media (max-width: 1024px) {
           .new-project-split-layout {
             grid-template-columns: 1fr;
@@ -427,9 +436,15 @@ export default function NewProjectPage() {
           <div className="stepper-title">Analysis Steps</div>
           <div className="stepper-items">
             {/* Step 1: Location & Language */}
-            <div className="stepper-item completed">
+            <div
+              className={`stepper-item ${currentStep === 1 ? 'active' : currentStep > 1 ? 'completed' : ''}`}
+              onClick={() => setCurrentStep(1)}
+              style={{ cursor: 'pointer' }}
+            >
               <div className="stepper-icon">
-                <svg className="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                {currentStep > 1 ? (
+                  <svg className="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                ) : '1'}
               </div>
               <div className="stepper-text">
                 <div className="stepper-label">Step 1</div>
@@ -438,9 +453,13 @@ export default function NewProjectPage() {
             </div>
             
             {/* Step 2: Target Keyword */}
-            <div className={`stepper-item ${keyword.trim() ? 'completed' : 'active'}`}>
+            <div
+              className={`stepper-item ${currentStep === 2 ? 'active' : currentStep > 2 ? 'completed' : ''}`}
+              onClick={() => setCurrentStep(2)}
+              style={{ cursor: 'pointer' }}
+            >
               <div className="stepper-icon">
-                {keyword.trim() ? (
+                {currentStep > 2 ? (
                   <svg className="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
                 ) : '2'}
               </div>
@@ -451,9 +470,15 @@ export default function NewProjectPage() {
             </div>
 
             {/* Step 3: Projection Currency */}
-            <div className={`stepper-item ${currency ? 'completed' : 'active'}`}>
+            <div
+              className={`stepper-item ${currentStep === 3 ? 'active' : currentStep > 3 ? 'completed' : ''}`}
+              onClick={() => {
+                if (keyword.trim()) setCurrentStep(3);
+              }}
+              style={{ cursor: keyword.trim() ? 'pointer' : 'not-allowed', opacity: keyword.trim() ? 1 : 0.6 }}
+            >
               <div className="stepper-icon">
-                {currency ? (
+                {currentStep > 3 ? (
                   <svg className="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
                 ) : '3'}
               </div>
@@ -464,11 +489,15 @@ export default function NewProjectPage() {
             </div>
 
             {/* Step 4: Audit Assumptions */}
-            <div className={`stepper-item ${sector !== 'General' ? 'completed' : 'active'}`}>
+            <div
+              className={`stepper-item ${currentStep === 4 ? 'active' : ''}`}
+              onClick={() => {
+                if (keyword.trim()) setCurrentStep(4);
+              }}
+              style={{ cursor: keyword.trim() ? 'pointer' : 'not-allowed', opacity: keyword.trim() ? 1 : 0.6 }}
+            >
               <div className="stepper-icon">
-                {sector !== 'General' ? (
-                  <svg className="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
-                ) : '4'}
+                4
               </div>
               <div className="stepper-text">
                 <div className="stepper-label">Step 4</div>
@@ -488,399 +517,466 @@ export default function NewProjectPage() {
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
           {/* Step 1: Target Location & Language Panel */}
-          <div className="card">
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '0.25rem', color: 'var(--ypym-black)' }}>
-                Step 1: Select Location & Language
-              </h3>
-              <p style={{ fontSize: '13px', color: 'var(--text-note)', margin: 0 }}>
-                Choose the target geocoding country and language. This will automatically filter the available crawled keywords database.
-              </p>
-            </div>
-
-            <div>
-              <label htmlFor="locale" style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>Target Location & Language</label>
-              <select
-                id="locale"
-                value={`${localeLanguage}-${localeCountry}`}
-                onChange={(e) => {
-                  const [lang, country] = e.target.value.split('-');
-                  setLocaleLanguage(lang);
-                  setLocaleCountry(country);
-                }}
-                disabled={submitting}
-                style={{ fontSize: '14px', padding: '10px', borderRadius: '8px', width: '100%', border: '1px solid #DADCE0' }}
-              >
-                <option value="en-US">United States (English - US)</option>
-                <option value="id-ID">Indonesia (Indonesian - ID)</option>
-                <option value="en-GB">United Kingdom (English - GB)</option>
-                <option value="en-SG">Singapore (English - SG)</option>
-                <option value="en-NL">Netherlands (English - NL)</option>
-                <option value="en-HK">Hong Kong (English - HK)</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Step 2: Target Keyword Selection Panel */}
-          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div>
-              <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '0.25rem', color: 'var(--ypym-black)' }}>
-                Step 2: Select Keyword Target
-              </h3>
-              <p style={{ fontSize: '13px', color: 'var(--text-note)', margin: 0 }}>
-                Choose from the crawled keywords matching your selected location & language, or enter a custom seed keyword.
-              </p>
-            </div>
-
-            {/* Crawled Keywords Sub-Panel */}
-            <div style={{ border: '1px solid rgba(0, 102, 204, 0.12)', backgroundColor: 'rgba(0, 102, 204, 0.01)', padding: '1.25rem', borderRadius: '12px' }}>
-              <h4 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--ypym-blue)' }}>
-                <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--ypym-blue)' }}></span>
-                Available Crawled Keywords for {localeCountry} ({localeLanguage.toUpperCase()})
-              </h4>
-              <p style={{ fontSize: '12px', color: 'var(--text-note)', marginBottom: '1rem' }}>
-                These keywords have pre-fetched dataset ideas for your selected locale. Click to auto-fill preset assumptions.
-              </p>
-              
-              {filteredKeywords.length === 0 ? (
-                <p style={{ fontSize: '13px', color: 'var(--text-note)', fontStyle: 'italic', margin: 0 }}>
-                  No crawled keywords found for {localeCountry} ({localeLanguage.toUpperCase()}) in the database. Enter a custom target seed keyword below to proceed.
-                </p>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  {/* Filter Tabs by Sector */}
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', borderBottom: '1px solid rgba(0,0,0,0.06)', paddingBottom: '0.5rem' }}>
-                    {['All', ...Array.from(new Set(filteredKeywords.map(k => k.sector)))].map(sec => (
-                      <button
-                        key={sec}
-                        type="button"
-                        onClick={() => setSelectedSector(sec)}
-                        className="btn btn-sm"
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          background: selectedSector === sec ? 'var(--ypym-blue)' : '#f5f5f7',
-                          color: selectedSector === sec ? '#fff' : 'var(--text-main)',
-                          border: '1px solid ' + (selectedSector === sec ? 'var(--ypym-blue)' : '#e5e5ea'),
-                          borderRadius: '99px',
-                          padding: '4px 12px',
-                          fontSize: '12px',
-                          cursor: 'pointer',
-                          fontWeight: selectedSector === sec ? '600' : '500'
-                        }}
-                      >
-                        {["Executive Search & Recruitment", "Technology / SaaS", "Construction & EPC", "Energy (Oil, Gas, Power)", "Mining", "Manufacturing"].includes(sec) && (
-                          <span style={{
-                            display: 'inline-block',
-                            width: '6px',
-                            height: '6px',
-                            borderRadius: '50%',
-                            backgroundColor: selectedSector === sec ? '#ffffff' : '#09b812',
-                            marginRight: '6px',
-                            flexShrink: 0
-                          }}></span>
-                        )}
-                        {sec}
-                      </button>
-                    ))}
-                  </div>
-                  
-                  {/* Keywords grid */}
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', maxHeight: '160px', overflowY: 'auto', padding: '2px' }}>
-                    {filteredKeywords
-                      .filter(k => selectedSector === 'All' || k.sector === selectedSector)
-                      .map(k => {
-                        const isActive = keyword === k.keyword;
-                        return (
-                          <button
-                            key={`${k.keyword}_${k.location}_${k.lang}`}
-                            type="button"
-                            onClick={() => {
-                              setKeyword(k.keyword);
-                              const preset = sectorsData.find(s => s.name.toLowerCase() === k.sector.toLowerCase()) || 
-                                             sectorsData.find(s => s.name === 'Financials');
-                              if (preset) {
-                                handleSelectSector(preset);
-                              }
-                            }}
-                            className="btn"
-                            style={{
-                              padding: '6px 12px',
-                              fontSize: '13px',
-                              border: '1px solid',
-                              borderRadius: '8px',
-                              background: isActive ? 'rgba(0,102,204,0.08)' : '#ffffff',
-                              borderColor: isActive ? 'var(--ypym-blue)' : '#e5e5ea',
-                              color: isActive ? 'var(--ypym-blue)' : 'var(--text-main)',
-                              fontWeight: isActive ? '600' : 'normal',
-                              cursor: 'pointer',
-                              transition: 'all 0.15s'
-                            }}
-                          >
-                            {k.keyword}
-                            <span style={{ fontSize: '10px', opacity: 0.6, marginLeft: '6px', padding: '1px 5px', background: '#f2f2f7', borderRadius: '4px', color: '#555' }}>
-                              {k.sector}
-                            </span>
-                          </button>
-                        );
-                      })}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Custom/Seed Keyword Input Box */}
-            <div>
-              <label htmlFor="keyword" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)', marginBottom: '0.5rem', display: 'block' }}>Target Seed Keyword</label>
-              <input
-                type="text"
-                id="keyword"
-                placeholder="e.g., executive search, software developer, etc."
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                required
-                disabled={submitting}
-                style={{ fontSize: '15px', padding: '10px 14px', borderRadius: '8px', width: '100%', border: '1px solid #DADCE0' }}
-              />
-            </div>
-          </div>
-
-          {/* Step 3: Base Projection Currency Panel */}
-          <div className="card">
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '0.25rem', color: 'var(--ypym-black)' }}>
-                Step 3: Base Projection Currency
-              </h3>
-              <p style={{ fontSize: '13px', color: 'var(--text-note)', margin: 0 }}>
-                Choose the display currency for financial ROI modeling and projections.
-              </p>
-            </div>
-
-            <div>
-              <label htmlFor="currency" style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>Base Projection Currency</label>
-              <select
-                id="currency"
-                value={currency}
-                onChange={(e) => {
-                  setCurrency(e.target.value);
-                  setValueCurrency(e.target.value);
-                }}
-                disabled={submitting}
-                style={{ fontSize: '14px', padding: '10px', borderRadius: '8px', width: '100%', border: '1px solid #DADCE0' }}
-              >
-                <option value="USD">USD ($) - Dollar</option>
-                <option value="IDR">IDR (Rp) - Rupiah</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Step 4: Assumptions Panel (Black Card) */}
-          <div className="card assumption-dark-card">
-            <div className="dark-card-header">
-              <div>
-                <h3 style={{ fontSize: '18px', fontWeight: 600, margin: 0, color: '#ffffff' }}>
-                  Step 4: Audit Assumption Parameters & Modeling
+          {currentStep === 1 && (
+            <div className="card animate-fade-in">
+              <div style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '0.25rem', color: 'var(--ypym-black)' }}>
+                  Step 1: Select Location & Language
                 </h3>
-                <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: '0.25rem 0 0 0' }}>
-                  Adjust conversion rates, average transaction values, capture targets, and service fees.
+                <p style={{ fontSize: '13px', color: 'var(--text-note)', margin: 0 }}>
+                  Choose the target geocoding country and language. This will automatically filter the available crawled keywords database.
                 </p>
               </div>
-              <div className="sector-quick-select">
-                <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>
-                  Presets:
-                </span>
-                {predefinedSectors.buttons.map(s => (
-                  <button
-                    key={s.name}
-                    type="button"
-                    onClick={() => handleSelectSector(s)}
-                    className="btn-sector-preset"
-                  >
-                    {s.name}
-                  </button>
-                ))}
+
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label htmlFor="locale" style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>Target Location & Language</label>
                 <select
+                  id="locale"
+                  value={`${localeLanguage}-${localeCountry}`}
                   onChange={(e) => {
-                    const val = e.target.value;
-                    if (!val) return;
-                    const sec = predefinedSectors.dropdown.find(d => d.name === val);
-                    if (sec) handleSelectSector(sec);
-                    e.target.value = '';
+                    const [lang, country] = e.target.value.split('-');
+                    setLocaleLanguage(lang);
+                    setLocaleCountry(country);
                   }}
-                  className="select-sector-preset"
+                  disabled={submitting}
+                  style={{ fontSize: '14px', padding: '10px', borderRadius: '8px', width: '100%', border: '1px solid #DADCE0' }}
                 >
-                  <option value="">More ({predefinedSectors.dropdown.length})...</option>
-                  {predefinedSectors.dropdown.map(s => (
-                    <option key={s.name} value={s.name}>{s.name}</option>
-                  ))}
+                  <option value="en-US">United States (English - US)</option>
+                  <option value="id-ID">Indonesia (Indonesian - ID)</option>
+                  <option value="en-GB">United Kingdom (English - GB)</option>
+                  <option value="en-SG">Singapore (English - SG)</option>
+                  <option value="en-NL">Netherlands (English - NL)</option>
+                  <option value="en-HK">Hong Kong (English - HK)</option>
                 </select>
               </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', borderTop: '1px solid #EAF0FA', paddingTop: '1.5rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => navigate('/query-planner')}
+                  disabled={submitting}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-solid"
+                  onClick={() => setCurrentStep(2)}
+                  style={{ padding: '10px 24px', fontSize: '14px', fontWeight: 600, borderRadius: '8px' }}
+                >
+                  Next: Select Keyword
+                </button>
+              </div>
             </div>
+          )}
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-              <div className="grid-2">
-                <div>
-                  <label htmlFor="captureRate">Target Capture Rate (%)</label>
-                  <input
-                    type="number"
-                    id="captureRate"
-                    value={captureRate}
-                    onChange={(e) => setCaptureRate(e.target.value)}
-                    min="0.1"
-                    max="100"
-                    step="0.1"
-                    required
-                    disabled={submitting}
-                  />
-                  <span className="font-mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                    Target percentage of the search traffic pool captured.
-                  </span>
-                </div>
-
-                <div>
-                  <label htmlFor="conversionRate">Baseline Conversion Rate (%)</label>
-                  <input
-                    type="number"
-                    id="conversionRate"
-                    value={conversionRate}
-                    onChange={(e) => setConversionRate(e.target.value)}
-                    min="0.1"
-                    max="100"
-                    step="0.1"
-                    required
-                    disabled={submitting}
-                  />
-                  <span className="font-mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                    Baseline conversion rate before intent multiplier.
-                  </span>
-                </div>
+          {/* Step 2: Target Keyword Selection Panel */}
+          {currentStep === 2 && (
+            <div className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div>
+                <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '0.25rem', color: 'var(--ypym-black)' }}>
+                  Step 2: Select Keyword Target
+                </h3>
+                <p style={{ fontSize: '13px', color: 'var(--text-note)', margin: 0 }}>
+                  Choose from the crawled keywords matching your selected location & language, or enter a custom seed keyword.
+                </p>
               </div>
 
-              <div className="grid-2">
-                <div>
-                  <label htmlFor="valuePerSale">Value per Transaction / Sale</label>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <input
-                      type="number"
-                      id="valuePerSale"
-                      value={valuePerSale}
-                      onChange={(e) => setValuePerSale(e.target.value)}
-                      min="0"
-                      required
-                      disabled={submitting}
-                      style={{ flex: 1 }}
-                    />
+              {/* Crawled Keywords Sub-Panel */}
+              <div style={{ border: '1px solid rgba(0, 102, 204, 0.12)', backgroundColor: 'rgba(0, 102, 204, 0.01)', padding: '1.25rem', borderRadius: '12px' }}>
+                <h4 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--ypym-blue)' }}>
+                  <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--ypym-blue)' }}></span>
+                  Available Crawled Keywords for {localeCountry} ({localeLanguage.toUpperCase()})
+                </h4>
+                <p style={{ fontSize: '12px', color: 'var(--text-note)', marginBottom: '1rem' }}>
+                  These keywords have pre-fetched dataset ideas for your selected locale. Click to auto-fill preset assumptions.
+                </p>
+                
+                {filteredKeywords.length === 0 ? (
+                  <p style={{ fontSize: '13px', color: 'var(--text-note)', fontStyle: 'italic', margin: 0 }}>
+                    No crawled keywords found for {localeCountry} ({localeLanguage.toUpperCase()}) in the database. Enter a custom target seed keyword below to proceed.
+                  </p>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {/* Filter Tabs by Sector */}
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', borderBottom: '1px solid rgba(0,0,0,0.06)', paddingBottom: '0.5rem' }}>
+                      {['All', ...Array.from(new Set(filteredKeywords.map(k => k.sector)))].map(sec => (
+                        <button
+                          key={sec}
+                          type="button"
+                          onClick={() => setSelectedSector(sec)}
+                          className="btn btn-sm"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            background: selectedSector === sec ? 'var(--ypym-blue)' : '#f5f5f7',
+                            color: selectedSector === sec ? '#fff' : 'var(--text-main)',
+                            border: '1px solid ' + (selectedSector === sec ? 'var(--ypym-blue)' : '#e5e5ea'),
+                            borderRadius: '99px',
+                            padding: '4px 12px',
+                            fontSize: '12px',
+                            cursor: 'pointer',
+                            fontWeight: selectedSector === sec ? '600' : '500'
+                          }}
+                        >
+                          {["Executive Search & Recruitment", "Technology / SaaS", "Construction & EPC", "Energy (Oil, Gas, Power)", "Mining", "Manufacturing"].includes(sec) && (
+                            <span style={{
+                              display: 'inline-block',
+                              width: '6px',
+                              height: '6px',
+                              borderRadius: '50%',
+                              backgroundColor: selectedSector === sec ? '#ffffff' : '#09b812',
+                              marginRight: '6px',
+                              flexShrink: 0
+                            }}></span>
+                          )}
+                          {sec}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    {/* Keywords grid */}
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', maxHeight: '160px', overflowY: 'auto', padding: '2px' }}>
+                      {filteredKeywords
+                        .filter(k => selectedSector === 'All' || k.sector === selectedSector)
+                        .map(k => {
+                          const isActive = keyword === k.keyword;
+                          return (
+                            <button
+                              key={`${k.keyword}_${k.location}_${k.lang}`}
+                              type="button"
+                              onClick={() => {
+                                setKeyword(k.keyword);
+                                const preset = sectorsData.find(s => s.name.toLowerCase() === k.sector.toLowerCase()) || 
+                                               sectorsData.find(s => s.name === 'Financials');
+                                if (preset) {
+                                  handleSelectSector(preset);
+                                }
+                              }}
+                              className="btn"
+                              style={{
+                                padding: '6px 12px',
+                                fontSize: '13px',
+                                border: '1px solid',
+                                borderRadius: '8px',
+                                background: isActive ? 'rgba(0,102,204,0.08)' : '#ffffff',
+                                borderColor: isActive ? 'var(--ypym-blue)' : '#e5e5ea',
+                                color: isActive ? 'var(--ypym-blue)' : 'var(--text-main)',
+                                fontWeight: isActive ? '600' : 'normal',
+                                cursor: 'pointer',
+                                transition: 'all 0.15s'
+                              }}
+                            >
+                              {k.keyword}
+                              <span style={{ fontSize: '10px', opacity: 0.6, marginLeft: '6px', padding: '1px 5px', background: '#f2f2f7', borderRadius: '4px', color: '#555' }}>
+                                {k.sector}
+                              </span>
+                            </button>
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Custom/Seed Keyword Input Box */}
+              <div>
+                <label htmlFor="keyword" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)', marginBottom: '0.5rem', display: 'block' }}>Target Seed Keyword</label>
+                <input
+                  type="text"
+                  id="keyword"
+                  placeholder="e.g., executive search, software developer, etc."
+                  value={keyword}
+                  onChange={(e) => setKeyword(e.target.value)}
+                  required
+                  disabled={submitting}
+                  style={{ fontSize: '15px', padding: '10px 14px', borderRadius: '8px', width: '100%', border: '1px solid #DADCE0' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #EAF0FA', paddingTop: '1.5rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => setCurrentStep(1)}
+                  disabled={submitting}
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-solid"
+                  disabled={!keyword.trim()}
+                  onClick={() => setCurrentStep(3)}
+                  style={{ padding: '10px 24px', fontSize: '14px', fontWeight: 600, borderRadius: '8px' }}
+                >
+                  Next: Set Currency
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Base Projection Currency Panel */}
+          {currentStep === 3 && (
+            <div className="card animate-fade-in">
+              <div style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '0.25rem', color: 'var(--ypym-black)' }}>
+                  Step 3: Base Projection Currency
+                </h3>
+                <p style={{ fontSize: '13px', color: 'var(--text-note)', margin: 0 }}>
+                  Choose the display currency for financial ROI modeling and projections.
+                </p>
+              </div>
+
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label htmlFor="currency" style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>Base Projection Currency</label>
+                <select
+                  id="currency"
+                  value={currency}
+                  onChange={(e) => {
+                    setCurrency(e.target.value);
+                    setValueCurrency(e.target.value);
+                  }}
+                  disabled={submitting}
+                  style={{ fontSize: '14px', padding: '10px', borderRadius: '8px', width: '100%', border: '1px solid #DADCE0' }}
+                >
+                  <option value="USD">USD ($) - Dollar</option>
+                  <option value="IDR">IDR (Rp) - Rupiah</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #EAF0FA', paddingTop: '1.5rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => setCurrentStep(2)}
+                  disabled={submitting}
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-solid"
+                  onClick={() => setCurrentStep(4)}
+                  style={{ padding: '10px 24px', fontSize: '14px', fontWeight: 600, borderRadius: '8px' }}
+                >
+                  Next: Audit Assumptions
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 4: Assumptions Panel (Black Card) */}
+          {currentStep === 4 && (
+            <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div className="card assumption-dark-card">
+                <div className="dark-card-header">
+                  <div>
+                    <h3 style={{ fontSize: '18px', fontWeight: 600, margin: 0, color: '#ffffff' }}>
+                      Step 4: Audit Assumption Parameters & Modeling
+                    </h3>
+                    <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: '0.25rem 0 0 0' }}>
+                      Adjust conversion rates, average transaction values, capture targets, and service fees.
+                    </p>
+                  </div>
+                  <div className="sector-quick-select">
+                    <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>
+                      Presets:
+                    </span>
+                    {predefinedSectors.buttons.map(s => (
+                      <button
+                        key={s.name}
+                        type="button"
+                        onClick={() => handleSelectSector(s)}
+                        className="btn-sector-preset"
+                      >
+                        {s.name}
+                      </button>
+                    ))}
                     <select
-                      value={valueCurrency}
-                      onChange={(e) => setValueCurrency(e.target.value)}
-                      disabled={submitting}
-                      style={{ width: '90px' }}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (!val) return;
+                        const sec = predefinedSectors.dropdown.find(d => d.name === val);
+                        if (sec) handleSelectSector(sec);
+                        e.target.value = '';
+                      }}
+                      className="select-sector-preset"
                     >
-                      <option value="USD">USD</option>
-                      <option value="IDR">IDR</option>
+                      <option value="">More ({predefinedSectors.dropdown.length})...</option>
+                      {predefinedSectors.dropdown.map(s => (
+                        <option key={s.name} value={s.name}>{s.name}</option>
+                      ))}
                     </select>
                   </div>
-                  <span className="font-mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                    Average Order Value (AOV) or qualified lead value.
-                  </span>
                 </div>
 
-                <div>
-                  <label htmlFor="rampUpMonths">Ranking Ramp-Up Period (Months)</label>
-                  <input
-                    type="number"
-                    id="rampUpMonths"
-                    value={rampUpMonths}
-                    onChange={(e) => setRampUpMonths(e.target.value)}
-                    min="1"
-                    max="36"
-                    required
-                    disabled={submitting}
-                  />
-                  <span className="font-mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                    Timeframe to reach peak search optimization using a logistic curve.
-                  </span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                  <div className="grid-2">
+                    <div>
+                      <label htmlFor="captureRate">Target Capture Rate (%)</label>
+                      <input
+                        type="number"
+                        id="captureRate"
+                        value={captureRate}
+                        onChange={(e) => setCaptureRate(e.target.value)}
+                        min="0.1"
+                        max="100"
+                        step="0.1"
+                        required
+                        disabled={submitting}
+                      />
+                      <span className="font-mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                        Target percentage of the search traffic pool captured.
+                      </span>
+                    </div>
+
+                    <div>
+                      <label htmlFor="conversionRate">Baseline Conversion Rate (%)</label>
+                      <input
+                        type="number"
+                        id="conversionRate"
+                        value={conversionRate}
+                        onChange={(e) => setConversionRate(e.target.value)}
+                        min="0.1"
+                        max="100"
+                        step="0.1"
+                        required
+                        disabled={submitting}
+                      />
+                      <span className="font-mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                        Baseline conversion rate before intent multiplier.
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid-2">
+                    <div>
+                      <label htmlFor="valuePerSale">Value per Transaction / Sale</label>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <input
+                          type="number"
+                          id="valuePerSale"
+                          value={valuePerSale}
+                          onChange={(e) => setValuePerSale(e.target.value)}
+                          min="0"
+                          required
+                          disabled={submitting}
+                          style={{ flex: 1 }}
+                        />
+                        <select
+                          value={valueCurrency}
+                          onChange={(e) => setValueCurrency(e.target.value)}
+                          disabled={submitting}
+                          style={{ width: '90px' }}
+                        >
+                          <option value="USD">USD</option>
+                          <option value="IDR">IDR</option>
+                        </select>
+                      </div>
+                      <span className="font-mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                        Average Order Value (AOV) or qualified lead value.
+                      </span>
+                    </div>
+
+                    <div>
+                      <label htmlFor="rampUpMonths">Ranking Ramp-Up Period (Months)</label>
+                      <input
+                        type="number"
+                        id="rampUpMonths"
+                        value={rampUpMonths}
+                        onChange={(e) => setRampUpMonths(e.target.value)}
+                        min="1"
+                        max="36"
+                        required
+                        disabled={submitting}
+                      />
+                      <span className="font-mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                        Timeframe to reach peak search optimization using a logistic curve.
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid-2">
+                    <div>
+                      <label htmlFor="serviceFeePct">SEO Service Fee %</label>
+                      <input
+                        type="number"
+                        id="serviceFeePct"
+                        value={serviceFeePct}
+                        onChange={(e) => setServiceFeePct(e.target.value)}
+                        min="0"
+                        max="100"
+                        required
+                        disabled={submitting}
+                      />
+                      <span className="font-mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                        Monthly SEO service fee modeled as a percentage of gross organic revenue.
+                      </span>
+                    </div>
+
+                    <div>
+                      <label htmlFor="overlapDiscount">Cluster Overlap Discount Factor</label>
+                      <input
+                        type="number"
+                        id="overlapDiscount"
+                        value={overlapDiscount}
+                        onChange={(e) => setOverlapDiscount(e.target.value)}
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        required
+                        disabled={submitting}
+                      />
+                      <span className="font-mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                        Incremental contribution of secondary keywords (default 0.15).
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="grid-2">
-                <div>
-                  <label htmlFor="serviceFeePct">SEO Service Fee %</label>
-                  <input
-                    type="number"
-                    id="serviceFeePct"
-                    value={serviceFeePct}
-                    onChange={(e) => setServiceFeePct(e.target.value)}
-                    min="0"
-                    max="100"
-                    required
+              {/* Stepper bottom execute buttons */}
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-end',
+                gap: '0.5rem',
+                marginTop: '2rem',
+                borderTop: '1px solid #EAF0FA',
+                paddingTop: '1.5rem'
+              }}>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    className="btn btn-ghost"
+                    onClick={() => setCurrentStep(3)}
                     disabled={submitting}
-                  />
-                  <span className="font-mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                    Monthly SEO service fee modeled as a percentage of gross organic revenue.
-                  </span>
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn btn-solid"
+                    disabled={submitting || !keyword.trim()}
+                    style={{
+                      padding: '12px 32px',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 14px rgba(26, 75, 255, 0.25)'
+                    }}
+                  >
+                    {submitting ? 'Processing Pipeline...' : 'Fetch Data'}
+                  </button>
                 </div>
-
-                <div>
-                  <label htmlFor="overlapDiscount">Cluster Overlap Discount Factor</label>
-                  <input
-                    type="number"
-                    id="overlapDiscount"
-                    value={overlapDiscount}
-                    onChange={(e) => setOverlapDiscount(e.target.value)}
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    required
-                    disabled={submitting}
-                  />
-                  <span className="font-mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                    Incremental contribution of secondary keywords (default 0.15).
-                  </span>
-                </div>
+                <span style={{ fontSize: '11px', color: '#8F90A6', textAlign: 'right', maxWidth: '320px', lineHeight: 1.4 }}>
+                  fetch data from Google Ads, Google Trends, Google Search Suggestion Query
+                </span>
               </div>
             </div>
-          </div>
-
-          {/* Stepper bottom execute buttons */}
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-end',
-            gap: '0.5rem',
-            marginTop: '2rem',
-            borderTop: '1px solid #EAF0FA',
-            paddingTop: '1.5rem'
-          }}>
-            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <button
-                type="button"
-                className="btn btn-ghost"
-                onClick={() => navigate('/query-planner')}
-                disabled={submitting}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="btn btn-solid"
-                disabled={submitting || !keyword.trim()}
-                style={{
-                  padding: '12px 32px',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 14px rgba(26, 75, 255, 0.25)'
-                }}
-              >
-                {submitting ? 'Processing Pipeline...' : 'Fetch Data'}
-              </button>
-            </div>
-            <span style={{ fontSize: '11px', color: '#8F90A6', textAlign: 'right', maxWidth: '320px', lineHeight: 1.4 }}>
-              fetch data from Google Ads, Google Trends, Google Search Suggestion Query
-            </span>
-          </div>
-
+          )}
         </form>
 
       </div>

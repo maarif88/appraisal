@@ -110,10 +110,10 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 
 // ─── Start Server ──────────────────────────────────────────
 async function start() {
-  // Restore crawled_database.json from backup if masked by volume mount
+  // Restore crawled_database.json from backup to ensure updates are applied
   const targetJsonPath = path.resolve('./data/crawled_database.json');
   const backupJsonPath = path.resolve('./crawled_database.backup.json');
-  if (!fs.existsSync(targetJsonPath) && fs.existsSync(backupJsonPath)) {
+  if (fs.existsSync(backupJsonPath)) {
     console.log('[Startup] Copying crawled_database.json from backup to mounted data volume...');
     try {
       const dbDir = path.dirname(targetJsonPath);
