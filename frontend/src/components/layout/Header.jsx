@@ -61,9 +61,41 @@ export default function Header() {
   const [langSearch, setLangSearch] = useState('');
   const [rotatorIndex, setRotatorIndex] = useState(0);
   const [ctaPopupOpen, setCtaPopupOpen] = useState(false);
+  const [bottomNavVisible, setBottomNavVisible] = useState(false);
 
   const langRef = useRef(null);
   const isId = false;
+
+  // 5 seconds delay before showing the bottom nav bar
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setBottomNavVisible(true);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Hide on scroll down, show on scroll up
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    const handleScroll = () => {
+      if (!bottomNavVisible) return;
+      const bottomNavEl = document.getElementById('mweb-bottom-nav');
+      if (!bottomNavEl) return;
+      if (mobileMenuOpen) return; // don't hide if drawer is open
+      
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        bottomNavEl.style.transform = 'translateX(-50%) translateY(90px)';
+        bottomNavEl.style.opacity = '0';
+      } else {
+        bottomNavEl.style.transform = 'translateX(-50%) translateY(0)';
+        bottomNavEl.style.opacity = '1';
+      }
+      lastScrollY = currentScrollY;
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [bottomNavVisible, mobileMenuOpen]);
 
   const toggleMobileAccordion = (name) => {
     setMobileExpandedItem(prev => prev === name ? null : name);
@@ -951,6 +983,51 @@ export default function Header() {
           </div>
         </div>
       )}
+
+      {/* MOBILE BOTTOM FLOATING NAVIGATION BAR */}
+      <nav className={`mweb-bottom-nav ${bottomNavVisible ? 'is-visible' : ''}`} id="mweb-bottom-nav" aria-label="Mobile Navigation">
+        <a href="https://ypym.app/" className="mweb-nav-tab" id="mweb-tab-home">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span>Home</span>
+        </a>
+
+        <a href="https://ypym.app/business" className="mweb-nav-tab" id="mweb-tab-services">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+            <polyline points="2 17 12 22 22 17"/>
+            <polyline points="2 12 12 17 22 12"/>
+          </svg>
+          <span>Services</span>
+        </a>
+
+        <a href="https://ypym.app/hub/" className="mweb-nav-tab" id="mweb-tab-docs">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+            <path d="M6 6h10M6 10h10"/>
+          </svg>
+          <span>Docs</span>
+        </a>
+
+        <a href="https://ypym.app/company/contact-us" className="mweb-nav-tab" id="mweb-tab-contact" onClick={(e) => { e.preventDefault(); setCtaPopupOpen(true); }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          <span>Contact</span>
+        </a>
+
+        <button type="button" className="mweb-nav-tab mweb-menu-btn" id="mweb-tab-menu" onClick={() => setMobileMenuOpen(prev => !prev)}>
+          <div className="mweb-menu-icon-bg">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </div>
+        </button>
+      </nav>
     </header>
   );
 }
