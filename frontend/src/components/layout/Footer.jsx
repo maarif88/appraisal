@@ -130,7 +130,6 @@ export default function Footer() {
                 <li><a href="https://query-mapping.ypym.app" target="_blank" rel="noopener noreferrer">Query Mapping</a></li>
                 <li><a href="https://web-sitemap.ypym.app" target="_blank" rel="noopener noreferrer">Web Sitemap</a></li>
                 <li><a href="https://flow.ypym.app" target="_blank" rel="noopener noreferrer">Flow</a></li>
-                <li><a href="https://hub.ypym.app" target="_blank" rel="noopener noreferrer">Console (Hub)</a></li>
               </ul>
             </div>
 
