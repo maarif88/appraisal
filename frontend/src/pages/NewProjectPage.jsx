@@ -543,6 +543,7 @@ export default function NewProjectPage() {
                 >
                   <option value="en-US">United States (English - US)</option>
                   <option value="id-ID">Indonesia (Indonesian - ID)</option>
+                  <option value="en-global">Global (English - global)</option>
                   <option value="en-GB">United Kingdom (English - GB)</option>
                   <option value="en-SG">Singapore (English - SG)</option>
                   <option value="en-NL">Netherlands (English - NL)</option>

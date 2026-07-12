@@ -90,6 +90,9 @@ if (env.NODE_ENV === 'production') {
   
   // Handle SPA routing: redirect all non-API requests to index.html
   app.get(/^(?!\/api).*/, (req, res) => {
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
     res.sendFile(path.join(frontendBuildPath, 'index.html'));
   });
 }

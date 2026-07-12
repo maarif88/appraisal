@@ -11,7 +11,7 @@ export async function createProject(data) {
 }
 
 export async function listProjects() {
-  const res = await fetch(`${API_BASE}/projects`);
+  const res = await fetch(`${API_BASE}/projects?_t=${Date.now()}`);
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
@@ -41,7 +41,7 @@ export async function getStatus(id) {
 }
 
 export async function getKeywords(id, params = {}) {
-  const query = new URLSearchParams(params).toString();
+  const query = new URLSearchParams({ ...params, _t: Date.now() }).toString();
   const res = await fetch(`${API_BASE}/projects/${id}/keywords?${query}`);
   if (!res.ok) throw new Error(await res.text());
   return res.json();
@@ -58,7 +58,7 @@ export async function reproject(id, assumptions) {
 }
 
 export async function exportProject(id, format) {
-  const res = await fetch(`${API_BASE}/projects/${id}/export/${format}`);
+  const res = await fetch(`${API_BASE}/projects/${id}/export/${format}?_t=${Date.now()}`);
   if (!res.ok) throw new Error(await res.text());
   if (format === 'csv') {
     return res.text();
@@ -78,7 +78,7 @@ export function formatNumber(num) {
 }
 
 export async function getCrawledKeywords() {
-  const res = await fetch(`${API_BASE}/projects/crawled-keywords`);
+  const res = await fetch(`${API_BASE}/projects/crawled-keywords?_t=${Date.now()}`);
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }

@@ -21,7 +21,7 @@ export const DEFAULT_ASSUMPTIONS = {
 
 export const createProjectSchema = z.object({
   seed_keyword: z.string().min(1).max(200).trim(),
-  locale_country: z.string().length(2).default('ID'),
+  locale_country: z.string().min(2).max(6).default('ID'),
   locale_language: z.string().min(2).max(5).default('id'),
   currency_base: z.string().length(3).default('USD'),
   currency_display: z.array(z.string().length(3)).default(['USD', 'IDR']),
