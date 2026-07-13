@@ -10,10 +10,11 @@ To navigate easily across the workspace, you can use the direct links below:
 
 ### 📂 Main Directories
 - 💼 **Appraisal Workspace**: [ypym-appraisal](file:///C:/Users/rochm/Documents/ypym-sandbox/ypym-appraisal)
+  - 📚 **Project Index (Master Hub)**: [PROJECT_INDEX.md](file:///C:/Users/rochm/Documents/ypym-sandbox/ypym-appraisal/PROJECT_INDEX.md)
   - 🖥️ **Backend Service (Express/TS)**: [backend](file:///C:/Users/rochm/Documents/ypym-sandbox/ypym-appraisal/backend)
   - 🎨 **Frontend App (React/Vite)**: [frontend](file:///C:/Users/rochm/Documents/ypym-sandbox/ypym-appraisal/frontend)
   - 🕷️ **Crawler & Seeder Scripts**: [scripts](file:///C:/Users/rochm/Documents/ypym-sandbox/ypym-appraisal/scripts)
-- 🌐 **Ecosystem Container Directory**: [ypym-appraisal-app](file:///C:/Users/rochm/Documents/ypym-sandbox/ypym-appraisal-app)
+- 📱 **Mobile App (Flutter)**: [ypym-appraisal-app](file:///C:/Users/rochm/Documents/ypym-sandbox/ypym-appraisal-app) — YPYM Query Planner (Android + iOS)
 
 ### 📄 Documentation & Guides
 - 📝 **Ecosystem Readme**: [README.md](file:///C:/Users/rochm/Documents/ypym-sandbox/ypym-appraisal/README.md)
