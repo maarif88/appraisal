@@ -658,3 +658,60 @@ Daftar kata kunci yang pernah di-crawl oleh skrip otomatisasi.
 - `enterprise learning|US|English`
 - `compliance training|US|English`
 - `professional development|US|English`
+
+## Sector: Executive Search & Recruitment (Date: 2026-07-13)
+- `executive search recruitment|US|English`
+- `executive search consultant|US|English`
+- `executive recruiting services|US|English`
+- `executive recruiters|US|English`
+- `executive headhunters|US|English`
+- `executive head hunters|US|English`
+- `executive search companies|US|English`
+- `executive recruiting firms|US|English`
+- `executive recruitment agencies|US|English`
+- `executive staffing agency|US|English`
+- `executive placement firms|US|English`
+- `search firms|US|English`
+- `hr search firms|US|English`
+- `hr executive search firms|US|English`
+- `headhunter company|US|English`
+- `headhunter agency|US|English`
+- `head hunting firms|US|English`
+- `executive placement|US|English`
+- `executive placement services|US|English`
+- `executive job placement services|US|English`
+- `executive job search|US|English`
+- `executive job search firms|US|English`
+- `executive job search sites|US|English`
+- `best executive job search sites|US|English`
+- `best executive recruiting firms|US|English`
+- `best executive search firms|US|English`
+- `top executive recruiters|US|English`
+- `top executive recruiting firms|US|English`
+- `top executive search firms|US|English`
+- `executive recruiters near me|US|English`
+- `executive headhunters near me|US|English`
+- `executive search firms near me|US|English`
+- `headhunter agency near me|US|English`
+- `healthcare executive recruiters|US|English`
+- `healthcare executive|US|English`
+- `search firms|US|English`
+- `top healthcare recruiting firms|US|English`
+- `it executive recruiters|US|English`
+- `it executive search firms|US|English`
+- `finance and accounting recruiting firms|US|English`
+- `financial services recruiting firms|US|English`
+- `financial advisor recruiting firms|US|English`
+- `top finance recruiting firms|US|English`
+- `executive sales recruiters|US|English`
+- `marketing executive recruiters|US|English`
+- `marketing headhunter|US|English`
+- `sales leadership recruiters|US|English`
+- `top sales executive recruiting firms|US|English`
+- `ceo search|US|English`
+- `ceo search firms|US|English`
+- `c suite recruiters|US|English`
+- `higher education search firms|US|English`
+- `higher ed search firms|US|English`
+- `insurance executive recruiters|US|English`
+- `private equity headhunters|US|English`
