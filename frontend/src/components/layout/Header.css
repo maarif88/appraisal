@@ -808,6 +808,18 @@
   color: #ffffff !important;
 }
 
+/* --- MENU BLUE DOT INDICATOR --- */
+.menu-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background-color: #1A4BFF;
+  border-radius: 50%;
+  margin-left: 4px;
+  transform: translateY(-4px);
+  vertical-align: middle;
+}
+
 /* Accordion Open State */
 .accordion-item.is-expanded .accordion-trigger {
   color: #000000;

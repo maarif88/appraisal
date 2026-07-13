@@ -195,7 +195,8 @@ export default function Header() {
                     <div className="drawer-link-list">
                       <a href="https://ypym.app/business" className="drawer-link-item" onMouseEnter={() => setActiveSolDesc('sol-desc-bisnis')}>Business Solutions, Enterprise SEO</a>
                       <a href="https://ypym.app/technical" className="drawer-link-item" onMouseEnter={() => setActiveSolDesc('sol-desc-teknis')}>Technical Solutions, SEO</a>
-                      <a href="https://ypym.app/venture-studio" className="drawer-link-item" onMouseEnter={() => setActiveSolDesc('sol-desc-venture')}>Venture Studio</a>
+                      <a href="https://ypym.app/digital-brand-experience" className="drawer-link-item" onMouseEnter={() => setActiveSolDesc('sol-desc-brand-exp')}>Digital Brand Experience</a>
+                      <a href="https://ypym.app/venture-studio" className="drawer-link-item" onMouseEnter={() => setActiveSolDesc('sol-desc-venture')}>Venture Studio<span className="menu-dot"></span></a>
                     </div>
                     <div className="sol-details-col">
                       {activeSolDesc === 'sol-desc-bisnis' && (
@@ -208,6 +209,12 @@ export default function Header() {
                         <div className="sol-desc-item active">
                           <h3 className="sol-desc-title">Technical Solutions, SEO</h3>
                           <p className="sol-desc-text">Advanced web technical infrastructure optimization to ensure flawless crawling and indexing by search engines. Includes Core Web Vitals, headless architecture, JavaScript rendering, and compliance with modern security standards.</p>
+                        </div>
+                      )}
+                      {activeSolDesc === 'sol-desc-brand-exp' && (
+                        <div className="sol-desc-item active">
+                          <h3 className="sol-desc-title">Digital Brand Experience</h3>
+                          <p className="sol-desc-text">Engineering cohesive, authority-grade digital brand experiences for enterprises across every customer touchpoint and market.</p>
                         </div>
                       )}
                       {activeSolDesc === 'sol-desc-venture' && (
@@ -451,8 +458,10 @@ export default function Header() {
                     <a href="https://ypym.app/company/about-us" className="drawer-link-item">About YPYM</a>
                     <a href="https://ypym.app/company/contact-us" className="drawer-link-item">Contact Us</a>
                     <a href="https://ypym.app/career" className="drawer-link-item">Careers</a>
-                    <a href="https://ypym.app/investment/bill-of-quantity" className="drawer-link-item">Bill of Quantity (BoQ)</a>
-                    <a href="https://ypym.app/investment/get-quote" className="drawer-link-item">Get a Quote</a>
+                    <a href="https://ypym.app/investment/bill-of-quantity" className="drawer-link-item">Bill of Quantity (BoQ)<span className="menu-dot"></span></a>
+                    <a href="https://ypym.app/investment/get-quote" className="drawer-link-item">Get a Quote<span className="menu-dot"></span></a>
+                    <a href="https://ypym.app/company/acceptable-use-policy" className="drawer-link-item">Acceptable Use Policy</a>
+                    <a href="https://ypym.app/company/press-release" className="drawer-link-item">Press Release</a>
                   </div>
                 </div>
               </div>
@@ -474,7 +483,10 @@ export default function Header() {
               <div className="drawer-inner">
                 <div className="drawer-left">
                   <h2>20 sectors. One organic search authority framework.</h2>
-                  <a href="https://ypym.app/sector" className="drawer-btn">View All Sectors</a>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    <a href="https://ypym.app/sector" className="drawer-btn" style={{ margin: 0 }}>View All Sectors</a>
+                    <a href="https://ypym.app/decision-intelligence" className="drawer-btn primary" style={{ margin: 0 }}>Decision Intelligence</a>
+                  </div>
                 </div>
                 <div className="drawer-right">
                   <div className="drawer-link-list">
@@ -598,7 +610,8 @@ export default function Header() {
                 <div className="accordion-links">
                   <a href="https://ypym.app/business">Business Solutions, Enterprise SEO</a>
                   <a href="https://ypym.app/technical">Technical Solutions, SEO</a>
-                  <a href="https://ypym.app/venture-studio">Venture Studio</a>
+                  <a href="https://ypym.app/digital-brand-experience">Digital Brand Experience</a>
+                  <a href="https://ypym.app/venture-studio">Venture Studio<span className="menu-dot"></span></a>
                   <div style={{ display: 'flex', gap: '8px', marginTop: '8px', width: '100%' }}>
                     <a href="https://ypym.app/business" className="see-overview-pill" style={{ flex: 1, textAlign: 'center', margin: 0 }}>View Services</a>
                     <a href="https://appraisal.ypym.app/" className="see-overview-pill primary" style={{ flex: 1, textAlign: 'center', margin: 0 }}>Start Appraisal</a>
@@ -637,8 +650,10 @@ export default function Header() {
                   <a href="https://ypym.app/company/about-us">About YPYM</a>
                   <a href="https://ypym.app/company/contact-us">Contact Us</a>
                   <a href="https://ypym.app/career">Careers</a>
-                  <a href="https://ypym.app/investment/bill-of-quantity">Bill of Quantity (BoQ)</a>
-                  <a href="https://ypym.app/investment/get-quote">Get a Quote</a>
+                  <a href="https://ypym.app/investment/bill-of-quantity">Bill of Quantity (BoQ)<span className="menu-dot"></span></a>
+                  <a href="https://ypym.app/investment/get-quote">Get a Quote<span className="menu-dot"></span></a>
+                  <a href="https://ypym.app/company/acceptable-use-policy">Acceptable Use Policy</a>
+                  <a href="https://ypym.app/company/press-release">Press Release</a>
                   <a href="https://ypym.app/company" className="see-overview-pill">Company</a>
                 </div>
               </div>
@@ -662,7 +677,10 @@ export default function Header() {
                   <a href="https://ypym.app/sector/utilities">Utilities</a>
                   <a href="https://ypym.app/sector/transportation">Transportation</a>
                   <a href="https://ypym.app/sector/retail-trade">Retail Trade</a>
-                  <a href="https://ypym.app/sector" className="see-overview-pill">View All Sectors</a>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '8px', width: '100%' }}>
+                    <a href="https://ypym.app/sector" className="see-overview-pill" style={{ flex: 1, textAlign: 'center', margin: 0 }}>View All Sectors</a>
+                    <a href="https://ypym.app/decision-intelligence" className="see-overview-pill primary" style={{ flex: 1, textAlign: 'center', margin: 0 }}>Decision Intelligence</a>
+                  </div>
                 </div>
               </div>
             </div>
