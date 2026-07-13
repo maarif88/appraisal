@@ -173,16 +173,15 @@ export default function Header() {
           {/* Dropdown: Solutions */}
           <div 
             className={`nav-item-dropdown ${activeDropdown === 'solusi' ? 'is-open' : ''}`}
-            onMouseEnter={() => setActiveDropdown('solusi')}
             onMouseLeave={() => setActiveDropdown(null)}
           >
-            <button className="nav-btn" onClick={() => toggleDropdown('solusi')}>
+            <button className="nav-btn" onMouseEnter={() => setActiveDropdown('solusi')} onClick={() => toggleDropdown('solusi')}>
               Solutions
               <svg className="chevron" width="10" height="10" viewBox="0 0 10 10" fill="none">
                 <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
-            <div className={`dropdown-drawer ${activeDropdown === 'solusi' ? 'is-open' : ''}`}>
+            <div className={`dropdown-drawer ${activeDropdown === 'solusi' ? 'is-open' : ''}`} onMouseEnter={() => setActiveDropdown('solusi')}>
               <div className="drawer-inner">
                 <div className="drawer-left">
                   <h2>Adaptive SEO, ASO, AEO, and GEO systems for various industries.</h2>
@@ -232,7 +231,7 @@ export default function Header() {
                     <span className="highlight-label">ADAPTIVE SEARCH OPTIMIZATION FRAMEWORKS</span>
                   </div>
                   <div className="rotator-window">
-                    <div className={`rotator-item ${rotatorIndex === 0 ? 'active' : ''}`}>
+                    <div className={`rotator-item ${rotatorIndex === 0 ? 'active' : ((rotatorIndex - 1 + 5) % 5 === 0 ? 'exited' : '')}`}>
                       <div className="rotator-item-grid">
                         <div className="rotator-item-left">
                           <h3 className="rotator-term-title"><span className="rotator-term">SEO</span> (Search Engine Optimization)</h3>
@@ -254,7 +253,7 @@ export default function Header() {
                       </div>
                     </div>
 
-                    <div className={`rotator-item ${rotatorIndex === 1 ? 'active' : ''}`}>
+                    <div className={`rotator-item ${rotatorIndex === 1 ? 'active' : ((rotatorIndex - 1 + 5) % 5 === 1 ? 'exited' : '')}`}>
                       <div className="rotator-item-grid">
                         <div className="rotator-item-left">
                           <h3 className="rotator-term-title"><span className="rotator-term">ASO</span> (App Store Optimization)</h3>
@@ -284,7 +283,7 @@ export default function Header() {
                       </div>
                     </div>
 
-                    <div className={`rotator-item ${rotatorIndex === 2 ? 'active' : ''}`}>
+                    <div className={`rotator-item ${rotatorIndex === 2 ? 'active' : ((rotatorIndex - 1 + 5) % 5 === 2 ? 'exited' : '')}`}>
                       <div className="rotator-item-grid">
                         <div className="rotator-item-left">
                           <h3 className="rotator-term-title"><span className="rotator-term">AEO</span> (Answer Engine Optimization)</h3>
@@ -306,7 +305,7 @@ export default function Header() {
                       </div>
                     </div>
 
-                    <div className={`rotator-item ${rotatorIndex === 3 ? 'active' : ''}`}>
+                    <div className={`rotator-item ${rotatorIndex === 3 ? 'active' : ((rotatorIndex - 1 + 5) % 5 === 3 ? 'exited' : '')}`}>
                       <div className="rotator-item-grid">
                         <div className="rotator-item-left">
                           <h3 className="rotator-term-title"><span className="rotator-term">GEO</span> (Generative Engine Optimization)</h3>
@@ -352,7 +351,7 @@ export default function Header() {
                       </div>
                     </div>
 
-                    <div className={`rotator-item ${rotatorIndex === 4 ? 'active' : ''}`}>
+                    <div className={`rotator-item ${rotatorIndex === 4 ? 'active' : ((rotatorIndex - 1 + 5) % 5 === 4 ? 'exited' : '')}`}>
                       <div className="rotator-item-grid">
                         <div className="rotator-item-left">
                           <h3 className="rotator-term-title"><span className="rotator-term">Local SEO</span> (Local Search Engine Optimization)</h3>
@@ -382,16 +381,15 @@ export default function Header() {
            {/* Dropdown: Martech Platform */}
           <div 
             className={`nav-item-dropdown ${activeDropdown === 'martech' ? 'is-open' : ''}`}
-            onMouseEnter={() => setActiveDropdown('martech')}
             onMouseLeave={() => setActiveDropdown(null)}
           >
-            <button className="nav-btn" onClick={() => toggleDropdown('martech')}>
+            <button className="nav-btn" onMouseEnter={() => setActiveDropdown('martech')} onClick={() => toggleDropdown('martech')}>
               Martech Platform
               <svg className="chevron" width="10" height="10" viewBox="0 0 10 10" fill="none">
                 <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
-            <div className={`dropdown-drawer ${activeDropdown === 'martech' ? 'is-open' : ''}`}>
+            <div className={`dropdown-drawer ${activeDropdown === 'martech' ? 'is-open' : ''}`} onMouseEnter={() => setActiveDropdown('martech')}>
               <div className="drawer-inner">
                 <div className="drawer-left">
                   <h2>Martech infrastructure supporting organic growth.</h2>
@@ -434,16 +432,15 @@ export default function Header() {
            {/* Dropdown: Company */}
           <div 
             className={`nav-item-dropdown ${activeDropdown === 'perusahaan' ? 'is-open' : ''}`}
-            onMouseEnter={() => setActiveDropdown('perusahaan')}
             onMouseLeave={() => setActiveDropdown(null)}
           >
-            <button className="nav-btn" onClick={() => toggleDropdown('perusahaan')}>
+            <button className="nav-btn" onMouseEnter={() => setActiveDropdown('perusahaan')} onClick={() => toggleDropdown('perusahaan')}>
               Company
               <svg className="chevron" width="10" height="10" viewBox="0 0 10 10" fill="none">
                 <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
-            <div className={`dropdown-drawer ${activeDropdown === 'perusahaan' ? 'is-open' : ''}`}>
+            <div className={`dropdown-drawer ${activeDropdown === 'perusahaan' ? 'is-open' : ''}`} onMouseEnter={() => setActiveDropdown('perusahaan')}>
               <div className="drawer-inner">
                 <div className="drawer-left">
                   <h2>Building the mechanisms behind organic search authority.</h2>
@@ -465,16 +462,15 @@ export default function Header() {
            {/* Dropdown: Sectors */}
           <div 
             className={`nav-item-dropdown ${activeDropdown === 'sektor' ? 'is-open' : ''}`}
-            onMouseEnter={() => setActiveDropdown('sektor')}
             onMouseLeave={() => setActiveDropdown(null)}
           >
-            <button className="nav-btn" onClick={() => toggleDropdown('sektor')}>
+            <button className="nav-btn" onMouseEnter={() => setActiveDropdown('sektor')} onClick={() => toggleDropdown('sektor')}>
               Sectors
               <svg className="chevron" width="10" height="10" viewBox="0 0 10 10" fill="none">
                 <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
-            <div className={`dropdown-drawer ${activeDropdown === 'sektor' ? 'is-open' : ''}`}>
+            <div className={`dropdown-drawer ${activeDropdown === 'sektor' ? 'is-open' : ''}`} onMouseEnter={() => setActiveDropdown('sektor')}>
               <div className="drawer-inner">
                 <div className="drawer-left">
                   <h2>20 sectors. One organic search authority framework.</h2>
