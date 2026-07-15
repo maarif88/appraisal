@@ -1869,7 +1869,7 @@ export default function DashboardPage() {
                 <td style={{ padding: '10px 16px', verticalAlign: 'middle' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <span style={{ fontWeight: kw.is_cluster_primary ? 600 : 400, color: '#3c4043' }}>{kw.keyword}</span>
-                    {kw.is_cluster_primary && <span style={{ padding: '2px 6px', background: 'rgba(0,102,204,0.06)', borderRadius: '4px', fontSize: '9px', fontWeight: 600, color: 'var(--ypym-blue)' }}>Cluster Primary</span>}
+                    {!!kw.is_cluster_primary && <span style={{ padding: '2px 6px', background: 'rgba(0,102,204,0.06)', borderRadius: '4px', fontSize: '9px', fontWeight: 600, color: 'var(--ypym-blue)' }}>Cluster Primary</span>}
                   </div>
                 </td>
                 <td className="text-right font-mono" style={{ padding: '10px 16px', verticalAlign: 'middle', color: '#3c4043' }}>
