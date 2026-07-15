@@ -715,3 +715,243 @@ Daftar kata kunci yang pernah di-crawl oleh skrip otomatisasi.
 - `higher ed search firms|US|English`
 - `insurance executive recruiters|US|English`
 - `private equity headhunters|US|English`
+
+## Sector: Communication Services (Date: 2026-07-15)
+- `berita hari ini|ID|Indonesia`
+- `berita terbaru|ID|Indonesia`
+- `berita terkini|ID|Indonesia`
+- `breaking news|ID|Indonesia`
+- `headline hari ini|ID|Indonesia`
+- `kabar terbaru|ID|Indonesia`
+- `berita indonesia|ID|Indonesia`
+- `berita nasional|ID|Indonesia`
+- `berita nusantara|ID|Indonesia`
+- `berita indonesia hari ini|ID|Indonesia`
+- `berita politik|ID|Indonesia`
+- `politik indonesia|ID|Indonesia`
+- `pilpres|ID|Indonesia`
+- `dpr|ID|Indonesia`
+- `pemerintah|ID|Indonesia`
+- `kabinet|ID|Indonesia`
+- `kementerian|ID|Indonesia`
+- `berita bisnis|ID|Indonesia`
+- `berita ekonomi|ID|Indonesia`
+- `berita perusahaan|ID|Indonesia`
+- `berita industri|ID|Indonesia`
+- `berita korporasi|ID|Indonesia`
+- `berita pasar modal|ID|Indonesia`
+- `berita saham|ID|Indonesia`
+- `berita emiten|ID|Indonesia`
+- `berita idx|ID|Indonesia`
+- `berita ipo|ID|Indonesia`
+- `berita investasi|ID|Indonesia`
+- `berita keuangan|ID|Indonesia`
+- `berita bank|ID|Indonesia`
+- `berita fintech|ID|Indonesia`
+- `berita asuransi|ID|Indonesia`
+- `berita obligasi|ID|Indonesia`
+- `berita teknologi|ID|Indonesia`
+- `berita ai|ID|Indonesia`
+- `berita startup|ID|Indonesia`
+- `berita gadget|ID|Indonesia`
+- `berita software|ID|Indonesia`
+- `berita cybersecurity|ID|Indonesia`
+- `berita dunia|ID|Indonesia`
+- `berita internasional|ID|Indonesia`
+- `berita amerika|ID|Indonesia`
+- `berita china|ID|Indonesia`
+- `berita asia|ID|Indonesia`
+- `berita eropa|ID|Indonesia`
+- `berita olahraga|ID|Indonesia`
+- `berita sepak bola|ID|Indonesia`
+- `berita liga inggris|ID|Indonesia`
+- `berita motogp|ID|Indonesia`
+- `berita formula 1|ID|Indonesia`
+- `berita badminton|ID|Indonesia`
+- `berita artis|ID|Indonesia`
+- `berita selebriti|ID|Indonesia`
+- `berita film|ID|Indonesia`
+- `berita musik|ID|Indonesia`
+- `berita korea|ID|Indonesia`
+- `berita hollywood|ID|Indonesia`
+- `berita lifestyle|ID|Indonesia`
+- `kesehatan|ID|Indonesia`
+- `makanan|ID|Indonesia`
+- `fashion|ID|Indonesia`
+- `travel|ID|Indonesia`
+- `wellness|ID|Indonesia`
+- `berita sains|ID|Indonesia`
+- `penelitian terbaru|ID|Indonesia`
+- `inovasi|ID|Indonesia`
+- `antariksa|ID|Indonesia`
+- `berita otomotif|ID|Indonesia`
+- `mobil terbaru|ID|Indonesia`
+- `motor terbaru|ID|Indonesia`
+- `kendaraan listrik|ID|Indonesia`
+- `berita properti|ID|Indonesia`
+- `real estate|ID|Indonesia`
+- `perumahan|ID|Indonesia`
+- `apartemen|ID|Indonesia`
+- `berita energi|ID|Indonesia`
+- `berita migas|ID|Indonesia`
+- `berita batubara|ID|Indonesia`
+- `berita nikel|ID|Indonesia`
+- `berita mineral|ID|Indonesia`
+- `berita pertanian|ID|Indonesia`
+- `perkebunan|ID|Indonesia`
+- `sawit|ID|Indonesia`
+- `pangan|ID|Indonesia`
+- `berita hukum|ID|Indonesia`
+- `regulasi|ID|Indonesia`
+- `peraturan pemerintah|ID|Indonesia`
+- `putusan pengadilan|ID|Indonesia`
+- `berita jakarta|ID|Indonesia`
+- `berita surabaya|ID|Indonesia`
+- `berita bandung|ID|Indonesia`
+- `berita jawa timur|ID|Indonesia`
+- `berita daerah|ID|Indonesia`
+- `berita kota|ID|Indonesia`
+- `berita kabupaten|ID|Indonesia`
+- `opini|ID|Indonesia`
+- `editorial|ID|Indonesia`
+- `analisis|ID|Indonesia`
+- `kolom|ID|Indonesia`
+- `perspektif|ID|Indonesia`
+
+## Sector: Professional Services (Date: 2026-07-15)
+- `jasa seo|ID|Indonesia`
+- `seo services|ID|Indonesia`
+- `search engine optimization|ID|Indonesia`
+- `search engine optimization services|ID|Indonesia`
+- `seo agency|ID|Indonesia`
+- `seo consultant|ID|Indonesia`
+- `seo company|ID|Indonesia`
+- `technical seo|ID|Indonesia`
+- `enterprise seo|ID|Indonesia`
+- `local seo|ID|Indonesia`
+- `generative engine optimization|ID|Indonesia`
+- `geo services|ID|Indonesia`
+- `geo agency|ID|Indonesia`
+- `ai search optimization|ID|Indonesia`
+- `llm optimization|ID|Indonesia`
+- `ai seo|ID|Indonesia`
+- `answer engine optimization|ID|Indonesia`
+- `aeo services|ID|Indonesia`
+- `answer optimization|ID|Indonesia`
+- `featured snippet optimization|ID|Indonesia`
+- `voice search optimization|ID|Indonesia`
+- `app store optimization|ID|Indonesia`
+- `jasa aso|ID|Indonesia`
+- `aso services|ID|Indonesia`
+- `app store seo|ID|Indonesia`
+- `google play optimization|ID|Indonesia`
+- `app store ranking|ID|Indonesia`
+- `digital marketing|ID|Indonesia`
+- `digital marketing services|ID|Indonesia`
+- `digital marketing agency|ID|Indonesia`
+- `internet marketing|ID|Indonesia`
+- `online marketing|ID|Indonesia`
+- `digital marketing|ID|Indonesia`
+- `digital marketing services|ID|Indonesia`
+- `digital marketing agency|ID|Indonesia`
+- `internet marketing|ID|Indonesia`
+- `online marketing|ID|Indonesia`
+- `content marketing|ID|Indonesia`
+- `content marketing services|ID|Indonesia`
+- `content strategy|ID|Indonesia`
+- `content creation|ID|Indonesia`
+- `content writing|ID|Indonesia`
+- `editorial services|ID|Indonesia`
+- `marketing consulting|ID|Indonesia`
+- `marketing consultant|ID|Indonesia`
+- `marketing strategy|ID|Indonesia`
+- `go to market strategy|ID|Indonesia`
+- `marketing advisory|ID|Indonesia`
+- `marketing services|ID|Indonesia`
+- `layanan marketing|ID|Indonesia`
+- `growth marketing|ID|Indonesia`
+- `integrated marketing services|ID|Indonesia`
+- `outsourced marketing|ID|Indonesia`
+- `performance marketing|ID|Indonesia`
+- `paid advertising|ID|Indonesia`
+- `ppc agency|ID|Indonesia`
+- `google ads agency|ID|Indonesia`
+- `paid search|ID|Indonesia`
+- `conversion optimization|ID|Indonesia`
+- `social media marketing|ID|Indonesia`
+- `social media agency|ID|Indonesia`
+- `instagram marketing|ID|Indonesia`
+- `linkedin marketing|ID|Indonesia`
+- `tiktok marketing|ID|Indonesia`
+- `performance marketing|ID|Indonesia`
+- `paid advertising|ID|Indonesia`
+- `ppc agency|ID|Indonesia`
+- `google ads agency|ID|Indonesia`
+- `paid search|ID|Indonesia`
+- `conversion optimization|ID|Indonesia`
+- `social media marketing|ID|Indonesia`
+- `social media agency|ID|Indonesia`
+- `instagram marketing|ID|Indonesia`
+- `linkedin marketing|ID|Indonesia`
+- `tiktok marketing|ID|Indonesia`
+- `email marketing|ID|Indonesia`
+- `marketing automation|ID|Indonesia`
+- `crm marketing|ID|Indonesia`
+- `lifecycle marketing|ID|Indonesia`
+- `branding agency|ID|Indonesia`
+- `brand strategy|ID|Indonesia`
+- `creative agency|ID|Indonesia`
+- `corporate branding|ID|Indonesia`
+- `visual identity|ID|Indonesia`
+
+## Sector: Food & Beverage Services (Date: 2026-07-15)
+- `restoran|ID|Indonesia`
+- `cafe|ID|Indonesia`
+- `coffee shop|ID|Indonesia`
+- `bakery|ID|Indonesia`
+- `warung makan|ID|Indonesia`
+- `nasi goreng|ID|Indonesia`
+- `bakso|ID|Indonesia`
+- `sate|ID|Indonesia`
+- `sushi|ID|Indonesia`
+- `ramen|ID|Indonesia`
+- `pizza|ID|Indonesia`
+- `restoran di Jakarta|ID|Indonesia`
+- `cafe Surabaya|ID|Indonesia`
+- `coffee shop Bandung|ID|Indonesia`
+- `bakery Malang|ID|Indonesia`
+- `restoran Semarang|ID|Indonesia`
+- `restoran dekat saya|ID|Indonesia`
+- `cafe near me|ID|Indonesia`
+- `coffee shop near me|ID|Indonesia`
+- `bakery terdekat|ID|Indonesia`
+- `warung makan terdekat|ID|Indonesia`
+- `restoran terbaik|ID|Indonesia`
+- `cafe terbaik|ID|Indonesia`
+- `coffee shop terbaik|ID|Indonesia`
+- `tempat makan enak|ID|Indonesia`
+- `restoran favorit|ID|Indonesia`
+- `booking restoran|ID|Indonesia`
+- `reservasi restoran|ID|Indonesia`
+- `pesan catering|ID|Indonesia`
+- `order kopi|ID|Indonesia`
+- `delivery makanan|ID|Indonesia`
+- `tempat makan keluarga|ID|Indonesia`
+- `cafe buat kerja|ID|Indonesia`
+- `restoran ulang tahun|ID|Indonesia`
+- `tempat nongkrong|ID|Indonesia`
+- `restoran romantis|ID|Indonesia`
+- `tempat makan keluarga|ID|Indonesia`
+- `cafe buat kerja|ID|Indonesia`
+- `restoran ulang tahun|ID|Indonesia`
+- `tempat nongkrong|ID|Indonesia`
+- `restoran romantis|ID|Indonesia`
+- `restoran halal|ID|Indonesia`
+- `restoran 24 jam|ID|Indonesia`
+- `restoran murah|ID|Indonesia`
+- `restoran premium|ID|Indonesia`
+- `restoran all you can eat|ID|Indonesia`
+- `restoran outdoor|ID|Indonesia`
+- `restoran rooftop|ID|Indonesia`
+- `restoran pet friendly|ID|Indonesia`
+- `restoran live music|ID|Indonesia`
