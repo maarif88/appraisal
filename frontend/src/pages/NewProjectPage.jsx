@@ -509,7 +509,7 @@ export default function NewProjectPage() {
           <div className="stepper-help">
             <h4>Need Assistance?</h4>
             <p>Select any available crawled keyword to automatically fill out the recommended industry assumptions.</p>
-            <a href="https://maarif88.github.io/ypym-company/index.html" target="_blank" rel="noopener noreferrer" className="btn btn-light btn-sm" style={{ width: '100%', justifyContent: 'center', background: '#ffffff', borderColor: '#EAF0FA' }}>Read Documentation</a>
+            <a href="https://hub.ypym.app/" target="_blank" rel="noopener noreferrer" className="btn btn-light btn-sm" style={{ width: '100%', justifyContent: 'center', background: '#ffffff', borderColor: '#EAF0FA' }}>Read Documentation</a>
           </div>
         </div>
 

@@ -3,7 +3,7 @@
 > **Function (EN)**: Central documentation hub linking all project files for the YPYM Appraisal ecosystem (web + mobile app).
 > **Fungsi (ID)**: Hub dokumentasi utama yang menghubungkan semua file proyek ekosistem YPYM Appraisal (web + mobile app).
 > 
-> **Created**: 2026-07-14 | **Last Modified**: 2026-07-14T00:00:00+07:00
+> **Created**: 2026-07-14 | **Last Modified**: 2026-07-15T08:50:00+07:00 (Header updates & Contact popup adjustments)
 
 ---
 
@@ -120,6 +120,8 @@ Backend berjalan di port `3100`. Semua endpoint di-prefix dengan `/api/v1/`.
 |--------|----------|-----------|
 | `POST` | `/api/v1/projects` | Create project (seed keyword + params) |
 | `GET` | `/api/v1/projects` | List all projects |
+| `GET` | `/api/v1/projects/sectors` | Get aggregate sector metrics (app specific) |
+| `GET` | `/api/v1/projects/summary` | Get global aggregate summary stats and weekly calendar |
 | `GET` | `/api/v1/projects/:id` | Get project detail |
 | `DELETE` | `/api/v1/projects/:id` | Delete project |
 | `POST` | `/api/v1/projects/:id/analyze` | Trigger full pipeline |

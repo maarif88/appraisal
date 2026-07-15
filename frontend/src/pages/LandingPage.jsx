@@ -629,7 +629,7 @@ export default function LandingPage() {
         tags: ["Better-SQLite3", "Cost Ledger", "Local Cache"],
         status: "3 cost leaks resolved",
         actionText: "Read documentation",
-        actionUrl: "https://maarif88.github.io/ypym-company/index.html"
+        actionUrl: "https://hub.ypym.app/"
       },
       right: {
         title: "Margin Protection Shield",

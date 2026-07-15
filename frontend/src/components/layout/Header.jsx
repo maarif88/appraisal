@@ -400,7 +400,7 @@ export default function Header() {
               <div className="drawer-inner">
                 <div className="drawer-left">
                   <h2>Martech infrastructure supporting organic growth.</h2>
-                  <a href="https://maarif88.github.io/ypym-company/index.html" className="drawer-btn">@github</a>
+                  <a href="https://hub.ypym.app/platform/query-mapping" className="drawer-btn">Product & Research</a>
                 </div>
                 <div className="drawer-right">
                   <div className="martech-grid">

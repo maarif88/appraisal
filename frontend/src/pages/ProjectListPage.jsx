@@ -309,7 +309,7 @@ export default function ProjectListPage() {
           <Link to="/query-planner/new" className="search-tag-chip" style={{ textDecoration: 'none' }}>
             <span style={{ color: '#FF5E3A' }}>⊕</span> Generate projection
           </Link>
-          <a href="https://maarif88.github.io/ypym-company/index.html" target="_blank" rel="noopener noreferrer" className="search-tag-chip" style={{ textDecoration: 'none' }}>
+          <a href="https://hub.ypym.app/" target="_blank" rel="noopener noreferrer" className="search-tag-chip" style={{ textDecoration: 'none' }}>
             <span>📖</span> Read documentation
           </a>
           <div className="search-tag-chip" style={{ cursor: 'pointer' }} onClick={() => fetchProjects()}>

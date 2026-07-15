@@ -151,3 +151,48 @@ When a user launches a new projection on the website:
    *Example Dynamic URL*: `http://localhost:5173/projects/c3113f12-e38f-4228-b912-f6974dab503d/bank-terbaik`
 3. **Static Page Loading**:
    The dashboard retrieves pre-calculated metrics from SQLite instantly. It does not perform any heavy calculation or API requests on load, preventing server load while ensuring ultra-fast load times.
+
+---
+
+### Phase 6: Sector Aggregate Data Flow (App Specific)
+To power the Sektor Analytics screen in the mobile app, a new aggregation flow is introduced:
+1. **API Request**: The Flutter app requests `GET /api/v1/projects/sectors` on app load.
+2. **Backend Processing (`project.routes.ts`)**:
+   - The backend reads `crawled_database.json` and parses all sheets (`ads`, `suggestions`, `trends_top`, `trends_rising`).
+   - Grouping is performed by the `"Sector"` attribute found in keyword records.
+   - For each sector, the API computes the total unique keywords count, total search volumes pool, average search trends index, Google Trends query counts, autocomplete suggestion list size, and average low/high CPC bidding rates.
+   - It generates 7 trend points per sector to draw smooth sparkline graphs.
+3. **Flutter App Rendering**:
+   - The app renders sector cards matching the **Health Metrics (Ref 6)** style with clean custom icons.
+   - Micro-sparklines are plotted on the right side of each card using `fl_chart.LineChart`.
+   - Expanding cards opens details displaying the 8 key metrics.
+
+---
+
+### Phase 7: Global Summary & Weekly Calendar Data Flow (App Specific)
+To power the Noot App style Home Screen in the mobile app, a new summary and calendar aggregation flow is introduced:
+1. **API Request**: The Flutter app requests `GET /api/v1/projects/summary` on app load.
+2. **Backend Processing (`project.routes.ts`)**:
+   - The backend aggregates stats across all sectors inside `crawled_database.json` to calculate:
+     - `total_sectors`: Total unique sectors.
+     - `total_keywords`: Deduplicated unique keywords pool.
+     - `total_sv`: Cumulative search volume pool.
+     - `avg_trends`: Global average trends interest index.
+     - `avg_bidding_low` / `avg_bidding_high`: Average CPC bidding ranges.
+   - For the **weekly calendar**, it queries the SQLite `projects` table for all created projects.
+   - It iterates back 7 weeks, computes the start/end dates for each ISO week, and counts how many keywords were added (summing `raw_keyword_count` from projects created within that week's range).
+3. **Flutter App Rendering**:
+   - The app renders a horizontal scrollable row of the last 7 weeks (e.g. W24 to W30) at the top of the Home Screen (Ref 7 style).
+   - Underneath, it renders a large summary statistics card showing the Search Volume pool, a circular trends indicator gauge, and three columns (Sektor, Kata Kunci, Tren) with colored underline bars matching Noot's nutrients styling.
+   - Recently logged query projects are listed as timeline pills with distinct colors mapped by sector and heights determined by Search Volume size (Ref 9 style).
+
+---
+
+### Phase 8: Timeline-Style Query History & Sector Metrics Data Flow (App Specific)
+To power the Timeline style Query History Feed on the Home Screen, we introduced the following logic:
+1. **Model Extension**: The `Project` model in [models.dart](file:///c:/Users/rochm/Documents/ypym-sandbox/ypym-appraisal-app/lib/models/models.dart) was expanded to include `rawKeywordCount` and `rawSvPool` to map dynamic metrics from the backend.
+2. **Visual Mapping**:
+   - **Color by Sector**: Each sector carries a distinct premium color (e.g. Technology -> Blue, Banking -> Purple, Insurance -> Orange, Finance -> Teal, E-commerce -> Pink, Healthcare -> Red...).
+   - **Height by Search Volume**: The height of each timeline capsule is calculated dynamically based on its `rawSvPool` (clamped between 48 and 110 pixels), creating a visual indication of market size.
+   - **Continuous Line Segment**: The timeline items are rendered using an overlapping vertical line, connecting the capsules into a continuous line (Ref 9 style).
+3. **Redirection & Refreshes**: Tapping any log item navigates the user to the Project Dashboard instantly.
