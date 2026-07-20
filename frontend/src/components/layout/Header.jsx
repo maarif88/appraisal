@@ -202,7 +202,7 @@ export default function Header() {
                       {activeSolDesc === 'sol-desc-bisnis' && (
                         <div className="sol-desc-item active">
                           <h3 className="sol-desc-title">Business Solutions, Enterprise SEO</h3>
-                          <p className="sol-desc-text">Business-oriented SEO services designed specifically to boost brand authority, dominate high-value industry keywords, and convert organic traffic into net profit. This solution focuses on measurable, long-term business ROI.</p>
+                          <p className="sol-desc-text">Business-oriented SEO services designed specifically to boost brand authority, capture high-value industry keywords, and convert organic traffic into net profit. This solution focuses on measurable, long-term business ROI.</p>
                         </div>
                       )}
                       {activeSolDesc === 'sol-desc-teknis' && (
@@ -220,7 +220,7 @@ export default function Header() {
                       {activeSolDesc === 'sol-desc-venture' && (
                         <div className="sol-desc-item active">
                           <h3 className="sol-desc-title">Venture Studio</h3>
-                          <p className="sol-desc-text">Strategic partnership to design, build, and accelerate new digital platforms from scratch. We integrate innovative products, top-tier technology teams, and advanced organic growth strategies to dominate new markets.</p>
+                          <p className="sol-desc-text">Strategic partnership to design, build, and accelerate new digital platforms from scratch. We integrate innovative products, top-tier technology teams, and advanced organic growth strategies to lead new markets.</p>
                         </div>
                       )}
                     </div>
@@ -362,7 +362,7 @@ export default function Header() {
                       <div className="rotator-item-grid">
                         <div className="rotator-item-left">
                           <h3 className="rotator-term-title"><span className="rotator-term">Local SEO</span> (Local Search Engine Optimization)</h3>
-                          <p className="rotator-info-text">Optimizing geographic presence, digital maps, and local directories to dominate map packs and localized proximity-based search queries.</p>
+                          <p className="rotator-info-text">Optimizing geographic presence, digital maps, and local directories to command map packs and localized proximity-based search queries.</p>
                         </div>
                         <div className="rotator-item-right">
                           <span className="platform-list-title">Target Platforms</span>

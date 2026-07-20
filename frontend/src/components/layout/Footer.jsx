@@ -75,10 +75,10 @@ export default function Footer() {
         </div>
       </section>
 
-      {/* ─── LENS ON DOMINANCE STRIP ─── */}
+      {/* ─── BUILT ON COMPOSURE STRIP ─── */}
       <section className="lens-strip">
         <div className="container">
-          <p className="lens-text">LENS ON DOMINANCE</p>
+          <p className="lens-text">BUILT ON COMPOSURE.</p>
         </div>
       </section>
 
