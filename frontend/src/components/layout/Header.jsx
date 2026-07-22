@@ -461,7 +461,7 @@ export default function Header() {
                     <a href="https://ypym.app/investment/bill-of-quantity" className="drawer-link-item">Bill of Quantity (BoQ)<span className="menu-dot"></span></a>
                     <a href="https://ypym.app/investment/get-quote" className="drawer-link-item">Get a Quote<span className="menu-dot"></span></a>
                     <a href="https://ypym.app/company/acceptable-use-policy" className="drawer-link-item">Acceptable Use Policy</a>
-                    <a href="https://ypym.app/company/press-release" className="drawer-link-item">Press Release</a>
+                    <a href="https://ypym.app/company/press" className="drawer-link-item">Press Release</a>
                   </div>
                 </div>
               </div>
@@ -653,7 +653,7 @@ export default function Header() {
                   <a href="https://ypym.app/investment/bill-of-quantity">Bill of Quantity (BoQ)<span className="menu-dot"></span></a>
                   <a href="https://ypym.app/investment/get-quote">Get a Quote<span className="menu-dot"></span></a>
                   <a href="https://ypym.app/company/acceptable-use-policy">Acceptable Use Policy</a>
-                  <a href="https://ypym.app/company/press-release">Press Release</a>
+                  <a href="https://ypym.app/company/press">Press Release</a>
                   <a href="https://ypym.app/company" className="see-overview-pill">Company</a>
                 </div>
               </div>

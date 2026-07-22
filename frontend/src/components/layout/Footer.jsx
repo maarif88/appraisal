@@ -152,7 +152,7 @@ export default function Footer() {
                 <li><a href="https://ypym.app/investment/get-quote" target="_blank" rel="noopener noreferrer">Get a Quote</a></li>
                 <li><a href="https://ypym.app/company/contact-us" target="_blank" rel="noopener noreferrer">Contact Us</a></li>
                 <li><a href="https://ypym.app/company/acceptable-use-policy" target="_blank" rel="noopener noreferrer">Acceptable Use Policy</a></li>
-                <li><a href="https://ypym.app/company/press-release" target="_blank" rel="noopener noreferrer">Press Release</a></li>
+                <li><a href="https://ypym.app/company/press" target="_blank" rel="noopener noreferrer">Press Release</a></li>
               </ul>
             </div>
           </div>
