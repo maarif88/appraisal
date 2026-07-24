@@ -2,7 +2,7 @@
 
 ## Phase 1A: Backend Foundation + DB
 - [x] Create project folder structure
-- [x] Initialize backend (package.json, tsconfig, Express server)
+- [x] Initialize backend (../../ypym-company/package.json, tsconfig, Express server)
 - [x] Setup database config + migrations
 - [x] SQLite integration (simple, robust database instead of PostgreSQL/Redis)
 - [x] Environment variable config (.env.example)

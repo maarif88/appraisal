@@ -124,7 +124,7 @@ ypym-appraisal/
 │   │       ├── stemmer.ts            # ID/EN stemming
 │   │       └── validators.ts
 │   ├── migrations/                   # Database migrations
-│   ├── package.json
+│   ├── ../../ypym-company/package.json
 │   ├── tsconfig.json
 │   └── .env.example
 │
@@ -166,7 +166,7 @@ ypym-appraisal/
 │   │       └── formatters.js
 │   ├── public/
 │   │   └── favicon.ico
-│   ├── package.json
+│   ├── ../../ypym-company/package.json
 │   └── vite.config.js
 │
 ├── SKILL.md                          # Project skill file
@@ -186,7 +186,7 @@ Kita akan build dalam tahapan iteratif sesuai spec bagian 9 (Rencana Build Berta
 
 ### Component 1: Backend Foundation
 
-#### [NEW] `backend/package.json`
+#### [NEW] `backend/../../ypym-company/package.json`
 Dependencies: `express`, `typescript`, `pg` (PostgreSQL driver), `bullmq` (job queue), `ioredis`, `cors`, `helmet`, `dotenv`, `zod` (validation), `axios` (HTTP client).
 
 #### [NEW] `backend/src/server.ts`

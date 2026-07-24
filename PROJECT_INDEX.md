@@ -68,8 +68,8 @@ ypym-sandbox/
 ### 🎨 Design & Ecosystem
 | File | Deskripsi |
 |------|-----------|
-| 🎨 [YPYM_DESIGN_SYSTEM.md](file:///C:/Users/rochm/Documents/ypym-sandbox/ypym-company/frontend/YPYM_DESIGN_SYSTEM.md) | YPYM visual design system (colors, typography, buttons, callouts) |
-| 🚀 [YPYM_APP_STAGING.md](file:///C:/Users/rochm/Documents/ypym-sandbox/ypym-company/YPYM_APP_STAGING.md) | Panduan staging & deployment seluruh ekosistem YPYM |
+| 🎨 [YPYM_DESIGN_SYSTEM.md](file:///c:/Users/rochm/Documents/ypym-sandbox/docs/ypym-company/design-system.md) | YPYM visual design system (colors, typography, buttons, callouts) |
+| 🚀 [YPYM_APP_STAGING.md](file:///c:/Users/rochm/Documents/ypym-sandbox/docs/app-staging-setup.md) | Panduan staging & deployment seluruh ekosistem YPYM |
 
 ---
 
