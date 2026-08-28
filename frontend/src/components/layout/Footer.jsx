@@ -127,8 +127,9 @@ export default function Footer() {
             <div className="footer-col">
               <p className="footer-col-title">Products</p>
               <ul>
-                <li><a href="https://query-mapping.ypym.app" target="_blank" rel="noopener noreferrer">Query Mapping</a></li>
+                <li><a href="https://ypym.app/radius" target="_blank" rel="noopener noreferrer">Radius (API)</a></li>
                 <li><a href="https://web-sitemap.ypym.app" target="_blank" rel="noopener noreferrer">Web Sitemap</a></li>
+                <li><a href="https://query-mapping.ypym.app" target="_blank" rel="noopener noreferrer">Query Mapping</a></li>
                 <li><a href="https://flow.ypym.app" target="_blank" rel="noopener noreferrer">Flow</a></li>
               </ul>
             </div>
@@ -139,6 +140,7 @@ export default function Footer() {
               <ul>
                 <li><a href="https://ypym.app/article" target="_blank" rel="noopener noreferrer">Articles</a></li>
                 <li><a href="https://ypym.app/sector" target="_blank" rel="noopener noreferrer">Sector Intelligence</a></li>
+                <li><a href="https://ypym.app/decision-intelligence" target="_blank" rel="noopener noreferrer">Decision Intelligence</a></li>
                 <li><a href="https://ypym.app/indonesia/exporter" target="_blank" rel="noopener noreferrer">Indonesia Exporter Directory</a></li>
               </ul>
             </div>

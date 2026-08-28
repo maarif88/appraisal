@@ -249,6 +249,20 @@
   padding-left: 4px;
 }
 
+.drawer-divider {
+  height: 1px;
+  background: var(--color-border-light, rgba(0, 0, 0, 0.08));
+  margin: 4px 0;
+  width: 100%;
+}
+
+.accordion-divider {
+  height: 1px;
+  background: var(--color-border-light, rgba(0, 0, 0, 0.08));
+  margin: 8px 0;
+  width: 100%;
+}
+
 /* --- ROTATOR --- */
 .drawer-highlight-section {
   border-top: 1px solid var(--color-border-light);

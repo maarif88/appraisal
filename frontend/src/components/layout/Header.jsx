@@ -400,26 +400,24 @@ export default function Header() {
               <div className="drawer-inner">
                 <div className="drawer-left">
                   <h2>Martech infrastructure supporting organic growth.</h2>
-                  <a href="https://hub.ypym.app/platform/query-mapping" className="drawer-btn">Product & Research</a>
+                  <a href="https://hub.ypym.app/platform/query-mapping" className="drawer-btn">Product &amp; Research</a>
                 </div>
                 <div className="drawer-right">
                   <div className="martech-grid">
                     <div className="drawer-link-list">
-                      <a href="https://flow.ypym.app" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-flow')}>YPYM Flow</a>
-                      <a href="https://query-mapping.ypym.app" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-query')}>Query Mapping</a>
+                      <a href="https://ypym.app/radius" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-radius')}>Radius (API)</a>
                       <a href="https://web-sitemap.ypym.app" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-sitemap')}>Web Sitemap</a>
+                      <a href="https://query-mapping.ypym.app" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-query')}>Query Mapping</a>
+                      <a href="https://flow.ypym.app" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-flow')}>Flow</a>
+                      <div className="drawer-divider"></div>
+                      <a href="https://ypym.app/stack-management" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-managed')}>Managed Services <span style={{ fontSize: '11px', opacity: 0.65, fontWeight: 'normal' }}>(for Organic Marketing Infra)</span></a>
+                      <a href="https://ypym.app/stack-management/integrations" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-integrations')}>Integrate with us</a>
                     </div>
                     <div className="mar-details-col">
-                      {activeMarDesc === 'mar-desc-flow' && (
+                      {activeMarDesc === 'mar-desc-radius' && (
                         <div className="mar-desc-item active">
-                          <h3 className="mar-desc-title">YPYM Flow</h3>
-                          <p className="mar-desc-text">Unified marketing automation workflow platform to design, test, and launch massive B2B campaigns. Equipped with predictive analytics and real-time data integration.</p>
-                        </div>
-                      )}
-                      {activeMarDesc === 'mar-desc-query' && (
-                        <div className="mar-desc-item active">
-                          <h3 className="mar-desc-title">Query Mapping</h3>
-                          <p className="mar-desc-text">Advanced analytics tool to map user search intent with your site's information architecture. Automatically discovers keyword gaps and recommends internal linking structures.</p>
+                          <h3 className="mar-desc-title">Radius (API)</h3>
+                          <p className="mar-desc-text">Autonomous organic search visibility engine and enterprise MarTech intelligence API.</p>
                         </div>
                       )}
                       {activeMarDesc === 'mar-desc-sitemap' && (
@@ -428,7 +426,30 @@ export default function Header() {
                           <p className="mar-desc-text">Smart sitemap generator that manages crawl priority and indexing of large-scale dynamic web pages. Guarantees search engines crawl your latest pages instantly.</p>
                         </div>
                       )}
-
+                      {activeMarDesc === 'mar-desc-query' && (
+                        <div className="mar-desc-item active">
+                          <h3 className="mar-desc-title">Query Mapping</h3>
+                          <p className="mar-desc-text">Advanced analytics tool to map user search intent with your site's information architecture. Automatically discovers keyword gaps and recommends internal linking structures.</p>
+                        </div>
+                      )}
+                      {activeMarDesc === 'mar-desc-flow' && (
+                        <div className="mar-desc-item active">
+                          <h3 className="mar-desc-title">Flow</h3>
+                          <p className="mar-desc-text">Unified marketing automation workflow platform to design, test, and launch massive B2B campaigns. Equipped with predictive analytics and real-time data integration.</p>
+                        </div>
+                      )}
+                      {activeMarDesc === 'mar-desc-managed' && (
+                        <div className="mar-desc-item active">
+                          <h3 className="mar-desc-title">Managed Services</h3>
+                          <p className="mar-desc-text">Dedicated managed operations and technical governance for enterprise organic search & AI discovery infrastructure.</p>
+                        </div>
+                      )}
+                      {activeMarDesc === 'mar-desc-integrations' && (
+                        <div className="mar-desc-item active">
+                          <h3 className="mar-desc-title">Integrate with us</h3>
+                          <p className="mar-desc-text">Connect your CMS, custom stack, and internal data pipelines directly with YPYM martech infrastructure.</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -461,7 +482,7 @@ export default function Header() {
                     <a href="https://ypym.app/investment/bill-of-quantity" className="drawer-link-item">Bill of Quantity (BoQ)<span className="menu-dot"></span></a>
                     <a href="https://ypym.app/investment/get-quote" className="drawer-link-item">Get a Quote<span className="menu-dot"></span></a>
                     <a href="https://ypym.app/company/acceptable-use-policy" className="drawer-link-item">Acceptable Use Policy</a>
-                    <a href="https://ypym.app/company/press" className="drawer-link-item">Press Release</a>
+                    <a href="https://ypym.app/company/press" className="drawer-link-item">Press Release<span className="menu-dot"></span></a>
                   </div>
                 </div>
               </div>
@@ -494,6 +515,10 @@ export default function Header() {
                     <a href="https://ypym.app/sector/technology-services" className="drawer-link-item">Technology Services</a>
                     <a href="https://ypym.app/sector/process-industries" className="drawer-link-item">Process Industries</a>
                     <a href="https://ypym.app/sector/communications" className="drawer-link-item">Communications</a>
+                    <a href="https://ypym.app/sector/health-services" className="drawer-link-item">Health Services</a>
+                    <a href="https://ypym.app/sector/utilities" className="drawer-link-item">Utilities</a>
+                    <a href="https://ypym.app/sector/transportation" className="drawer-link-item">Transportation</a>
+                    <a href="https://ypym.app/sector/retail-trade" className="drawer-link-item">Retail Trade</a>
                   </div>
                 </div>
               </div>
@@ -630,9 +655,13 @@ export default function Header() {
               </button>
               <div className="accordion-content" style={{ maxHeight: mobileExpandedItem === 'martech' ? '500px' : '0', transition: 'max-height 0.3s ease', overflow: 'hidden' }}>
                 <div className="accordion-links">
-                  <a href="https://flow.ypym.app">YPYM Flow</a>
-                  <a href="https://query-mapping.ypym.app">Query Mapping</a>
+                  <a href="https://ypym.app/radius">Radius (API)</a>
                   <a href="https://web-sitemap.ypym.app">Web Sitemap</a>
+                  <a href="https://query-mapping.ypym.app">Query Mapping</a>
+                  <a href="https://flow.ypym.app">Flow</a>
+                  <div className="accordion-divider"></div>
+                  <a href="https://ypym.app/stack-management">Managed Services</a>
+                  <a href="https://ypym.app/stack-management/integrations">Integrate with us</a>
                 </div>
               </div>
             </div>
