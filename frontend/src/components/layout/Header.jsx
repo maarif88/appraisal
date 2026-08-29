@@ -184,7 +184,7 @@ export default function Header() {
             <div className={`dropdown-drawer ${activeDropdown === 'solusi' ? 'is-open' : ''}`} onMouseEnter={() => setActiveDropdown('solusi')}>
               <div className="drawer-inner">
                 <div className="drawer-left">
-                  <h2>Adaptive SEO, ASO, AEO, and GEO systems for various industries.</h2>
+                  <h2>Search solutions designed to adapt and scale with your market.</h2>
                   <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                     <a href="https://ypym.app/solutions" className="drawer-btn">View Services</a>
                     <a href="https://appraisal.ypym.app/" className="drawer-btn primary">Start Appraisal</a>
@@ -385,13 +385,13 @@ export default function Header() {
             </div>
           </div>
 
-           {/* Dropdown: Martech Platform */}
+           {/* Dropdown: Software & APIs */}
           <div 
             className={`nav-item-dropdown ${activeDropdown === 'martech' ? 'is-open' : ''}`}
             onMouseLeave={() => setActiveDropdown(null)}
           >
             <button className="nav-btn" onMouseEnter={() => setActiveDropdown('martech')} onClick={() => toggleDropdown('martech')}>
-              Martech Platform
+              Software & APIs
               <svg className="chevron" width="10" height="10" viewBox="0 0 10 10" fill="none">
                 <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
@@ -399,7 +399,7 @@ export default function Header() {
             <div className={`dropdown-drawer ${activeDropdown === 'martech' ? 'is-open' : ''}`} onMouseEnter={() => setActiveDropdown('martech')}>
               <div className="drawer-inner">
                 <div className="drawer-left">
-                  <h2>Martech infrastructure supporting organic growth.</h2>
+                  <h2>Software and API infrastructure supporting organic growth.</h2>
                   <a href="https://hub.ypym.app/platform/query-mapping" className="drawer-btn">Product &amp; Research</a>
                 </div>
                 <div className="drawer-right">
@@ -645,10 +645,10 @@ export default function Header() {
               </div>
             </div>
 
-            {/* Accordion: Martech Platform */}
+            {/* Accordion: Software & APIs */}
             <div className={`accordion-item ${mobileExpandedItem === 'martech' ? 'is-expanded' : ''}`}>
               <button className="accordion-trigger" onClick={() => toggleMobileAccordion('martech')}>
-                Martech Platform
+                Software & APIs
                 <svg className="chevron" width="12" height="12" viewBox="0 0 10 10" fill="none">
                   <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
