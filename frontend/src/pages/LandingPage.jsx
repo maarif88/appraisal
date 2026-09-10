@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { listProjects } from '../utils/api.js';
-import StatusBadge from '../components/shared/StatusBadge.jsx';
 
 const keywordsPool = [
   { id: 1, text: 'jasa seo jakarta', sv: '1.2k', intent: 'Transactional', initial: 'JS', time: '1hr ago' },
@@ -860,7 +859,6 @@ export default function LandingPage() {
                         </div>
                       </div>
                     )}
-                    <StatusBadge status={p.status} />
                     <Link to={projectUrl} className="btn btn-ghost btn-sm">
                       View Dashboard
                     </Link>
