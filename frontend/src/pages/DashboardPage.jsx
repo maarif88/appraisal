@@ -398,7 +398,7 @@ export default function DashboardPage() {
               color: 'var(--text-note)',
               fontFamily: 'var(--font-mono)'
             }}>
-              Seed Keyword: <span style={{ fontWeight: 600, color: 'var(--ypym-blue)' }}>"{project.seed_keyword}"</span>
+              Seed Keyword: <span style={{ fontWeight: 600, color: 'var(--ypym-black)' }}>"{project.seed_keyword}"</span>
             </p>
             <div className="callout callout-information" style={{ width: '100%' }}>
               <span className="callout-title">Please Wait</span>
@@ -1222,7 +1222,7 @@ export default function DashboardPage() {
                     {/* Mini Card 1: Total SV */}
                     <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '8px', display: 'flex', flexDirection: 'column', gap: '2px', textAlign: 'left' }}>
                       <span style={{ fontSize: '9px', color: 'var(--text-note)', textTransform: 'uppercase', fontWeight: 600 }}>Total SV Pool</span>
-                      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--ypym-blue)' }}>{formatNumber(totalSv)} / mo</span>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--ypym-black)' }}>{formatNumber(totalSv)} / mo</span>
                     </div>
                     
                     {/* Mini Card 2: Avg Competition */}
@@ -1760,7 +1760,7 @@ export default function DashboardPage() {
           <h3 style={{ fontSize: '18px', fontWeight: 600, margin: 0, color: 'var(--ypym-black)' }}>
             Keyword Ideas & Value Metrics Breakdown
           </h3>
-          <span style={{ padding: '4px 10px', background: 'rgba(0,102,204,0.06)', border: '1px solid rgba(0,102,204,0.12)', borderRadius: '4px', fontSize: '12px', fontWeight: 600, color: 'var(--ypym-blue)' }}>
+          <span style={{ padding: '4px 10px', background: 'rgba(11, 15, 65, 0.05)', border: '1px solid rgba(11, 15, 65, 0.10)', borderRadius: '4px', fontSize: '12px', fontWeight: 600, color: 'var(--ypym-black)' }}>
             Sector: {project.sector || 'General'}
           </span>
         </div>
@@ -1925,7 +1925,7 @@ export default function DashboardPage() {
                 <td className="text-right font-mono" style={{ padding: '10px 16px', verticalAlign: 'middle', color: '#3c4043' }}>
                   {kw.difficulty_score}
                 </td>
-                <td className="text-right font-mono" style={{ padding: '10px 16px', verticalAlign: 'middle', color: 'var(--ypym-blue)', fontWeight: 600 }}>
+                <td className="text-right font-mono" style={{ padding: '10px 16px', verticalAlign: 'middle', color: 'var(--ypym-black)', fontWeight: 600 }}>
                   {kw.capture_rate_effective}%
                 </td>
               </tr>

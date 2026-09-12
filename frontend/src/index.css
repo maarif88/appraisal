@@ -8,11 +8,12 @@
 
 :root {
   /* Brand Colors */
-  --ypym-blue:     #1A4BFF;
-  --ypym-lime:     #DAFF01;
-  --ypym-white:    #FBFBFB;
-  --ypym-cyan:     #30FFFC;
-  --ypym-black:    #0B0F41;
+  --ypym-blue:      #1A4BFF;
+  --ypym-dark-blue: #0B0F41;
+  --ypym-lime:      #DAFF01;
+  --ypym-white:     #FBFBFB;
+  --ypym-cyan:      #30FFFC;
+  --ypym-black:     #0B0F41;
 
   /* Text Colors */
   --text-heading:  #03011e;
@@ -256,22 +257,30 @@ p {
   white-space: nowrap;
 }
 .btn-solid {
-  background: var(--ypym-blue);
+  background: var(--ypym-black);
   color: #ffffff;
 }
 .btn-solid:hover {
-  background: #1239CC;
+  background: #131835;
   color: #ffffff;
 }
 .btn-ghost {
   background: transparent;
-  color: var(--ypym-blue);
-  border: 1px solid rgba(26,75,255,0.30);
+  color: var(--ypym-black);
+  border: 1px solid rgba(11, 15, 65, 0.18);
 }
 .btn-ghost:hover {
-  background: rgba(26,75,255,0.05);
-  border-color: var(--ypym-blue);
-  color: var(--ypym-blue);
+  background: rgba(11, 15, 65, 0.04);
+  border-color: var(--ypym-black);
+  color: var(--ypym-black);
+}
+.btn-blue {
+  background: var(--ypym-blue);
+  color: #ffffff;
+}
+.btn-blue:hover {
+  background: #1239CC;
+  color: #ffffff;
 }
 .btn-light {
   background: #ffffff;

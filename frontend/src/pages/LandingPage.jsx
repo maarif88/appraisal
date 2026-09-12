@@ -123,14 +123,14 @@ function HeroSliderWidget() {
 function CardItem({ slot }) {
   const { keyword, isBlue, staticRot } = slot;
   
-  const bg = isBlue ? 'var(--ypym-blue)' : '#ffffff';
+  const bg = isBlue ? 'var(--ypym-black)' : '#ffffff';
   const textColor = isBlue ? '#ffffff' : 'var(--ypym-black)';
   const subColor = isBlue ? 'rgba(255, 255, 255, 0.7)' : 'var(--text-note)';
   const timeColor = isBlue ? 'rgba(255, 255, 255, 0.6)' : '#8F90A6';
-  const border = isBlue ? '1px solid var(--ypym-blue)' : '1px solid #EAF0FA';
-  const shadow = isBlue ? '0 8px 24px rgba(26, 75, 255, 0.25)' : '0 8px 20px rgba(11,15,65,0.02)';
-  const avatarBg = isBlue ? 'rgba(255, 255, 255, 0.15)' : '#F0F4FF';
-  const avatarColor = isBlue ? '#ffffff' : 'var(--ypym-blue)';
+  const border = isBlue ? '1px solid var(--ypym-black)' : '1px solid #EAF0FA';
+  const shadow = isBlue ? '0 8px 24px rgba(11, 15, 65, 0.20)' : '0 8px 20px rgba(11,15,65,0.02)';
+  const avatarBg = isBlue ? 'rgba(255, 255, 255, 0.15)' : 'rgba(11, 15, 65, 0.05)';
+  const avatarColor = isBlue ? '#ffffff' : 'var(--ypym-black)';
 
   return (
     <div
@@ -310,8 +310,8 @@ function ChatSimulator() {
           if (msg.sender === 'narrator') {
             return (
               <div key={i} style={{
-                background: 'rgba(26, 75, 255, 0.05)',
-                borderLeft: '4px solid var(--ypym-blue)',
+                background: 'rgba(11, 15, 65, 0.04)',
+                borderLeft: '4px solid var(--ypym-black)',
                 padding: '12px 16px',
                 borderRadius: '8px',
                 fontSize: '13px',
@@ -364,13 +364,13 @@ function ChatSimulator() {
               style={{
                 borderRadius: '99px',
                 padding: '8px 20px',
-                background: 'var(--ypym-blue)',
+                background: 'var(--ypym-black)',
                 color: '#ffffff',
                 fontWeight: 600,
                 fontSize: '12px',
                 border: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(26, 75, 255, 0.2)',
+                boxShadow: '0 4px 12px rgba(11, 15, 65, 0.2)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px'
@@ -430,7 +430,7 @@ function PhoneScreen1() {
           </div>
           <div style={{ background: '#F8F9FC', border: '1px solid #EAF0FA', borderRadius: '12px', padding: '10px 12px' }}>
             <span style={{ fontSize: '10px', color: 'var(--text-note)', display: 'block' }}>Net Profit</span>
-            <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ypym-blue)', marginTop: '2px', display: 'block' }}>$221.1k</span>
+            <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ypym-black)', marginTop: '2px', display: 'block' }}>$221.1k</span>
           </div>
         </div>
 
@@ -438,7 +438,7 @@ function PhoneScreen1() {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ypym-black)' }}>Audit Engine</span>
-            <span style={{ fontSize: '10px', color: 'var(--ypym-blue)', fontWeight: 600 }}>v1.2.0</span>
+            <span style={{ fontSize: '10px', color: 'var(--text-note)', fontWeight: 600 }}>v1.2.0</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {[
@@ -707,7 +707,7 @@ export default function LandingPage() {
               letterSpacing: '-0.02em',
               marginBottom: '1.5rem'
             }}>
-              Fuelling growth <span style={{ color: '#FF5E3A', fontFamily: 'sans-serif' }}>↗</span><br />
+              Fuelling growth<br />
               with every keyword
             </h1>
 
@@ -721,7 +721,7 @@ export default function LandingPage() {
               From keyword trends to cost analysis, we calculate SEO projections and organic ROI on autopilot.
             </p>
 
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', marginBottom: '3rem' }}>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
               <Link to="/query-planner/new" className="btn btn-solid" style={{
                 background: 'var(--ypym-black)',
                 color: '#ffffff',
@@ -738,65 +738,6 @@ export default function LandingPage() {
               onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
                 Start projection now
               </Link>
-              <a href="#how-it-works-ref" onClick={(e) => {
-                e.preventDefault();
-                document.getElementById('how-it-works-ref')?.scrollIntoView({ behavior: 'smooth' });
-              }} style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                color: 'var(--ypym-black)',
-                fontWeight: 600,
-                fontSize: '14px',
-                textDecoration: 'none'
-              }}>
-                <span style={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '50%',
-                  border: '1px solid #E2E8F0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '10px'
-                }}>▷</span>
-                Learn more
-              </a>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <div style={{ display: 'flex', gap: '4px' }}>
-                {[1,2,3,4,5].map(s => (
-                  <span key={s} style={{ color: '#FFB800', fontSize: '18px' }}>★</span>
-                ))}
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                {['RM', 'YM', 'AS', 'LD'].map((initials, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '50%',
-                      background: ['#1A4BFF', '#0B0F41', '#30FFFC', '#DAFF01'][idx],
-                      color: idx === 3 ? 'var(--ypym-black)' : '#ffffff',
-                      border: '2px solid #ffffff',
-                      marginLeft: idx === 0 ? 0 : '-10px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '10px',
-                      fontWeight: 700,
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.08)'
-                    }}
-                  >
-                    {initials}
-                  </div>
-                ))}
-                <span style={{ fontSize: '13px', color: 'var(--text-note)', marginLeft: '12px', fontWeight: 500 }}>
-                  Trusted by 50+ marketing teams
-                </span>
-              </div>
             </div>
           </div>
 
@@ -811,7 +752,7 @@ export default function LandingPage() {
       <section className="section" style={{ padding: '1rem 0 3rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <h2>Recent Projections</h2>
-          <Link to="/query-planner" style={{ fontSize: '14px', fontWeight: 600 }}>View All</Link>
+          <Link to="/query-planner" style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ypym-black)', textDecoration: 'none' }}>View All</Link>
         </div>
 
         {loading ? (
@@ -840,7 +781,7 @@ export default function LandingPage() {
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
                       <h3 style={{ fontSize: '18px', fontWeight: 600, margin: 0 }}>{p.seed_keyword}</h3>
-                      <span style={{ padding: '2px 8px', background: 'rgba(0,102,204,0.06)', border: '1px solid rgba(0,102,204,0.12)', borderRadius: '4px', fontSize: '11px', fontWeight: 600, color: 'var(--ypym-blue)' }}>
+                      <span style={{ padding: '2px 8px', background: 'rgba(11, 15, 65, 0.05)', border: '1px solid rgba(11, 15, 65, 0.10)', borderRadius: '4px', fontSize: '11px', fontWeight: 600, color: 'var(--ypym-black)' }}>
                         {p.sector || 'General'}
                       </span>
                     </div>
@@ -854,7 +795,7 @@ export default function LandingPage() {
                         <span className="font-mono" style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                           Effective SV Pool:
                         </span>
-                        <div className="font-display" style={{ fontWeight: 600, color: 'var(--ypym-blue)', fontSize: '16px' }}>
+                        <div className="font-display" style={{ fontWeight: 600, color: 'var(--ypym-black)', fontSize: '16px' }}>
                           {p.effective_sv_pool.toLocaleString('en-US')} / mo
                         </div>
                       </div>
@@ -873,7 +814,7 @@ export default function LandingPage() {
       {/* Core Mission / Main Idea Section */}
       <section className="section core-mission-section" style={{ padding: '4rem 24px', borderRadius: '24px' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
-          <span className="eyebrow" style={{ color: 'var(--ypym-blue)', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600, fontSize: '12px' }}>
+          <span className="eyebrow" style={{ color: 'var(--ypym-black)', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600, fontSize: '12px' }}>
             Solving the Hardest Questions in SEO
           </span>
           <h2 style={{ fontSize: '32px', fontWeight: 700, marginTop: '0.5rem', marginBottom: '1.5rem', color: 'var(--ypym-black)', letterSpacing: '-0.02em' }}>
@@ -905,7 +846,7 @@ export default function LandingPage() {
                     width: '8px',
                     height: '8px',
                     borderRadius: '50%',
-                    background: activePhoneSlide === i ? 'var(--ypym-blue)' : '#DADCE0',
+                    background: activePhoneSlide === i ? 'var(--ypym-black)' : '#DADCE0',
                     cursor: 'pointer',
                     transition: 'background 0.3s ease'
                   }}
@@ -923,7 +864,7 @@ export default function LandingPage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                color: 'var(--ypym-blue)',
+                color: 'var(--ypym-black)',
                 fontWeight: 600,
                 fontSize: '14px',
                 textDecoration: 'none',
@@ -1067,11 +1008,11 @@ export default function LandingPage() {
               width: '40px',
               height: '40px',
               borderRadius: '8px',
-              background: 'rgba(26,75,255,0.08)',
+              background: 'rgba(11, 15, 65, 0.06)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'var(--ypym-blue)'
+              color: 'var(--ypym-black)'
             }}>
               <span className="font-display" style={{ fontWeight: 700 }}>1</span>
             </div>
@@ -1086,11 +1027,11 @@ export default function LandingPage() {
               width: '40px',
               height: '40px',
               borderRadius: '8px',
-              background: 'rgba(26,75,255,0.08)',
+              background: 'rgba(11, 15, 65, 0.06)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'var(--ypym-blue)'
+              color: 'var(--ypym-black)'
             }}>
               <span className="font-display" style={{ fontWeight: 700 }}>2</span>
             </div>
@@ -1105,11 +1046,11 @@ export default function LandingPage() {
               width: '40px',
               height: '40px',
               borderRadius: '8px',
-              background: 'rgba(26,75,255,0.08)',
+              background: 'rgba(11, 15, 65, 0.06)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'var(--ypym-blue)'
+              color: 'var(--ypym-black)'
             }}>
               <span className="font-display" style={{ fontWeight: 700 }}>3</span>
             </div>
@@ -1253,11 +1194,11 @@ export default function LandingPage() {
                   {tabData[activeTab].left.status}
                 </span>
                 {tabData[activeTab].left.actionUrl ? (
-                  <a href={tabData[activeTab].left.actionUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ypym-blue)', textDecoration: 'underline' }}>
+                  <a href={tabData[activeTab].left.actionUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ypym-black)', textDecoration: 'underline' }}>
                     {tabData[activeTab].left.actionText}
                   </a>
                 ) : (
-                  <a href="#" onClick={(e) => e.preventDefault()} style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ypym-blue)', textDecoration: 'underline' }}>
+                  <a href="#" onClick={(e) => e.preventDefault()} style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ypym-black)', textDecoration: 'underline' }}>
                     {tabData[activeTab].left.actionText}
                   </a>
                 )}

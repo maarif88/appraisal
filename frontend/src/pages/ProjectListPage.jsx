@@ -525,8 +525,8 @@ export default function ProjectListPage() {
                                 <span
                                   style={{
                                     fontSize: '11px',
-                                    background: '#E2E8FF',
-                                    color: 'var(--ypym-blue)',
+                                    background: 'rgba(11, 15, 65, 0.06)',
+                                    color: 'var(--ypym-black)',
                                     padding: '2px 6px',
                                     borderRadius: '99px',
                                     fontWeight: 500,
@@ -538,7 +538,7 @@ export default function ProjectListPage() {
                             </div>
                           </td>
                           <td>
-                            <span style={{ padding: '3px 8px', background: 'rgba(0,102,204,0.06)', border: '1px solid rgba(0,102,204,0.12)', borderRadius: '4px', fontSize: '11px', fontWeight: 600, color: 'var(--ypym-blue)' }}>
+                            <span style={{ padding: '3px 8px', background: 'rgba(11, 15, 65, 0.05)', border: '1px solid rgba(11, 15, 65, 0.10)', borderRadius: '4px', fontSize: '11px', fontWeight: 600, color: 'var(--ypym-black)' }}>
                               {latest.sector || 'General'}
                             </span>
                           </td>
@@ -551,7 +551,7 @@ export default function ProjectListPage() {
                           <td className="text-right font-mono">
                             {latest.status === 'completed' ? formatNumber(latest.raw_sv_pool) : '-'}
                           </td>
-                          <td className="text-right font-mono" style={{ color: 'var(--ypym-blue)', fontWeight: 600 }}>
+                          <td className="text-right font-mono" style={{ color: 'var(--ypym-black)', fontWeight: 600 }}>
                             {latest.status === 'completed' ? formatNumber(latest.effective_sv_pool) : '-'}
                           </td>
                           <td style={{ fontSize: '13px', color: 'var(--text-note)' }}>
@@ -580,7 +580,7 @@ export default function ProjectListPage() {
                                 </div>
                               </td>
                               <td>
-                                <span style={{ opacity: 0.5, padding: '3px 8px', background: 'rgba(0,102,204,0.06)', border: '1px solid rgba(0,102,204,0.12)', borderRadius: '4px', fontSize: '11px', fontWeight: 600, color: 'var(--ypym-blue)' }}>
+                                <span style={{ opacity: 0.7, padding: '3px 8px', background: 'rgba(11, 15, 65, 0.05)', border: '1px solid rgba(11, 15, 65, 0.10)', borderRadius: '4px', fontSize: '11px', fontWeight: 600, color: 'var(--ypym-black)' }}>
                                   {p.sector || 'General'}
                                 </span>
                               </td>
@@ -593,7 +593,7 @@ export default function ProjectListPage() {
                               <td className="text-right font-mono" style={{ opacity: 0.8 }}>
                                 {p.status === 'completed' ? formatNumber(p.raw_sv_pool) : '-'}
                               </td>
-                              <td className="text-right font-mono" style={{ color: 'rgba(26, 75, 255, 0.7)', fontWeight: 600 }}>
+                              <td className="text-right font-mono" style={{ color: 'var(--ypym-black)', fontWeight: 600, opacity: 0.85 }}>
                                 {p.status === 'completed' ? formatNumber(p.effective_sv_pool) : '-'}
                               </td>
                               <td style={{ fontSize: '13px', color: 'var(--text-note)', opacity: 0.8 }}>
@@ -634,10 +634,10 @@ export default function ProjectListPage() {
                 style={{
                   borderRadius: '99px',
                   padding: '12px 28px',
-                  background: 'var(--ypym-blue)',
+                  background: 'var(--ypym-black)',
                   color: '#ffffff',
                   fontWeight: 600,
-                  boxShadow: '0 8px 24px rgba(26, 75, 255, 0.25)',
+                  boxShadow: '0 8px 24px rgba(11, 15, 65, 0.20)',
                   border: 'none',
                   cursor: 'pointer',
                   pointerEvents: 'auto',
@@ -660,8 +660,8 @@ export default function ProjectListPage() {
                   padding: '10px 24px',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  borderColor: 'rgba(26, 75, 255, 0.2)',
-                  color: 'var(--ypym-blue)'
+                  borderColor: 'rgba(11, 15, 65, 0.2)',
+                  color: 'var(--ypym-black)'
                 }}
               >
                 Show Less Keywords

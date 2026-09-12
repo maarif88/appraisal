@@ -130,15 +130,26 @@ export default function Header() {
     setCookieOpen(false);
   };
 
-  // Close menus on outside click
+  // Close menus on outside click or Escape key
   useEffect(() => {
     function handleClickOutside(e) {
       if (langRef.current && !langRef.current.contains(e.target)) {
         setLangOpen(false);
       }
     }
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') {
+        setCookieOpen(false);
+        setLangOpen(false);
+        setActiveDropdown(null);
+      }
+    }
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   // Rotator effect
@@ -605,7 +616,13 @@ export default function Header() {
       </div>
 
       {/* Dimmed Background Overlay */}
-      <div className={`nav-backdrop ${activeDropdown ? 'is-open' : ''}`} onClick={() => setActiveDropdown(null)}></div>
+      <div 
+        className={`nav-backdrop ${(activeDropdown || cookieOpen) ? 'is-open' : ''}`} 
+        onClick={() => {
+          setActiveDropdown(null);
+          setCookieOpen(false);
+        }}
+      ></div>
 
       {/* Mobile Drawer */}
       <div className={`mobile-nav-drawer ${mobileMenuOpen ? 'open' : ''}`}>
@@ -802,57 +819,62 @@ export default function Header() {
         role="dialog" 
         aria-modal="true" 
         aria-labelledby="ck-panel-title"
-        style={{ display: cookieOpen ? 'block' : 'none' }}
+        aria-hidden={!cookieOpen}
       >
         {cookieScreen === 'main' ? (
-          /* SCREEN 1: Privacy Preference Center */
+          /* SCREEN 1: Your Privacy Choices */
           <div id="ck-main" className="ck-screen">
-            <button className="ck-close-btn" id="ck-close" type="button" aria-label="Close" onClick={() => setCookieOpen(false)}>
+            <button className="ck-close-btn" id="ck-close" type="button" aria-label={isId ? 'Tutup' : 'Close'} onClick={() => setCookieOpen(false)}>
               <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
                 <path d="M1 1l9 9M10 1L1 10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
               </svg>
             </button>
 
             <h2 className="ck-heading" id="ck-panel-title">
-              {isId ? 'Pusat Preferensi Privasi' : 'Privacy Preference Center'}
+              {isId ? 'Pilihan Privasi Anda' : 'Your Privacy Choices'}
             </h2>
 
             <p className="ck-body">
               {isId
-                ? 'PT ADI TJANDRA TEKNOLOGI (YPYM) adalah ekosistem marketing technology yang beroperasi pada tiga lini bisnis: layanan organic marketing tingkat lanjut, pengembangan platform martech in-house, dan venture studio. Saat Anda mengakses platform kami, kami dapat menyimpan atau mengambil data di perangkat Anda - termasuk cookie - untuk mengaktifkan fungsi inti, analitik, dan layanan yang dipersonalisasi. Dengan menggunakan platform dan mengirimkan data Anda, Anda mengakui praktik data kami yang mematuhi UU PDP No. 27/2022, PDPA, APPI, PIPA, dan GDPR. Anda mengendalikan data non-esensial yang kami kumpulkan.'
-                : 'PT ADI TJANDRA TEKNOLOGI (YPYM) is a marketing-technology ecosystem operating across three lines of business: advanced organic marketing services, in-house martech platform development, and a venture studio. When you access our platforms, we may store or retrieve data on your device - including cookies - to enable core functionality, analytics, and personalised services. By using our platforms and submitting your data, you acknowledge our data practices in compliance with Indonesia\'s Personal Data Protection Law (UU PDP No. 27/2022), PDPA, APPI, PIPA, and GDPR. You control which non-essential data we collect.'}
+                ? 'Kami menggunakan cookie untuk memastikan situs web YPYM berfungsi optimal, mengingat preferensi Anda, dan mengukur performa secara anonim guna meningkatkan kualitas layanan. Anda dapat menyesuaikan pilihan Anda kapan saja.'
+                : 'We use cookies to ensure YPYM websites function properly, remember your preferences, and anonymously analyze site performance to improve our services. You can customize your choices at any time.'}
             </p>
 
             <div className="ck-primary-actions">
               <button className="btn" id="ck-allow-all" type="button" onClick={() => saveConsent({ necessary: true, performance: true, functional: true, marketing: true })}>
                 {isId ? 'Izinkan Semua' : 'Allow All'}
               </button>
-              <button className="btn btn-secondary" id="ck-decline" type="button" onClick={() => saveConsent({ necessary: true, performance: false, functional: false, marketing: false })}>
-                {isId ? 'Tolak yang tidak diperlukan' : 'Decline unnecessary cookies'}
+              <button className="btn" id="ck-decline" type="button" onClick={() => saveConsent({ necessary: true, performance: false, functional: false, marketing: false })}>
+                {isId ? 'Tolak yang Tidak Perlu' : 'Decline Non-Essential'}
               </button>
             </div>
 
-            <button className="btn btn-outline" id="ck-manage-open" type="button" onClick={() => { setCookieScreen('manage'); setExpandedCat(null); }}>
-              {isId ? 'Kelola Preferensi Cookie' : 'Manage Consent Preferences'}
+            <button className="btn" id="ck-manage-open" type="button" onClick={() => { setCookieScreen('manage'); setExpandedCat(null); }}>
+              {isId ? 'Kelola Preferensi Cookie' : 'Manage Cookie Preferences'}
             </button>
 
             <a href={isId ? 'https://ypym.app/id-id/company/cookie-policy' : 'https://ypym.app/company/cookie-policy'} target="_blank" rel="noopener noreferrer" className="ck-learn-link">
-              {isId ? 'Pelajari Lebih Lanjut' : 'Learn More'}
+              {isId ? 'Pelajari Kebijakan Cookie' : 'Learn More in Cookie Policy'}
             </a>
           </div>
         ) : (
-          /* SCREEN 2: Manage Consent Preferences */
+          /* SCREEN 2: Manage Cookie Preferences */
           <div id="ck-manage" className="ck-screen">
-            <button className="ck-back-btn" id="ck-back" type="button" aria-label="Back" onClick={() => setCookieScreen('main')}>
+            <button className="ck-back-btn" id="ck-back" type="button" aria-label={isId ? 'Kembali' : 'Back'} onClick={() => setCookieScreen('main')}>
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              <span>{isId ? 'Kembali' : 'Back'}</span>
             </button>
 
             <h2 className="ck-heading">
-              {isId ? 'Kelola Preferensi Cookie' : 'Manage Consent Preferences'}
+              {isId ? 'Kelola Preferensi Cookie' : 'Manage Cookie Preferences'}
             </h2>
+
+            <p className="ck-manage-intro">
+              {isId
+                ? 'YPYM berkomitmen melindungi privasi data Anda dengan standar keamanan tinggi dan transparansi penuh. Kami menggunakan data perangkat dan cookie untuk mendukung keandalan sistem, analitik performa terukur, dan perlindungan keamanan. Anda memegang kendali penuh atas preferensi cookie di bawah ini.'
+                : 'YPYM is committed to protecting your privacy with high security standards and full transparency. We use device data and cookies to maintain system reliability, measure performance analytics, and uphold platform security. You have full control over your cookie preferences below.'}
+            </p>
 
             <div className="ck-cats">
               {/* Strictly Necessary */}
@@ -864,7 +886,7 @@ export default function Header() {
                 </div>
                 {expandedCat === 'ck0' && (
                   <div className="ck-cat-body">
-                    <p>{isId ? 'Diperlukan untuk fungsi inti platform YPYM, termasuk sesi akun, pengiriman formulir pertanyaan layanan B2B, akses alat SEO & martech, serta kontrol keamanan. Tidak dapat dinonaktifkan tanpa merusak fungsionalitas kritis. Sesuai dengan UU PDP No. 27/2022.' : 'Essential for core YPYM platform functions including account sessions, B2B service enquiry form submissions, SEO & martech tool access, and security controls. These cannot be disabled without breaking critical functionality. Governed under UU PDP No. 27/2022.'}</p>
+                    <p>{isId ? 'Diperlukan untuk fungsi keamanan dasar, navigasi halaman, dan sesi akun. Situs tidak dapat berfungsi dengan baik tanpa cookie ini.' : 'Required for core platform security, page navigation, and basic operations. The website cannot function properly without these cookies.'}</p>
                   </div>
                 )}
               </div>
@@ -873,15 +895,15 @@ export default function Header() {
               <div className="ck-cat">
                 <div className="ck-cat-row" onClick={() => setExpandedCat(prev => prev === 'ck1' ? null : 'ck1')}>
                   <span className="ck-cat-expand-icon">{expandedCat === 'ck1' ? '−' : '+'}</span>
-                  <span className="ck-cat-name">{isId ? 'Cookie Kinerja' : 'Performance Cookies'}</span>
-                  <label className="ck-sw" onClick={(e) => e.stopPropagation()}>
+                  <span className="ck-cat-name">{isId ? 'Cookie Kinerja & Analitik' : 'Performance & Analytics Cookies'}</span>
+                  <label className="ck-sw" onClick={(e) => e.stopPropagation()} aria-label={isId ? 'Toggle Cookie Kinerja & Analitik' : 'Toggle Performance & Analytics Cookies'}>
                     <input type="checkbox" className="ck-sw-input" checked={perfConsent} onChange={(e) => setPerfConsent(e.target.checked)} />
                     <span className="ck-sw-track"><span className="ck-sw-knob"></span></span>
                   </label>
                 </div>
                 {expandedCat === 'ck1' && (
                   <div className="ck-cat-body">
-                    <p>{isId ? 'Memungkinkan YPYM mengukur performa platform, keterlibatan konten, dan penggunaan alat SEO & martech. Data dianonimkan dan digunakan untuk meningkatkan solusi B2B dan akurasi alat kami. Mematuhi ketentuan analitik UU PDP, PDPA, dan GDPR.' : 'Allow YPYM to measure platform performance, content engagement, and SEO & martech tool usage. Data is anonymised and used to improve our B2B solutions and tool accuracy. Complies with analytics provisions under UU PDP, PDPA, and GDPR.'}</p>
+                    <p>{isId ? 'Membantu kami memahami interaksi pengunjung secara anonim (melalui Google Analytics) guna meningkatkan kecepatan, stabilitas, dan kualitas platform.' : 'Helps us understand how visitors anonymously interact with our site (via Google Analytics) to improve platform speed, stability, and quality.'}</p>
                   </div>
                 )}
               </div>
@@ -891,14 +913,14 @@ export default function Header() {
                 <div className="ck-cat-row" onClick={() => setExpandedCat(prev => prev === 'ck2' ? null : 'ck2')}>
                   <span className="ck-cat-expand-icon">{expandedCat === 'ck2' ? '−' : '+'}</span>
                   <span className="ck-cat-name">{isId ? 'Cookie Fungsional' : 'Functional Cookies'}</span>
-                  <label className="ck-sw" onClick={(e) => e.stopPropagation()}>
+                  <label className="ck-sw" onClick={(e) => e.stopPropagation()} aria-label={isId ? 'Toggle Cookie Fungsional' : 'Toggle Functional Cookies'}>
                     <input type="checkbox" className="ck-sw-input" checked={funcConsent} onChange={(e) => setFuncConsent(e.target.checked)} />
                     <span className="ck-sw-track"><span className="ck-sw-knob"></span></span>
                   </label>
                 </div>
                 {expandedCat === 'ck2' && (
                   <div className="ck-cat-body">
-                    <p>{isId ? 'Mengaktifkan pengalaman yang dipersonalisasi di seluruh platform YPYM - termasuk preferensi bahasa, pengaturan antarmuka alat SEO, parameter pencarian tersimpan, dan input formulir yang diingat untuk pengguna B2B yang kembali.' : 'Enable personalised experiences across the YPYM platform - including language preferences, SEO tool interface settings, saved search parameters, and remembered form inputs for returning B2B users.'}</p>
+                    <p>{isId ? 'Mengingat preferensi bahasa, pengaturan tampilan alat, dan parameter pencarian tersimpan untuk kenyamanan kunjungan Anda berikutnya.' : 'Remembers your language preferences, tool display settings, and saved parameters for a smooth returning experience.'}</p>
                   </div>
                 )}
               </div>
@@ -907,22 +929,22 @@ export default function Header() {
               <div className="ck-cat">
                 <div className="ck-cat-row" onClick={() => setExpandedCat(prev => prev === 'ck3' ? null : 'ck3')}>
                   <span className="ck-cat-expand-icon">{expandedCat === 'ck3' ? '−' : '+'}</span>
-                  <span className="ck-cat-name">{isId ? 'Cookie Pemasaran' : 'Marketing Cookies'}</span>
-                  <label className="ck-sw" onClick={(e) => e.stopPropagation()}>
+                  <span className="ck-cat-name">{isId ? 'Cookie Pemasaran & Wawasan' : 'Marketing & Insights Cookies'}</span>
+                  <label className="ck-sw" onClick={(e) => e.stopPropagation()} aria-label={isId ? 'Toggle Cookie Pemasaran & Wawasan' : 'Toggle Marketing & Insights Cookies'}>
                     <input type="checkbox" className="ck-sw-input" checked={mktgConsent} onChange={(e) => setMktgConsent(e.target.checked)} />
                     <span className="ck-sw-track"><span className="ck-sw-knob"></span></span>
                   </label>
                 </div>
                 {expandedCat === 'ck3' && (
                   <div className="ck-cat-body">
-                    <p>{isId ? 'Memungkinkan YPYM dan mitranya memahami keterlibatan konten di publikasi dan alat kami, serta menyampaikan komunikasi pemasaran B2B yang relevan. Cookie ini melacak interaksi di seluruh halaman layanan dan produk kami. Anda dapat memilih keluar tanpa memengaruhi akses platform, sesuai dengan hak subjek data berdasarkan UU PDP, PDPA, dan GDPR.' : 'Enable YPYM and its partners to understand content engagement across our publications and tools, and deliver relevant B2B marketing communications. These cookies track interactions across service and product pages. You may opt out without affecting platform access, in accordance with data subject rights under UU PDP, PDPA, and GDPR.'}</p>
+                    <p>{isId ? 'Membantu kami mengukur efektivitas publikasi dan menyampaikan wawasan B2B yang relevan dengan kebutuhan industri Anda.' : 'Allows us to measure publication effectiveness and deliver relevant B2B insights tailored to your industry.'}</p>
                   </div>
                 )}
               </div>
             </div>
 
             <button className="btn" id="ck-confirm" type="button" onClick={() => saveConsent({ necessary: true, performance: perfConsent, functional: funcConsent, marketing: mktgConsent })}>
-              {isId ? 'Konfirmasi pilihan saya' : 'Confirm my choices'}
+              {isId ? 'Konfirmasi Pilihan Saya' : 'Confirm My Choices'}
             </button>
           </div>
         )}

@@ -347,8 +347,8 @@ export default function NewProjectPage() {
           height: 14px;
         }
         .stepper-help {
-          background: rgba(26, 75, 255, 0.02);
-          border: 1px dashed rgba(26, 75, 255, 0.15);
+          background: rgba(11, 15, 65, 0.02);
+          border: 1px dashed rgba(11, 15, 65, 0.12);
           border-radius: 12px;
           padding: 1.25rem;
           margin-top: 1rem;
@@ -356,7 +356,7 @@ export default function NewProjectPage() {
         .stepper-help h4 {
           font-size: 12px;
           font-weight: 700;
-          color: var(--ypym-blue);
+          color: var(--ypym-black);
           margin: 0 0 0.5rem 0;
           text-transform: uppercase;
         }
@@ -585,9 +585,9 @@ export default function NewProjectPage() {
               </div>
 
               {/* Crawled Keywords Sub-Panel */}
-              <div style={{ border: '1px solid rgba(0, 102, 204, 0.12)', backgroundColor: 'rgba(0, 102, 204, 0.01)', padding: '1.25rem', borderRadius: '12px' }}>
-                <h4 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--ypym-blue)' }}>
-                  <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--ypym-blue)' }}></span>
+              <div style={{ border: '1px solid rgba(11, 15, 65, 0.10)', backgroundColor: 'rgba(11, 15, 65, 0.01)', padding: '1.25rem', borderRadius: '12px' }}>
+                <h4 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--ypym-black)' }}>
+                  <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--ypym-black)' }}></span>
                   Available Crawled Keywords for {localeCountry} ({localeLanguage.toUpperCase()})
                 </h4>
                 <p style={{ fontSize: '12px', color: 'var(--text-note)', marginBottom: '1rem' }}>
@@ -600,7 +600,7 @@ export default function NewProjectPage() {
                   </p>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                    {/* Filter Tabs by Sector */}
+                     {/* Filter Tabs by Sector */}
                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', borderBottom: '1px solid rgba(0,0,0,0.06)', paddingBottom: '0.5rem' }}>
                       {['All', ...Array.from(new Set(filteredKeywords.map(k => k.sector)))].map(sec => (
                         <button
@@ -611,9 +611,9 @@ export default function NewProjectPage() {
                           style={{
                             display: 'inline-flex',
                             alignItems: 'center',
-                            background: selectedSector === sec ? 'var(--ypym-blue)' : '#f5f5f7',
+                            background: selectedSector === sec ? 'var(--ypym-black)' : '#f5f5f7',
                             color: selectedSector === sec ? '#fff' : 'var(--text-main)',
-                            border: '1px solid ' + (selectedSector === sec ? 'var(--ypym-blue)' : '#e5e5ea'),
+                            border: '1px solid ' + (selectedSector === sec ? 'var(--ypym-black)' : '#e5e5ea'),
                             borderRadius: '99px',
                             padding: '4px 12px',
                             fontSize: '12px',
@@ -661,9 +661,9 @@ export default function NewProjectPage() {
                                 fontSize: '13px',
                                 border: '1px solid',
                                 borderRadius: '8px',
-                                background: isActive ? 'rgba(0,102,204,0.08)' : '#ffffff',
-                                borderColor: isActive ? 'var(--ypym-blue)' : '#e5e5ea',
-                                color: isActive ? 'var(--ypym-blue)' : 'var(--text-main)',
+                                background: isActive ? 'rgba(11, 15, 65, 0.06)' : '#ffffff',
+                                borderColor: isActive ? 'var(--ypym-black)' : '#e5e5ea',
+                                color: isActive ? 'var(--ypym-black)' : 'var(--text-main)',
                                 fontWeight: isActive ? '600' : 'normal',
                                 cursor: 'pointer',
                                 transition: 'all 0.15s'

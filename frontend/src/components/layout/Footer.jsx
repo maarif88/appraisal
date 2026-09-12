@@ -4,48 +4,6 @@ import './Footer.css';
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isCardOpen, setIsCardOpen] = useState(false);
-  const [currentIcon, setCurrentIcon] = useState(0);
-  const [leavingIcon, setLeavingIcon] = useState(-1);
-  const [labelState, setLabelState] = useState('slide-in'); // 'slide-in' | 'slide-out' | 'slide-prep'
-
-  const labels = [
-    '15-Min Virtual Meeting',
-    'Get correct SEO question?',
-    'Start Appraisal',
-    'Email for Immediate Response'
-  ];
-
-  useEffect(() => {
-    let timer;
-    const runCycle = () => {
-      const dur = 5000 + Math.random() * 5000;
-      timer = setTimeout(() => {
-        setLeavingIcon(currentIcon);
-        const nextIcon = (currentIcon + 1) % 4;
-        setCurrentIcon(nextIcon);
-
-        // Clear leaving icon after transition completes
-        setTimeout(() => {
-          setLeavingIcon(-1);
-        }, 600);
-
-        // Slide out text
-        setLabelState('slide-out');
-        setTimeout(() => {
-          setLabelState('slide-prep');
-          setTimeout(() => {
-            setLabelState('slide-in');
-          }, 50);
-        }, 300);
-
-        runCycle();
-      }, dur);
-    };
-
-    runCycle();
-    return () => clearTimeout(timer);
-  }, [currentIcon]);
 
   return (
     <>
@@ -176,9 +134,9 @@ export default function Footer() {
               <p>YPYM is committed to protecting your privacy. We collect only the information necessary to deliver our professional services and fulfil contractual obligations. We do not sell, trade, or transfer your personal data to third parties without your explicit consent, except where required by applicable law. All data submitted through our contact forms, service agreements, and analytics platforms is handled in accordance with Indonesia’s Personal Data Protection Law (UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi). For our complete privacy policy and data processing practices, visit <a href="https://ypym.app/company/privacy-policy" target="_blank" rel="noopener noreferrer">ypym.app/company/privacy-policy</a>.</p>
               <p>YPYM’s professional services, spanning organic marketing for search engines and AI answer engines, martech platform development, and venture studio engagements, are B2B service offerings and do not constitute financial, legal, investment, or other regulated advice. Performance figures, case study benchmarks, and organic ROI projections referenced on this website represent historical outcomes from specific client engagements and are not guaranteed results. Individual outcomes depend on client industry, competitive landscape, implementation quality, and market conditions outside YPYM’s control. All service engagements are governed by Indonesian commercial law and the terms set forth in YPYM’s Master Service Agreement.</p>
             </div>
-            <button
-              type="button"
-              className="footer-expand-btn"
+            <button 
+              type="button" 
+              className="footer-legal-toggle"
               onClick={() => setIsExpanded(!isExpanded)}
             >
               {isExpanded ? 'Show less' : 'Show all'}
@@ -186,88 +144,6 @@ export default function Footer() {
           </div>
         </div>
       </footer>
-
-      {/* ─── FLOATING CONTACT CARD WIDGET ─── */}
-      <div className={`fc-dim-overlay ${isCardOpen ? 'active' : ''}`} onClick={() => setIsCardOpen(false)}></div>
-
-      <button
-        className="fc-trigger"
-        type="button"
-        aria-label="Contact us"
-        onClick={(e) => {
-          e.stopPropagation();
-          setIsCardOpen(!isCardOpen);
-        }}
-      >
-        <div className="fc-icon-carousel">
-          <div className={`fc-icon-face ${currentIcon === 0 ? 'active' : ''} ${leavingIcon === 0 ? 'leaving' : ''}`} data-icon="cal">
-            <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/><rect x="7" y="12" width="2" height="2"/><rect x="11" y="12" width="2" height="2"/><rect x="15" y="12" width="2" height="2"/><rect x="7" y="16" width="2" height="2"/><rect x="11" y="16" width="2" height="2"/></svg>
-          </div>
-          <div className={`fc-icon-face ${currentIcon === 1 ? 'active' : ''} ${leavingIcon === 1 ? 'leaving' : ''}`} data-icon="di">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
-          </div>
-          <div className={`fc-icon-face ${currentIcon === 2 ? 'active' : ''} ${leavingIcon === 2 ? 'leaving' : ''}`} data-icon="apr">
-            <svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg>
-          </div>
-          <div className={`fc-icon-face ${currentIcon === 3 ? 'active' : ''} ${leavingIcon === 3 ? 'leaving' : ''}`} data-icon="mail">
-            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
-          </div>
-        </div>
-        <div className="fc-label">
-          <span className={`fc-label-text ${labelState === 'slide-out' ? 'slide-out' : labelState === 'slide-prep' ? 'slide-in-prep' : ''}`}>
-            {labels[currentIcon]}
-          </span>
-        </div>
-      </button>
-
-      <div className={`fc-card ${isCardOpen ? 'is-open' : ''}`} onClick={(e) => e.stopPropagation()}>
-        <div className="fc-card-title">Get in touch</div>
-        <div className="fc-card-sub">Choose the fastest way to reach us</div>
-
-        <a className="fc-item" href="https://calendar.app.google/qxnKQSRehtsBW4S76" target="_blank" rel="noopener noreferrer">
-          <div className="fc-item-icon fc-item-icon--cal">
-            <svg viewBox="0 0 24 24" fill="#4285F4"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/><rect x="7" y="12" width="2" height="2"/><rect x="11" y="12" width="2" height="2"/><rect x="15" y="12" width="2" height="2"/><rect x="7" y="16" width="2" height="2"/><rect x="11" y="16" width="2" height="2"/></svg>
-          </div>
-          <div className="fc-item-text">
-            <strong>15 Min Virtual Meeting</strong>
-            <span>Pick a time on Google Calendar</span>
-          </div>
-        </a>
-
-        <a className="fc-item" href="https://ypym.app/decision-intelligence" target="_blank" rel="noopener noreferrer">
-          <div className="fc-item-icon fc-item-icon--di">
-            <svg viewBox="0 0 24 24" fill="#1A4BFF"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
-          </div>
-          <div className="fc-item-text">
-            <strong>Get correct SEO question?</strong>
-            <span>Diagnose your business challenge</span>
-          </div>
-        </a>
-
-        <a className="fc-item" href="https://appraisal.ypym.app/" target="_blank" rel="noopener noreferrer">
-          <div className="fc-item-icon fc-item-icon--apr">
-            <svg viewBox="0 0 24 24" fill="#0284C7"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg>
-          </div>
-          <div className="fc-item-text">
-            <strong>Start Appraisal</strong>
-            <span>Free instant SEO appraisal tool</span>
-          </div>
-        </a>
-
-        <div className="fc-divider"></div>
-        <div className="fc-card-sub" style={{ marginBottom: '8px', marginTop: '0' }}>For immediate feedback</div>
-
-        <a className="fc-item" href="mailto:sales@ypym.app?subject=SEO%20Inquiry&body=Hi%20YPYM%20Team%2C%0A%0AI%E2%80%99d%20like%20to%20discuss%20..." target="_blank" rel="noopener noreferrer">
-          <div className="fc-item-icon fc-item-icon--mail">
-            <svg viewBox="0 0 24 24" fill="#EA4335"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
-          </div>
-          <div className="fc-item-text">
-            <strong>Email Us</strong>
-            <span>We reply under 60 minutes</span>
-          </div>
-        </a>
-        <div className="fc-footer">sales@ypym.app &middot; Response &lt; 60 min</div>
-      </div>
     </>
   );
 }

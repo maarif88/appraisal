@@ -133,23 +133,25 @@
   display: inline-flex; 
   align-items: center; 
   gap: 10px;
-  background: #DAFF01; 
+  background: #ffffff; 
   color: #0B0F41;
   font-size: 15px; 
   font-weight: 700;
   padding: 15px 32px; 
   border-radius: 99px;
-  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s, background 0.15s;
   position: relative; 
   z-index: 1;
-  box-shadow: 0 4px 24px rgba(218,255,1,0.25);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
   text-decoration: none !important;
 }
 
 .cta-btn:hover {
-  opacity: 0.9; 
+  background: #f8fafc;
+  color: #0B0F41;
+  opacity: 0.95; 
   transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(218,255,1,0.38);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.22);
 }
 
 
@@ -418,37 +420,12 @@
 
 
 /* ═══════════════════════════════════════
-   FLOATING CONTACT WIDGET (Bottom-Left)
+   FLOATING CONTACT WIDGET (Bottom-Left) - HIDDEN
    ═══════════════════════════════════════ */
-.fc-trigger {
-  display: none;
-  position: fixed; 
-  left: 20px; 
-  bottom: 24px; 
-  z-index: 9999;
-  height: 46px; 
-  padding: 0 18px 0 14px;
-  border-radius: 99px;
-  background: #2F60FF; /* YPYM Blue */
-  box-shadow: 0 4px 20px rgba(47,96,255,.35);
-  cursor: pointer; 
-  border: none;
-  align-items: center; 
-  justify-content: center; 
-  gap: 10px;
-  transition: transform .2s, box-shadow .2s;
-  overflow: hidden; 
-  color: #fff;
-  font-family: var(--font-sans);
-}
-
-.fc-trigger:hover { 
-  transform: scale(1.03); 
-  box-shadow: 0 6px 28px rgba(47,96,255,.45); 
-}
-
-@media (min-width: 720px) { 
-  .fc-trigger { display: flex; } 
+.fc-trigger,
+.fc-card,
+.fc-dim-overlay {
+  display: none !important;
 }
 
 .fc-icon-carousel {
