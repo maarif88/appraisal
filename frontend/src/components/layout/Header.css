@@ -179,6 +179,50 @@
   background-color: rgba(0, 0, 0, 0.08);
 }
 
+/* Standard YPYM CTA Button (Universal Pill System) */
+.ypym-cta-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  padding: 11px 26px !important;
+  border-radius: 9999px !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-sizing: border-box !important;
+  line-height: 1.2 !important;
+}
+
+.ypym-cta-btn--solid-black {
+  background: #000000 !important;
+  border: 1.5px solid #000000 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.10) !important;
+}
+.ypym-cta-btn--solid-black:hover {
+  background: #222222 !important;
+  border-color: #222222 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+}
+
+.ypym-cta-btn--outline-black {
+  background: transparent !important;
+  border: 0.75px solid #000000 !important;
+  color: #000000 !important;
+}
+.ypym-cta-btn--outline-black:hover {
+  background: rgba(0, 0, 0, 0.06) !important;
+  border-color: #000000 !important;
+  color: #000000 !important;
+}
+
 .drawer-right {
   display: flex;
   flex-direction: column;

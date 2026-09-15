@@ -196,9 +196,12 @@ export default function Header() {
               <div className="drawer-inner">
                 <div className="drawer-left">
                   <h2>Search solutions designed to adapt and scale with your market.</h2>
-                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                    <a href="https://ypym.app/solutions" className="drawer-btn">View Services</a>
-                    <a href="https://appraisal.ypym.app/" className="drawer-btn primary">Start Appraisal</a>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <a href="https://ypym.app/solutions" className="ypym-cta-btn ypym-cta-btn--solid-black" style={{ margin: 0 }}>View Services</a>
+                    <a href="https://appraisal.ypym.app/" className="ypym-cta-btn ypym-cta-btn--outline-black" style={{ margin: 0 }}>
+                      Start Appraisal
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 12L12 2M12 2H6M12 2v6" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </a>
                   </div>
                 </div>
                 <div className="drawer-right">
@@ -411,7 +414,7 @@ export default function Header() {
               <div className="drawer-inner">
                 <div className="drawer-left">
                   <h2>Software and API infrastructure supporting organic growth.</h2>
-                  <a href="https://hub.ypym.app/platform/query-mapping" className="drawer-btn">Product &amp; Research</a>
+                  <a href="https://hub.ypym.app/platform/query-mapping" className="ypym-cta-btn ypym-cta-btn--solid-black" style={{ margin: 0 }}>Product &amp; Research</a>
                 </div>
                 <div className="drawer-right">
                   <div className="martech-grid">
@@ -483,7 +486,7 @@ export default function Header() {
               <div className="drawer-inner">
                 <div className="drawer-left">
                   <h2>Building the mechanisms behind organic search authority.</h2>
-                  <a href="https://ypym.app/company" className="drawer-btn">Company</a>
+                  <a href="https://ypym.app/company" className="ypym-cta-btn ypym-cta-btn--solid-black" style={{ margin: 0 }}>Company</a>
                 </div>
                 <div className="drawer-right">
                   <div className="drawer-link-list">
@@ -515,9 +518,12 @@ export default function Header() {
               <div className="drawer-inner">
                 <div className="drawer-left">
                   <h2>20 sectors. One organic search authority framework.</h2>
-                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                    <a href="https://ypym.app/sector" className="drawer-btn" style={{ margin: 0 }}>View All Sectors</a>
-                    <a href="https://ypym.app/decision-intelligence" className="drawer-btn primary" style={{ margin: 0 }}>Decision Intelligence</a>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <a href="https://ypym.app/sector" className="ypym-cta-btn ypym-cta-btn--solid-black" style={{ margin: 0 }}>View All Sectors</a>
+                    <a href="https://ypym.app/decision-intelligence" className="ypym-cta-btn ypym-cta-btn--outline-black" style={{ margin: 0 }}>
+                      Decision Intelligence
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 12L12 2M12 2H6M12 2v6" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </a>
                   </div>
                 </div>
                 <div className="drawer-right">
