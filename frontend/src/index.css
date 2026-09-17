@@ -1,3 +1,5 @@
+@import '@fontsource-variable/fraunces/full.css';
+
 /* ═══════════════════════════════════════════════════
    YPYM Appraisal - Design System & Global Styles
    Following YPYM Company design tokens and layouts.
@@ -27,6 +29,8 @@
   --max-w:         1160px; /* Strict YPYM Company homepage container width */
   
   /* Font Stacks */
+  --font-h1:           'Fraunces Variable', 'Fraunces', Georgia, serif;                  /* H1 heading only — Fraunces Variable with WONK */
+  --font-h1-variation: 'WONK' 1, 'opsz' 72, 'wght' 400, 'SOFT' 0;                       /* Wonky leaning n, h, m substitution, regular 400 (not bold) */
   --font-display:  'Plus Jakarta Sans', -apple-system, sans-serif;
   --font-body:     'Plus Jakarta Sans', -apple-system, sans-serif;
   --font-mono:     'Plus Jakarta Sans', -apple-system, sans-serif;
@@ -57,7 +61,21 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.18;
   margin-bottom: 0.5rem;
 }
-h1 { font-size: 42px; font-weight: 400; letter-spacing: -0.02em; }
+
+/* H1 Fraunces Variable (WONK: 1) — Regular 400 (NOT BOLD) across ALL pages */
+h1,
+h1 *,
+h1[class],
+h1[class] *,
+html body h1,
+html body h1 * {
+  font-family: var(--font-h1, 'Fraunces Variable', 'Fraunces', Georgia, serif) !important;
+  font-variation-settings: var(--font-h1-variation, 'WONK' 1, 'opsz' 72, 'wght' 400, 'SOFT' 0) !important;
+  font-optical-sizing: auto !important;
+  font-weight: 400 !important;
+}
+
+h1 { font-size: clamp(32px, 4.5vw, 53px); font-weight: 400; letter-spacing: -0.02em; line-height: 1.15; }
 h2 { font-size: 28px; font-weight: 600; letter-spacing: -0.01em; }
 h3 { font-size: 22px; font-weight: 600; }
 h4 { font-size: 18px; font-weight: 500; }

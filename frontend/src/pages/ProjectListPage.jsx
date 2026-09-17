@@ -212,8 +212,10 @@ export default function ProjectListPage() {
         gap: '1.25rem'
       }}>
         <h1 style={{
+          fontFamily: 'var(--font-h1)',
+          fontVariationSettings: 'var(--font-h1-variation)',
           fontSize: '32px',
-          fontWeight: 700,
+          fontWeight: 400,
           color: 'var(--ypym-black)',
           letterSpacing: '-0.02em',
           margin: 0

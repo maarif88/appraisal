@@ -422,7 +422,15 @@ export default function NewProjectPage() {
       </div>
 
       <div style={{ marginBottom: '2.5rem' }}>
-        <h1 style={{ marginTop: '0.5rem', marginBottom: '0.5rem', fontSize: '32px', fontWeight: 700, color: 'var(--ypym-black)' }}>Start New Keyword Analysis</h1>
+        <h1 style={{
+          fontFamily: 'var(--font-h1)',
+          fontVariationSettings: 'var(--font-h1-variation)',
+          marginTop: '0.5rem',
+          marginBottom: '0.5rem',
+          fontSize: '32px',
+          fontWeight: 400,
+          color: 'var(--ypym-black)'
+        }}>Start New Keyword Analysis</h1>
         <p style={{ color: 'var(--text-note)', fontSize: '15px', maxWidth: '680px', lineHeight: '1.5' }}>
           Input your target seed keyword below. The system will automatically retrieve Google Autocomplete variations, search interest trends, cluster keywords, and calculate estimated ROI.
         </p>

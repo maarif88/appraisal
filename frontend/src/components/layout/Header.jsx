@@ -49,10 +49,9 @@ export default function Header() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [langOpen, setLangOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mobileExpandedItem, setMobileExpandedItem] = useState(null);
   const [cookieOpen, setCookieOpen] = useState(false);
   const [cookieScreen, setCookieScreen] = useState('main');
-  const [perfConsent, setPerfConsent] = useState(false);
+  const [perfConsent, setPerfConsent] = useState(true);
   const [funcConsent, setFuncConsent] = useState(false);
   const [mktgConsent, setMktgConsent] = useState(false);
   const [expandedCat, setExpandedCat] = useState(null);
@@ -60,11 +59,11 @@ export default function Header() {
   const [activeMarDesc, setActiveMarDesc] = useState('mar-desc-flow');
   const [langSearch, setLangSearch] = useState('');
   const [rotatorIndex, setRotatorIndex] = useState(0);
-  const [ctaPopupOpen, setCtaPopupOpen] = useState(false);
   const [bottomNavVisible, setBottomNavVisible] = useState(false);
+  const [ctaPopupOpen, setCtaPopupOpen] = useState(false);
 
   const langRef = useRef(null);
-  const isId = false;
+  const isId = typeof window !== 'undefined' && (window.location.pathname.includes('/id-id') || window.location.hostname.includes('.id'));
 
   // 5 seconds delay before showing the bottom nav bar
   useEffect(() => {
@@ -97,10 +96,6 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [bottomNavVisible, mobileMenuOpen]);
 
-  const toggleMobileAccordion = (name) => {
-    setMobileExpandedItem(prev => prev === name ? null : name);
-  };
-
   // Load consent on mount
   useEffect(() => {
     try {
@@ -130,26 +125,15 @@ export default function Header() {
     setCookieOpen(false);
   };
 
-  // Close menus on outside click or Escape key
+  // Close menus on outside click
   useEffect(() => {
     function handleClickOutside(e) {
       if (langRef.current && !langRef.current.contains(e.target)) {
         setLangOpen(false);
       }
     }
-    function handleKeyDown(e) {
-      if (e.key === 'Escape') {
-        setCookieOpen(false);
-        setLangOpen(false);
-        setActiveDropdown(null);
-      }
-    }
     document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   // Rotator effect
@@ -421,7 +405,7 @@ export default function Header() {
                     <div className="drawer-link-list">
                       <a href="https://ypym.app/radius" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-radius')}>Radius (API)</a>
                       <a href="https://web-sitemap.ypym.app" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-sitemap')}>Web Sitemap</a>
-                      <a href="https://query-mapping.ypym.app" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-query')}>Query Mapping</a>
+                      <a href="https://query-mapping.ypym.app" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-query')}>Appraisal</a>
                       <a href="https://flow.ypym.app" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-flow')}>Flow</a>
                       <div className="drawer-divider"></div>
                       <a href="https://ypym.app/stack-management" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-managed')}>Managed Services <span style={{ fontSize: '11px', opacity: 0.65, fontWeight: 'normal' }}>(for Organic Marketing Infra)</span></a>
@@ -442,7 +426,7 @@ export default function Header() {
                       )}
                       {activeMarDesc === 'mar-desc-query' && (
                         <div className="mar-desc-item active">
-                          <h3 className="mar-desc-title">Query Mapping</h3>
+                          <h3 className="mar-desc-title">Appraisal</h3>
                           <p className="mar-desc-text">Advanced analytics tool to map user search intent with your site's information architecture. Automatically discovers keyword gaps and recommends internal linking structures.</p>
                         </div>
                       )}
@@ -602,8 +586,8 @@ export default function Header() {
 
           {/* CTA Button */}
           <button 
-            type="button"
-            onClick={(e) => { e.preventDefault(); setCtaPopupOpen(true); }}
+            type="button" 
+            onClick={(e) => { e.preventDefault(); setCtaPopupOpen(true); }} 
             className="cta-pill-btn"
             style={{ background: '#1d1e20', border: 'none', cursor: 'pointer' }}
           >
@@ -622,20 +606,14 @@ export default function Header() {
       </div>
 
       {/* Dimmed Background Overlay */}
-      <div 
-        className={`nav-backdrop ${(activeDropdown || cookieOpen) ? 'is-open' : ''}`} 
-        onClick={() => {
-          setActiveDropdown(null);
-          setCookieOpen(false);
-        }}
-      ></div>
+      <div className={`nav-backdrop ${activeDropdown ? 'is-open' : ''}`} onClick={() => setActiveDropdown(null)}></div>
 
       {/* Mobile Drawer */}
       <div className={`mobile-nav-drawer ${mobileMenuOpen ? 'open' : ''}`}>
         <div className="mobile-drawer-header">
           <a href="https://ypym.app/" className="logo-group">
             <img src="https://ypym.app/ypym-icon-light.png" alt="YPYM Icon" className="logo-icon" />
-            <span className="logo-text">YPYM Company</span>
+            <span className="logo-text">YPYM <span style={{ fontWeight: 300 }}>Appraisal</span></span>
           </a>
           <button className="close-btn" onClick={() => setMobileMenuOpen(false)}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -646,153 +624,60 @@ export default function Header() {
         </div>
         <div className="mobile-drawer-body">
           <nav className="mobile-accordion-nav">
-            {/* Accordion: Solutions */}
-            <div className={`accordion-item ${mobileExpandedItem === 'solutions' ? 'is-expanded' : ''}`}>
-              <button className="accordion-trigger" onClick={() => toggleMobileAccordion('solutions')}>
-                Solutions
-                <svg className="chevron" width="12" height="12" viewBox="0 0 10 10" fill="none">
-                  <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-              <div className="accordion-content" style={{ maxHeight: mobileExpandedItem === 'solutions' ? '500px' : '0', transition: 'max-height 0.3s ease', overflow: 'hidden' }}>
-                <div className="accordion-links">
-                  <a href="https://ypym.app/business">Business Solutions, Enterprise SEO</a>
-                  <a href="https://ypym.app/technical">Technical Solutions, SEO</a>
-                  <a href="https://ypym.app/digital-brand-experience">Digital Brand Experience</a>
-                  <a href="https://ypym.app/venture-studio">Venture Studio<span className="menu-dot"></span></a>
-                  <div style={{ display: 'flex', gap: '8px', marginTop: '8px', width: '100%' }}>
-                    <a href="https://ypym.app/business" className="see-overview-pill" style={{ flex: 1, textAlign: 'center', margin: 0 }}>View Services</a>
-                    <a href="https://appraisal.ypym.app/" className="see-overview-pill primary" style={{ flex: 1, textAlign: 'center', margin: 0 }}>Start Appraisal</a>
-                  </div>
-                </div>
+            <div className="accordion-item">
+              <span className="accordion-trigger-label">Solutions</span>
+              <div className="accordion-links">
+                <a href="https://ypym.app/business">Business Solutions, Enterprise SEO</a>
+                <a href="https://ypym.app/technical">Technical Solutions, SEO</a>
+                <a href="https://ypym.app/digital-brand-experience">Digital Brand Experience</a>
+                <a href="https://ypym.app/venture-studio">Venture Studio<span className="menu-dot"></span></a>
+                <a href="https://appraisal.ypym.app/" style={{ color: '#1A4BFF', fontWeight: 600 }}>Start Appraisal</a>
               </div>
             </div>
-
-            {/* Accordion: Software & APIs */}
-            <div className={`accordion-item ${mobileExpandedItem === 'martech' ? 'is-expanded' : ''}`}>
-              <button className="accordion-trigger" onClick={() => toggleMobileAccordion('martech')}>
-                Software & APIs
-                <svg className="chevron" width="12" height="12" viewBox="0 0 10 10" fill="none">
-                  <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-              <div className="accordion-content" style={{ maxHeight: mobileExpandedItem === 'martech' ? '500px' : '0', transition: 'max-height 0.3s ease', overflow: 'hidden' }}>
-                <div className="accordion-links">
-                  <a href="https://ypym.app/radius">Radius (API)</a>
-                  <a href="https://web-sitemap.ypym.app">Web Sitemap</a>
-                  <a href="https://query-mapping.ypym.app">Query Mapping</a>
-                  <a href="https://flow.ypym.app">Flow</a>
-                  <div className="accordion-divider"></div>
-                  <a href="https://ypym.app/stack-management">Managed Services</a>
-                  <a href="https://ypym.app/stack-management/integrations">Integrate with us</a>
-                </div>
+            <div className="accordion-item">
+              <span className="accordion-trigger-label">Software & APIs</span>
+              <div className="accordion-links">
+                <a href="https://ypym.app/radius">Radius (API)</a>
+                <a href="https://web-sitemap.ypym.app">Web Sitemap</a>
+                <a href="https://query-mapping.ypym.app">Appraisal</a>
+                <a href="https://flow.ypym.app">Flow</a>
+                <div className="accordion-divider"></div>
+                <a href="https://ypym.app/stack-management">Managed Services</a>
+                <a href="https://ypym.app/stack-management/integrations">Integrate with us</a>
               </div>
             </div>
-
-            {/* Accordion: Company */}
-            <div className={`accordion-item ${mobileExpandedItem === 'company' ? 'is-expanded' : ''}`}>
-              <button className="accordion-trigger" onClick={() => toggleMobileAccordion('company')}>
-                Company
-                <svg className="chevron" width="12" height="12" viewBox="0 0 10 10" fill="none">
-                  <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-              <div className="accordion-content" style={{ maxHeight: mobileExpandedItem === 'company' ? '500px' : '0', transition: 'max-height 0.3s ease', overflow: 'hidden' }}>
-                <div className="accordion-links">
-                  <a href="https://ypym.app/company/about-us">About YPYM</a>
-                  <a href="https://ypym.app/company/contact-us">Contact Us</a>
-                  <a href="https://ypym.app/career">Careers</a>
-                  <a href="https://ypym.app/investment/bill-of-quantity">Bill of Quantity (BoQ)<span className="menu-dot"></span></a>
-                  <a href="https://ypym.app/investment/get-quote">Get a Quote<span className="menu-dot"></span></a>
-                  <a href="https://ypym.app/company/acceptable-use-policy">Acceptable Use Policy</a>
-                  <a href="https://ypym.app/company/press">Press Release</a>
-                  <a href="https://ypym.app/company" className="see-overview-pill">Company</a>
-                </div>
+            <div className="accordion-item">
+              <span className="accordion-trigger-label">Company</span>
+              <div className="accordion-links">
+                <a href="https://ypym.app/company/about-us">About YPYM</a>
+                <a href="https://ypym.app/company/contact-us">Contact Us</a>
+                <a href="https://ypym.app/career">Careers</a>
+                <a href="https://ypym.app/investment/bill-of-quantity">Bill of Quantity (BoQ)<span className="menu-dot"></span></a>
+                <a href="https://ypym.app/investment/get-quote">Get a Quote<span className="menu-dot"></span></a>
+                <a href="https://ypym.app/company/acceptable-use-policy">Acceptable Use Policy</a>
+                <a href="https://ypym.app/company/press">Press Release<span className="menu-dot"></span></a>
               </div>
             </div>
-
-            {/* Accordion: Sectors */}
-            <div className={`accordion-item ${mobileExpandedItem === 'sectors' ? 'is-expanded' : ''}`}>
-              <button className="accordion-trigger" onClick={() => toggleMobileAccordion('sectors')}>
-                Sectors
-                <svg className="chevron" width="12" height="12" viewBox="0 0 10 10" fill="none">
-                  <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-              <div className="accordion-content" style={{ maxHeight: mobileExpandedItem === 'sectors' ? '500px' : '0', transition: 'max-height 0.3s ease', overflow: 'hidden' }}>
-                <div className="accordion-links">
-                  <a href="https://ypym.app/sector/finance">Finance</a>
-                  <a href="https://ypym.app/sector/technology-services">Technology Services</a>
-                  <a href="https://ypym.app/sector/process-industries">Process Industries</a>
-                  <a href="https://ypym.app/sector/communications">Communications</a>
-                  <a href="https://ypym.app/sector/health-services">Health Services</a>
-                  <a href="https://ypym.app/sector/utilities">Utilities</a>
-                  <a href="https://ypym.app/sector/transportation">Transportation</a>
-                  <a href="https://ypym.app/sector/retail-trade">Retail Trade</a>
-                  <div style={{ display: 'flex', gap: '8px', marginTop: '8px', width: '100%' }}>
-                    <a href="https://ypym.app/sector" className="see-overview-pill" style={{ flex: 1, textAlign: 'center', margin: 0 }}>View All Sectors</a>
-                    <a href="https://ypym.app/decision-intelligence" className="see-overview-pill primary" style={{ flex: 1, textAlign: 'center', margin: 0 }}>Decision Intelligence</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Direct Link: Ink & Thought */}
-            <div className="accordion-item no-dropdown">
-              <a href="https://ypym.app/article" className="accordion-link-direct">Ink & Thought</a>
-            </div>
-
-            {/* Accordion: Language / Region */}
-            <div className={`accordion-item ${mobileExpandedItem === 'language' ? 'is-expanded' : ''}`}>
-              <button className="accordion-trigger" onClick={() => toggleMobileAccordion('language')}>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3">
-                    <circle cx="8" cy="8" r="6.5"/>
-                    <ellipse cx="8" cy="8" rx="2.5" ry="6.5"/>
-                    <line x1="1.5" y1="8" x2="14.5" y2="8"/>
-                  </svg>
-                  Language / Region
-                </span>
-                <svg className="chevron" width="12" height="12" viewBox="0 0 10 10" fill="none">
-                  <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-              <div className="accordion-content" style={{ maxHeight: mobileExpandedItem === 'language' ? '500px' : '0', transition: 'max-height 0.3s ease', overflow: 'hidden' }}>
-                <div className="accordion-links" style={{ gap: '6px', paddingBottom: '12px' }}>
-                  <a href="https://ypym.app/" className="lang-list-item" style={{ textDecoration: 'none', color: '#5f6368', display: 'flex', alignItems: 'center', padding: '6px 8px' }}>
-                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3" style={{ display: 'inline-block', verticalAlign: 'middle' }}><circle cx="8" cy="8" r="6.5"/><ellipse cx="8" cy="8" rx="2.5" ry="6.5"/><line x1="1.5" y1="8" x2="14.5" y2="8"/></svg>
-                    <span style={{ marginLeft: '8px' }}>Global EN</span>
-                  </a>
-                  <a href="https://ypym.app/id-id/" className="lang-list-item" style={{ textDecoration: 'none', color: '#5f6368', display: 'flex', alignItems: 'center', padding: '6px 8px' }}>
-                    <svg width="18" height="12" viewBox="0 0 20 14" style={{ borderRadius: '2px', display: 'inline-block', verticalAlign: 'middle' }}><rect width="20" height="7" fill="#CE1126"/><rect y="7" width="20" height="7" fill="#fff"/></svg>
-                    <span style={{ marginLeft: '8px' }}>Indonesia</span>
-                  </a>
-                  <a href="https://ypym.app/en-id/" className="lang-list-item" style={{ textDecoration: 'none', color: '#5f6368', display: 'flex', alignItems: 'center', padding: '6px 8px' }}>
-                    <svg width="18" height="12" viewBox="0 0 20 14" style={{ borderRadius: '2px', display: 'inline-block', verticalAlign: 'middle' }}><rect width="20" height="7" fill="#CE1126"/><rect y="7" width="20" height="7" fill="#fff"/></svg>
-                    <span style={{ marginLeft: '8px' }}>Indonesia (English)</span>
-                  </a>
-                  <a href="https://ypym.app/en-sg/" className="lang-list-item" style={{ textDecoration: 'none', color: '#5f6368', display: 'flex', alignItems: 'center', padding: '6px 8px' }}>
-                    <svg width="18" height="12" viewBox="0 0 20 14" style={{ borderRadius: '2px', display: 'inline-block', verticalAlign: 'middle' }}><rect width="20" height="7" fill="#EF3340"/><rect y="7" width="20" height="7" fill="#fff"/><path d="M4.5 3.5 A2.5 2.5 0 1 0 4.5 6.5 A1.8 1.8 0 1 1 4.5 3.5Z" fill="#fff"/></svg>
-                    <span style={{ marginLeft: '8px' }}>Singapore</span>
-                  </a>
-                  <a href="https://ypym.app/en-ch/" className="lang-list-item" style={{ textDecoration: 'none', color: '#5f6368', display: 'flex', alignItems: 'center', padding: '6px 8px' }}>
-                    <svg width="18" height="12" viewBox="0 0 20 14" style={{ borderRadius: '2px', display: 'inline-block', verticalAlign: 'middle' }}><rect width="20" height="14" fill="#FF0000"/><rect x="8.5" y="3" width="3" height="8" fill="#fff"/><rect x="5.5" y="5.5" width="9" height="3" fill="#fff"/></svg>
-                    <span style={{ marginLeft: '8px' }}>Switzerland</span>
-                  </a>
-                  <a href="https://ypym.app/en-mc/" className="lang-list-item" style={{ textDecoration: 'none', color: '#5f6368', display: 'flex', alignItems: 'center', padding: '6px 8px' }}>
-                    <svg width="18" height="12" viewBox="0 0 20 14" style={{ borderRadius: '2px', display: 'inline-block', verticalAlign: 'middle' }}><rect width="20" height="7" fill="#CE1126"/><rect y="7" width="20" height="7" fill="#fff"/></svg>
-                    <span style={{ marginLeft: '8px' }}>Monaco</span>
-                  </a>
-                  <a href="https://ypym.app/en-hk/" className="lang-list-item" style={{ textDecoration: 'none', color: '#5f6368', display: 'flex', alignItems: 'center', padding: '6px 8px' }}>
-                    <svg width="18" height="12" viewBox="0 0 20 14" style={{ borderRadius: '2px', display: 'inline-block', verticalAlign: 'middle' }}><rect width="20" height="14" fill="#DE2910"/><circle cx="10" cy="7" r="3.8" stroke="rgba(255,255,255,0.45)" strokeWidth="1.2" fill="none" strokeDasharray="2.8 2.8"/></svg>
-                    <span style={{ marginLeft: '8px' }}>Hong Kong</span>
-                  </a>
+            <div className="accordion-item">
+              <span className="accordion-trigger-label">Sectors</span>
+              <div className="accordion-links">
+                <a href="https://ypym.app/sector/finance">Finance</a>
+                <a href="https://ypym.app/sector/technology-services">Technology Services</a>
+                <a href="https://ypym.app/sector/process-industries">Process Industries</a>
+                <a href="https://ypym.app/sector/communications">Communications</a>
+                <a href="https://ypym.app/sector/health-services">Health Services</a>
+                <a href="https://ypym.app/sector/utilities">Utilities</a>
+                <a href="https://ypym.app/sector/transportation">Transportation</a>
+                <a href="https://ypym.app/sector/retail-trade">Retail Trade</a>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '8px', width: '100%' }}>
+                  <a href="https://ypym.app/sector" className="see-overview-pill" style={{ flex: 1, textAlign: 'center', margin: 0 }}>View All Sectors</a>
+                  <a href="https://ypym.app/decision-intelligence" className="see-overview-pill primary" style={{ flex: 1, textAlign: 'center', margin: 0 }}>Decision Intelligence</a>
                 </div>
               </div>
             </div>
           </nav>
         </div>
-        <div className="mobile-drawer-footer" style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
+        <div className="mobile-drawer-footer">
           <button 
             type="button"
             onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); setCtaPopupOpen(true); }}
@@ -800,20 +685,6 @@ export default function Header() {
             style={{ width: '100%', border: 'none', cursor: 'pointer', display: 'block', textAlign: 'center' }}
           >
             Contact Us
-          </button>
-          <button 
-            type="button" 
-            style={{ background: 'none', border: 'none', color: '#5f6368', fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontFamily: 'inherit' }}
-            onClick={() => { setMobileMenuOpen(false); setCookieOpen(true); setCookieScreen('main'); }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <circle cx="12" cy="12" r="9"/>
-              <circle cx="8.5" cy="9" r="1.5" fill="currentColor"/>
-              <circle cx="14" cy="7.5" r="1" fill="currentColor"/>
-              <circle cx="15.5" cy="13" r="1.5" fill="currentColor"/>
-              <circle cx="9" cy="15.5" r="1" fill="currentColor"/>
-            </svg>
-            Cookie Preferences
           </button>
         </div>
       </div>
@@ -825,12 +696,12 @@ export default function Header() {
         role="dialog" 
         aria-modal="true" 
         aria-labelledby="ck-panel-title"
-        aria-hidden={!cookieOpen}
+        style={{ display: cookieOpen ? 'block' : 'none' }}
       >
         {cookieScreen === 'main' ? (
-          /* SCREEN 1: Your Privacy Choices */
+          /* SCREEN 1: Privacy Preference Center */
           <div id="ck-main" className="ck-screen">
-            <button className="ck-close-btn" id="ck-close" type="button" aria-label={isId ? 'Tutup' : 'Close'} onClick={() => setCookieOpen(false)}>
+            <button className="ck-close-btn" id="ck-close" type="button" aria-label="Close" onClick={() => setCookieOpen(false)}>
               <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
                 <path d="M1 1l9 9M10 1L1 10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
               </svg>
@@ -850,32 +721,32 @@ export default function Header() {
               <button className="btn" id="ck-allow-all" type="button" onClick={() => saveConsent({ necessary: true, performance: true, functional: true, marketing: true })}>
                 {isId ? 'Izinkan Semua' : 'Allow All'}
               </button>
-              <button className="btn" id="ck-decline" type="button" onClick={() => saveConsent({ necessary: true, performance: false, functional: false, marketing: false })}>
-                {isId ? 'Tolak yang Tidak Perlu' : 'Decline Non-Essential'}
+              <button className="btn btn-secondary" id="ck-decline" type="button" onClick={() => saveConsent({ necessary: true, performance: false, functional: false, marketing: false })}>
+                {isId ? 'Tolak yang tidak diperlukan' : 'Decline unnecessary cookies'}
               </button>
             </div>
 
-            <button className="btn" id="ck-manage-open" type="button" onClick={() => { setCookieScreen('manage'); setExpandedCat(null); }}>
-              {isId ? 'Kelola Preferensi Cookie' : 'Manage Cookie Preferences'}
+            <button className="btn btn-outline" id="ck-manage-open" type="button" onClick={() => { setCookieScreen('manage'); setExpandedCat(null); }}>
+              {isId ? 'Kelola Preferensi Cookie' : 'Manage Consent Preferences'}
             </button>
 
-            <a href={isId ? 'https://ypym.app/id-id/company/cookie-policy' : 'https://ypym.app/company/cookie-policy'} target="_blank" rel="noopener noreferrer" className="ck-learn-link">
-              {isId ? 'Pelajari Kebijakan Cookie' : 'Learn More in Cookie Policy'}
+            <a href={isId ? 'https://ypym.app/id-id/company/cookie-policy' : 'https://ypym.app/company/cookie-policy'} className="ck-learn-link">
+              {isId ? 'Pelajari Lebih Lanjut' : 'Learn More'}
             </a>
           </div>
         ) : (
-          /* SCREEN 2: Manage Cookie Preferences */
+          /* SCREEN 2: Manage Consent Preferences */
           <div id="ck-manage" className="ck-screen">
-            <button className="ck-back-btn" id="ck-back" type="button" aria-label={isId ? 'Kembali' : 'Back'} onClick={() => setCookieScreen('main')}>
+            <button className="ck-back-btn" id="ck-back" type="button" aria-label="Back" onClick={() => setCookieScreen('main')}>
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
+              <span>{isId ? 'Kembali' : 'Back'}</span>
             </button>
 
             <h2 className="ck-heading">
               {isId ? 'Kelola Preferensi Cookie' : 'Manage Cookie Preferences'}
             </h2>
-
             <p className="ck-manage-intro">
               {isId
                 ? 'YPYM berkomitmen melindungi privasi data Anda dengan standar keamanan tinggi dan transparansi penuh. Kami menggunakan data perangkat dan cookie untuk mendukung keandalan sistem, analitik performa terukur, dan perlindungan keamanan. Anda memegang kendali penuh atas preferensi cookie di bawah ini.'
@@ -892,7 +763,7 @@ export default function Header() {
                 </div>
                 {expandedCat === 'ck0' && (
                   <div className="ck-cat-body">
-                    <p>{isId ? 'Diperlukan untuk fungsi keamanan dasar, navigasi halaman, dan sesi akun. Situs tidak dapat berfungsi dengan baik tanpa cookie ini.' : 'Required for core platform security, page navigation, and basic operations. The website cannot function properly without these cookies.'}</p>
+                    <p>{isId ? 'Diperlukan untuk fungsi inti platform YPYM, termasuk sesi akun, pengiriman formulir pertanyaan layanan B2B, akses alat SEO & martech, serta kontrol keamanan. Tidak dapat dinonaktifkan tanpa merusak fungsionalitas kritis. Sesuai dengan UU PDP No. 27/2022.' : 'Essential for core YPYM platform functions including account sessions, B2B service enquiry form submissions, SEO & martech tool access, and security controls. These cannot be disabled without breaking critical functionality. Governed under UU PDP No. 27/2022.'}</p>
                   </div>
                 )}
               </div>
@@ -901,15 +772,15 @@ export default function Header() {
               <div className="ck-cat">
                 <div className="ck-cat-row" onClick={() => setExpandedCat(prev => prev === 'ck1' ? null : 'ck1')}>
                   <span className="ck-cat-expand-icon">{expandedCat === 'ck1' ? '−' : '+'}</span>
-                  <span className="ck-cat-name">{isId ? 'Cookie Kinerja & Analitik' : 'Performance & Analytics Cookies'}</span>
-                  <label className="ck-sw" onClick={(e) => e.stopPropagation()} aria-label={isId ? 'Toggle Cookie Kinerja & Analitik' : 'Toggle Performance & Analytics Cookies'}>
+                  <span className="ck-cat-name">{isId ? 'Cookie Kinerja' : 'Performance Cookies'}</span>
+                  <label className="ck-sw" onClick={(e) => e.stopPropagation()}>
                     <input type="checkbox" className="ck-sw-input" checked={perfConsent} onChange={(e) => setPerfConsent(e.target.checked)} />
                     <span className="ck-sw-track"><span className="ck-sw-knob"></span></span>
                   </label>
                 </div>
                 {expandedCat === 'ck1' && (
                   <div className="ck-cat-body">
-                    <p>{isId ? 'Membantu kami memahami interaksi pengunjung secara anonim (melalui Google Analytics) guna meningkatkan kecepatan, stabilitas, dan kualitas platform.' : 'Helps us understand how visitors anonymously interact with our site (via Google Analytics) to improve platform speed, stability, and quality.'}</p>
+                    <p>{isId ? 'Memungkinkan YPYM mengukur performa platform, keterlibatan konten, dan penggunaan alat SEO & martech. Data dianonimkan dan digunakan untuk meningkatkan solusi B2B dan akurasi alat kami. Mematuhi ketentuan analitik UU PDP, PDPA, dan GDPR.' : 'Allow YPYM to measure platform performance, content engagement, and SEO & martech tool usage. Data is anonymised and used to improve our B2B solutions and tool accuracy. Complies with analytics provisions under UU PDP, PDPA, and GDPR.'}</p>
                   </div>
                 )}
               </div>
@@ -919,14 +790,14 @@ export default function Header() {
                 <div className="ck-cat-row" onClick={() => setExpandedCat(prev => prev === 'ck2' ? null : 'ck2')}>
                   <span className="ck-cat-expand-icon">{expandedCat === 'ck2' ? '−' : '+'}</span>
                   <span className="ck-cat-name">{isId ? 'Cookie Fungsional' : 'Functional Cookies'}</span>
-                  <label className="ck-sw" onClick={(e) => e.stopPropagation()} aria-label={isId ? 'Toggle Cookie Fungsional' : 'Toggle Functional Cookies'}>
+                  <label className="ck-sw" onClick={(e) => e.stopPropagation()}>
                     <input type="checkbox" className="ck-sw-input" checked={funcConsent} onChange={(e) => setFuncConsent(e.target.checked)} />
                     <span className="ck-sw-track"><span className="ck-sw-knob"></span></span>
                   </label>
                 </div>
                 {expandedCat === 'ck2' && (
                   <div className="ck-cat-body">
-                    <p>{isId ? 'Mengingat preferensi bahasa, pengaturan tampilan alat, dan parameter pencarian tersimpan untuk kenyamanan kunjungan Anda berikutnya.' : 'Remembers your language preferences, tool display settings, and saved parameters for a smooth returning experience.'}</p>
+                    <p>{isId ? 'Mengaktifkan pengalaman yang dipersonalisasi di seluruh platform YPYM - termasuk preferensi bahasa, pengaturan antarmuka alat SEO, parameter pencarian tersimpan, dan input formulir yang diingat untuk pengguna B2B yang kembali.' : 'Enable personalised experiences across the YPYM platform - including language preferences, SEO tool interface settings, saved search parameters, and remembered form inputs for returning B2B users.'}</p>
                   </div>
                 )}
               </div>
@@ -935,15 +806,15 @@ export default function Header() {
               <div className="ck-cat">
                 <div className="ck-cat-row" onClick={() => setExpandedCat(prev => prev === 'ck3' ? null : 'ck3')}>
                   <span className="ck-cat-expand-icon">{expandedCat === 'ck3' ? '−' : '+'}</span>
-                  <span className="ck-cat-name">{isId ? 'Cookie Pemasaran & Wawasan' : 'Marketing & Insights Cookies'}</span>
-                  <label className="ck-sw" onClick={(e) => e.stopPropagation()} aria-label={isId ? 'Toggle Cookie Pemasaran & Wawasan' : 'Toggle Marketing & Insights Cookies'}>
+                  <span className="ck-cat-name">{isId ? 'Cookie Pemasaran' : 'Marketing Cookies'}</span>
+                  <label className="ck-sw" onClick={(e) => e.stopPropagation()}>
                     <input type="checkbox" className="ck-sw-input" checked={mktgConsent} onChange={(e) => setMktgConsent(e.target.checked)} />
                     <span className="ck-sw-track"><span className="ck-sw-knob"></span></span>
                   </label>
                 </div>
                 {expandedCat === 'ck3' && (
                   <div className="ck-cat-body">
-                    <p>{isId ? 'Membantu kami mengukur efektivitas publikasi dan menyampaikan wawasan B2B yang relevan dengan kebutuhan industri Anda.' : 'Allows us to measure publication effectiveness and deliver relevant B2B insights tailored to your industry.'}</p>
+                    <p>{isId ? 'Memungkinkan YPYM dan mitranya memahami keterlibatan konten di publikasi dan alat kami, serta menyampaikan komunikasi pemasaran B2B yang relevan. Cookie ini melacak interaksi di seluruh halaman layanan dan produk kami. Anda dapat memilih keluar tanpa memengaruhi akses platform, sesuai dengan hak subjek data berdasarkan UU PDP, PDPA, dan GDPR.' : 'Enable YPYM and its partners to understand content engagement across our publications and tools, and deliver relevant B2B marketing communications. These cookies track interactions across service and product pages. You may opt out without affecting platform access, in accordance with data subject rights under UU PDP, PDPA, and GDPR.'}</p>
                   </div>
                 )}
               </div>
@@ -955,6 +826,57 @@ export default function Header() {
           </div>
         )}
       </div>
+
+      {/* MOBILE BOTTOM FLOATING NAVIGATION BAR */}
+      <nav className={`mweb-bottom-nav ${bottomNavVisible ? 'is-visible' : ''}`} id="mweb-bottom-nav" aria-label="Mobile Navigation">
+        <a href="https://ypym.app/" className="mweb-nav-tab" id="mweb-tab-home">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span>Home</span>
+        </a>
+
+        <a href="https://ypym.app/solutions" className="mweb-nav-tab" id="mweb-tab-services">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+            <polyline points="2 17 12 22 22 17"/>
+            <polyline points="2 12 12 17 22 12"/>
+          </svg>
+          <span>Solutions</span>
+        </a>
+
+        <a href="https://ypym.app/hub/" className="mweb-nav-tab" id="mweb-tab-docs">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+            <path d="M6 6h10M6 10h10"/>
+          </svg>
+          <span>Chapters</span>
+        </a>
+
+        <button 
+          type="button"
+          onClick={(e) => { e.preventDefault(); setCtaPopupOpen(true); }}
+          className="mweb-nav-tab" 
+          id="mweb-tab-contact"
+          style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          <span>Contact</span>
+        </button>
+
+        <button type="button" className="mweb-nav-tab mweb-menu-btn" id="mweb-tab-menu" onClick={() => setMobileMenuOpen(prev => !prev)}>
+          <div className="mweb-menu-icon-bg">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </div>
+        </button>
+      </nav>
 
       {/* FULLSCREEN CONTACT POPUP OVERLAY */}
       {ctaPopupOpen && (
@@ -1028,7 +950,7 @@ export default function Header() {
               </a>
               
               {/* Card 4: Contact Form */}
-              <a href="https://ypym.app/company/contact-us" target="_blank" rel="noopener noreferrer" className="cta-popup-card">
+              <a href="https://ypym.app/company/contact-us" className="cta-popup-card">
                 <div className="cta-card-icon-wrap form-icon-wrap">
                   <svg className="cta-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -1047,51 +969,8 @@ export default function Header() {
           </div>
         </div>
       )}
-
-      {/* MOBILE BOTTOM FLOATING NAVIGATION BAR */}
-      <nav className={`mweb-bottom-nav ${bottomNavVisible ? 'is-visible' : ''}`} id="mweb-bottom-nav" aria-label="Mobile Navigation">
-        <a href="https://ypym.app/" className="mweb-nav-tab" id="mweb-tab-home">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
-          <span>Home</span>
-        </a>
-
-        <a href="https://ypym.app/solutions" className="mweb-nav-tab" id="mweb-tab-services">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
-            <polyline points="2 17 12 22 22 17"/>
-            <polyline points="2 12 12 17 22 12"/>
-          </svg>
-          <span>Solutions</span>
-        </a>
-
-        <a href="https://ypym.app/hub/" className="mweb-nav-tab" id="mweb-tab-docs">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
-            <path d="M6 6h10M6 10h10"/>
-          </svg>
-          <span>Chapters</span>
-        </a>
-
-        <a href="https://ypym.app/company/contact-us" className="mweb-nav-tab" id="mweb-tab-contact" onClick={(e) => { e.preventDefault(); setCtaPopupOpen(true); }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-          </svg>
-          <span>Contact</span>
-        </a>
-
-        <button type="button" className="mweb-nav-tab mweb-menu-btn" id="mweb-tab-menu" onClick={() => setMobileMenuOpen(prev => !prev)}>
-          <div className="mweb-menu-icon-bg">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="3" y1="12" x2="21" y2="12"/>
-              <line x1="3" y1="6" x2="21" y2="6"/>
-              <line x1="3" y1="18" x2="21" y2="18"/>
-            </svg>
-          </div>
-        </button>
-      </nav>
     </header>
   );
 }
+
+export { Header, Header as YpymNavbar };

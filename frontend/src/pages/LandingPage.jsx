@@ -700,8 +700,10 @@ export default function LandingPage() {
           {/* Left Column */}
           <div style={{ flex: '1 1 500px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
             <h1 style={{
+              fontFamily: 'var(--font-h1)',
+              fontVariationSettings: 'var(--font-h1-variation)',
               fontSize: 'clamp(2.5rem, 6vw, 3.8rem)',
-              fontWeight: 700,
+              fontWeight: 400,
               lineHeight: 1.1,
               color: 'var(--ypym-black)',
               letterSpacing: '-0.02em',
