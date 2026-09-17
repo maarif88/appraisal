@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import CookieConsent from './CookieConsent';
 import './Header.css';
 
 // SVG flags
@@ -47,14 +48,9 @@ const countries = [
 
 export default function Header() {
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [langOpen, setLangOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [cookieOpen, setCookieOpen] = useState(false);
-  const [cookieScreen, setCookieScreen] = useState('main');
-  const [perfConsent, setPerfConsent] = useState(true);
-  const [funcConsent, setFuncConsent] = useState(false);
-  const [mktgConsent, setMktgConsent] = useState(false);
-  const [expandedCat, setExpandedCat] = useState(null);
+  const [langModalOpen, setLangModalOpen] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false);
   const [activeSolDesc, setActiveSolDesc] = useState('sol-desc-bisnis');
   const [activeMarDesc, setActiveMarDesc] = useState('mar-desc-flow');
   const [langSearch, setLangSearch] = useState('');
@@ -62,8 +58,15 @@ export default function Header() {
   const [bottomNavVisible, setBottomNavVisible] = useState(false);
   const [ctaPopupOpen, setCtaPopupOpen] = useState(false);
 
-  const langRef = useRef(null);
   const isId = typeof window !== 'undefined' && (window.location.pathname.includes('/id-id') || window.location.hostname.includes('.id'));
+
+  // 3D Flip cycle for Contact / Region button
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsFlipped((prev) => !prev);
+    }, 7000);
+    return () => clearInterval(interval);
+  }, []);
 
   // 5 seconds delay before showing the bottom nav bar
   useEffect(() => {
@@ -96,46 +99,6 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [bottomNavVisible, mobileMenuOpen]);
 
-  // Load consent on mount
-  useEffect(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem('ypym-cookie-consent') || 'null');
-      if (saved) {
-        setPerfConsent(!!saved.performance);
-        setFuncConsent(!!saved.functional);
-        setMktgConsent(!!saved.marketing);
-      } else {
-        const timer = setTimeout(() => {
-          setCookieOpen(true);
-          setCookieScreen('main');
-        }, 10000);
-        return () => clearTimeout(timer);
-      }
-    } catch (e) {}
-  }, []);
-
-  const saveConsent = (consent) => {
-    try {
-      localStorage.setItem('ypym-cookie-consent', JSON.stringify(consent));
-    } catch (e) {}
-    window.dispatchEvent(new CustomEvent('ypym:consent-updated', { detail: consent }));
-    setPerfConsent(consent.performance);
-    setFuncConsent(consent.functional);
-    setMktgConsent(consent.marketing);
-    setCookieOpen(false);
-  };
-
-  // Close menus on outside click
-  useEffect(() => {
-    function handleClickOutside(e) {
-      if (langRef.current && !langRef.current.contains(e.target)) {
-        setLangOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
   // Rotator effect
   useEffect(() => {
     if (activeDropdown !== 'solusi') return;
@@ -147,7 +110,6 @@ export default function Header() {
 
   const toggleDropdown = (name) => {
     setActiveDropdown(prev => prev === name ? null : name);
-    setLangOpen(false);
   };
 
   const filteredCountries = countries.filter(c => 
@@ -160,7 +122,7 @@ export default function Header() {
         {/* Logo Group */}
         <a href="https://ypym.app/" className="logo-group">
           <img src="https://ypym.app/ypym-icon-light.png" alt="YPYM Icon" className="logo-icon" />
-          <span className="logo-text">YPYM <span style={{ fontWeight: 300 }}>Appraisal</span></span>
+          <span className="logo-text"><span className="logo-text-bold">YPYM</span> <span className="logo-text-suffix">Appraisal</span></span>
         </a>
 
         {/* Navigation Menu */}
@@ -526,80 +488,68 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Direct Link: Ink & Thought */}
-          <a href="https://ypym.app/article" className="nav-link">Ink & Thought</a>
+          {/* Direct Link: Article */}
+          <a href={isId ? "https://ypym.app/id-id/blog" : "https://ypym.app/article"} className="nav-link">
+            {isId ? 'Blog' : 'Article'}
+          </a>
         </nav>
 
-        {/* Right Group */}
+        {/* Right Group (Pricing + Contact Flip CTA + 2-line Hamburger) */}
         <div className="header-right">
-          {/* Language globe switcher */}
-          <div className={`lang-switcher-wrap ${langOpen ? 'is-open' : ''}`} ref={langRef}>
-            <button className="lang-globe-btn" onClick={() => setLangOpen(!langOpen)}>
-              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3">
-                <circle cx="8" cy="8" r="6.5"/>
-                <ellipse cx="8" cy="8" rx="2.5" ry="6.5"/>
-                <line x1="1.5" y1="8" x2="14.5" y2="8"/>
-                <line x1="2.5" y1="5.3" x2="13.5" y2="5.3" strokeWidth="0.8" opacity="0.6"/>
-                <line x1="2.5" y1="10.7" x2="13.5" y2="10.7" strokeWidth="0.8" opacity="0.6"/>
-              </svg>
-            </button>
-            <div className={`lang-dropdown-v2 ${langOpen ? 'is-open' : ''}`}>
-              <div className="lang-search-wrapper">
-                <svg className="lang-search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+          <a
+            href={isId ? "https://ypym.app/id-id/investment/get-quote" : "https://ypym.app/investment/get-quote"}
+            className="header-pricing-link"
+          >
+            Pricing
+          </a>
+
+          <div
+            className="header-contact-flip-box"
+            id="contact-flip-box"
+            onMouseLeave={() => {
+              if (isFlipped) {
+                setTimeout(() => setIsFlipped(false), 1200);
+              }
+            }}
+          >
+            <div className={`header-contact-flipper ${isFlipped ? 'is-flipped' : ''}`} id="contact-flipper">
+              {/* Front Face: Contact CTA */}
+              <button
+                type="button"
+                onClick={() => setCtaPopupOpen(true)}
+                className="header-contact-pill header-contact-pill--front contact-popup-trigger"
+                id="desktop-cta-trigger"
+              >
+                <span className="cta-pill-label" id="cta-pill-label">Contact Us</span>
+              </button>
+
+              {/* Back Face: Language / Region Switcher Trigger */}
+              <button
+                type="button"
+                className="header-contact-pill header-contact-pill--back"
+                id="header-lang-flip-btn"
+                aria-label={isId ? "Pilih Bahasa dan Wilayah" : "Choose Language and Region"}
+                onClick={() => setLangModalOpen(true)}
+              >
+                <svg className="lang-pill-icon" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3">
+                  <circle cx="8" cy="8" r="6.5"/>
+                  <ellipse cx="8" cy="8" rx="2.5" ry="6.5"/>
+                  <line x1="1.5" y1="8" x2="14.5" y2="8"/>
                 </svg>
-                <input 
-                  type="text" 
-                  className="lang-search-input" 
-                  value={langSearch} 
-                  onChange={(e) => setLangSearch(e.target.value)} 
-                  placeholder="Search country..." 
-                />
-              </div>
-              <div className="lang-list-container">
-                {filteredCountries.map((c) => (
-                  <a key={c.name} href={c.url} className={`lang-list-item ${c.active ? 'active' : ''}`}>
-                    <span dangerouslySetInnerHTML={{ __html: c.flag }} />
-                    <span>{c.name}</span>
-                  </a>
-                ))}
-              </div>
+                <span className="lang-pill-label" id="lang-pill-label">{isId ? "ID / Bahasa" : "Region"}</span>
+              </button>
             </div>
           </div>
 
-          {/* Cookie Preferences Trigger */}
-          <button 
-            type="button" 
-            className={`ck-trigger-btn ${cookieOpen ? 'is-active' : ''}`}
-            onClick={() => { setCookieOpen(prev => !prev); setCookieScreen('main'); }}
-            aria-label={isId ? 'Preferensi Cookie' : 'Cookie preferences'}
-            title={isId ? 'Preferensi Cookie' : 'Cookie preferences'}
+          <button
+            className="hamburger-btn hamburger-2line"
+            id="ham-trigger"
+            aria-label="Navigation Menu"
+            onClick={() => setMobileMenuOpen(true)}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <circle cx="12" cy="12" r="9" strokeWidth="1.5"/>
-              <circle cx="8.5" cy="9" r="1.5" fill="currentColor"/>
-              <circle cx="14" cy="7.5" r="1" fill="currentColor"/>
-              <circle cx="15.5" cy="13" r="1.5" fill="currentColor"/>
-              <circle cx="9" cy="15.5" r="1" fill="currentColor"/>
-            </svg>
-          </button>
-
-          {/* CTA Button */}
-          <button 
-            type="button" 
-            onClick={(e) => { e.preventDefault(); setCtaPopupOpen(true); }} 
-            className="cta-pill-btn"
-            style={{ background: '#1d1e20', border: 'none', cursor: 'pointer' }}
-          >
-            Contact Us
-          </button>
-
-          {/* Hamburger Mobile Menu Button */}
-          <button className="hamburger-btn" onClick={() => setMobileMenuOpen(true)}>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-              <line x1="3" y1="6" x2="17" y2="6"/>
-              <line x1="3" y1="10" x2="17" y2="10"/>
-              <line x1="3" y1="14" x2="17" y2="14"/>
+            <svg className="ham-icon-open" width="18" height="12" viewBox="0 0 18 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+              <line x1="1" y1="2" x2="17" y2="2"/>
+              <line x1="1" y1="10" x2="17" y2="10"/>
             </svg>
           </button>
         </div>
@@ -613,7 +563,7 @@ export default function Header() {
         <div className="mobile-drawer-header">
           <a href="https://ypym.app/" className="logo-group">
             <img src="https://ypym.app/ypym-icon-light.png" alt="YPYM Icon" className="logo-icon" />
-            <span className="logo-text">YPYM <span style={{ fontWeight: 300 }}>Appraisal</span></span>
+            <span className="logo-text"><span className="logo-text-bold">YPYM</span> <span className="logo-text-suffix">Appraisal</span></span>
           </a>
           <button className="close-btn" onClick={() => setMobileMenuOpen(false)}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -689,143 +639,73 @@ export default function Header() {
         </div>
       </div>
 
-      {/* ════════ COOKIE CONSENT PANEL ════════ */}
-      <div 
-        id="ck-panel" 
-        className={`ck-panel ${cookieOpen ? 'ck-panel--open' : ''}`} 
-        role="dialog" 
-        aria-modal="true" 
-        aria-labelledby="ck-panel-title"
-        style={{ display: cookieOpen ? 'block' : 'none' }}
+      {/* GLOBAL SEARCHABLE REGION & LANGUAGE MODAL */}
+      <div
+        className={`lang-modal-backdrop ${langModalOpen ? 'is-open' : ''}`}
+        id="lang-modal-backdrop"
+        hidden={!langModalOpen}
+        onClick={() => setLangModalOpen(false)}
+      ></div>
+      <div
+        className={`lang-modal-dialog ${langModalOpen ? 'is-open' : ''}`}
+        id="v2-lang-wrap"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="lang-modal-title"
+        hidden={!langModalOpen}
       >
-        {cookieScreen === 'main' ? (
-          /* SCREEN 1: Privacy Preference Center */
-          <div id="ck-main" className="ck-screen">
-            <button className="ck-close-btn" id="ck-close" type="button" aria-label="Close" onClick={() => setCookieOpen(false)}>
-              <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
-                <path d="M1 1l9 9M10 1L1 10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+        <div className="lang-modal-card">
+          <div className="lang-modal-header">
+            <div className="lang-modal-title-group">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3">
+                <circle cx="8" cy="8" r="6.5"/>
+                <ellipse cx="8" cy="8" rx="2.5" ry="6.5"/>
+                <line x1="1.5" y1="8" x2="14.5" y2="8"/>
+              </svg>
+              <h3 id="lang-modal-title" className="lang-modal-title">
+                {isId ? "Wilayah & Bahasa" : "Region & Language"}
+              </h3>
+            </div>
+            <button
+              type="button"
+              className="lang-modal-close-btn"
+              id="lang-modal-close"
+              aria-label={isId ? "Tutup" : "Close"}
+              onClick={() => setLangModalOpen(false)}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
             </button>
-
-            <h2 className="ck-heading" id="ck-panel-title">
-              {isId ? 'Pilihan Privasi Anda' : 'Your Privacy Choices'}
-            </h2>
-
-            <p className="ck-body">
-              {isId
-                ? 'Kami menggunakan cookie untuk memastikan situs web YPYM berfungsi optimal, mengingat preferensi Anda, dan mengukur performa secara anonim guna meningkatkan kualitas layanan. Anda dapat menyesuaikan pilihan Anda kapan saja.'
-                : 'We use cookies to ensure YPYM websites function properly, remember your preferences, and anonymously analyze site performance to improve our services. You can customize your choices at any time.'}
-            </p>
-
-            <div className="ck-primary-actions">
-              <button className="btn" id="ck-allow-all" type="button" onClick={() => saveConsent({ necessary: true, performance: true, functional: true, marketing: true })}>
-                {isId ? 'Izinkan Semua' : 'Allow All'}
-              </button>
-              <button className="btn btn-secondary" id="ck-decline" type="button" onClick={() => saveConsent({ necessary: true, performance: false, functional: false, marketing: false })}>
-                {isId ? 'Tolak yang tidak diperlukan' : 'Decline unnecessary cookies'}
-              </button>
-            </div>
-
-            <button className="btn btn-outline" id="ck-manage-open" type="button" onClick={() => { setCookieScreen('manage'); setExpandedCat(null); }}>
-              {isId ? 'Kelola Preferensi Cookie' : 'Manage Consent Preferences'}
-            </button>
-
-            <a href={isId ? 'https://ypym.app/id-id/company/cookie-policy' : 'https://ypym.app/company/cookie-policy'} className="ck-learn-link">
-              {isId ? 'Pelajari Lebih Lanjut' : 'Learn More'}
-            </a>
           </div>
-        ) : (
-          /* SCREEN 2: Manage Consent Preferences */
-          <div id="ck-manage" className="ck-screen">
-            <button className="ck-back-btn" id="ck-back" type="button" aria-label="Back" onClick={() => setCookieScreen('main')}>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <span>{isId ? 'Kembali' : 'Back'}</span>
-            </button>
-
-            <h2 className="ck-heading">
-              {isId ? 'Kelola Preferensi Cookie' : 'Manage Cookie Preferences'}
-            </h2>
-            <p className="ck-manage-intro">
-              {isId
-                ? 'YPYM berkomitmen melindungi privasi data Anda dengan standar keamanan tinggi dan transparansi penuh. Kami menggunakan data perangkat dan cookie untuk mendukung keandalan sistem, analitik performa terukur, dan perlindungan keamanan. Anda memegang kendali penuh atas preferensi cookie di bawah ini.'
-                : 'YPYM is committed to protecting your privacy with high security standards and full transparency. We use device data and cookies to maintain system reliability, measure performance analytics, and uphold platform security. You have full control over your cookie preferences below.'}
-            </p>
-
-            <div className="ck-cats">
-              {/* Strictly Necessary */}
-              <div className="ck-cat">
-                <div className="ck-cat-row" onClick={() => setExpandedCat(prev => prev === 'ck0' ? null : 'ck0')}>
-                  <span className="ck-cat-expand-icon">{expandedCat === 'ck0' ? '−' : '+'}</span>
-                  <span className="ck-cat-name">{isId ? 'Cookie yang Wajib Ada' : 'Strictly Necessary Cookies'}</span>
-                  <span className="ck-always-active">{isId ? 'Selalu Aktif' : 'Always Active'}</span>
-                </div>
-                {expandedCat === 'ck0' && (
-                  <div className="ck-cat-body">
-                    <p>{isId ? 'Diperlukan untuk fungsi inti platform YPYM, termasuk sesi akun, pengiriman formulir pertanyaan layanan B2B, akses alat SEO & martech, serta kontrol keamanan. Tidak dapat dinonaktifkan tanpa merusak fungsionalitas kritis. Sesuai dengan UU PDP No. 27/2022.' : 'Essential for core YPYM platform functions including account sessions, B2B service enquiry form submissions, SEO & martech tool access, and security controls. These cannot be disabled without breaking critical functionality. Governed under UU PDP No. 27/2022.'}</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Performance Cookies */}
-              <div className="ck-cat">
-                <div className="ck-cat-row" onClick={() => setExpandedCat(prev => prev === 'ck1' ? null : 'ck1')}>
-                  <span className="ck-cat-expand-icon">{expandedCat === 'ck1' ? '−' : '+'}</span>
-                  <span className="ck-cat-name">{isId ? 'Cookie Kinerja' : 'Performance Cookies'}</span>
-                  <label className="ck-sw" onClick={(e) => e.stopPropagation()}>
-                    <input type="checkbox" className="ck-sw-input" checked={perfConsent} onChange={(e) => setPerfConsent(e.target.checked)} />
-                    <span className="ck-sw-track"><span className="ck-sw-knob"></span></span>
-                  </label>
-                </div>
-                {expandedCat === 'ck1' && (
-                  <div className="ck-cat-body">
-                    <p>{isId ? 'Memungkinkan YPYM mengukur performa platform, keterlibatan konten, dan penggunaan alat SEO & martech. Data dianonimkan dan digunakan untuk meningkatkan solusi B2B dan akurasi alat kami. Mematuhi ketentuan analitik UU PDP, PDPA, dan GDPR.' : 'Allow YPYM to measure platform performance, content engagement, and SEO & martech tool usage. Data is anonymised and used to improve our B2B solutions and tool accuracy. Complies with analytics provisions under UU PDP, PDPA, and GDPR.'}</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Functional Cookies */}
-              <div className="ck-cat">
-                <div className="ck-cat-row" onClick={() => setExpandedCat(prev => prev === 'ck2' ? null : 'ck2')}>
-                  <span className="ck-cat-expand-icon">{expandedCat === 'ck2' ? '−' : '+'}</span>
-                  <span className="ck-cat-name">{isId ? 'Cookie Fungsional' : 'Functional Cookies'}</span>
-                  <label className="ck-sw" onClick={(e) => e.stopPropagation()}>
-                    <input type="checkbox" className="ck-sw-input" checked={funcConsent} onChange={(e) => setFuncConsent(e.target.checked)} />
-                    <span className="ck-sw-track"><span className="ck-sw-knob"></span></span>
-                  </label>
-                </div>
-                {expandedCat === 'ck2' && (
-                  <div className="ck-cat-body">
-                    <p>{isId ? 'Mengaktifkan pengalaman yang dipersonalisasi di seluruh platform YPYM - termasuk preferensi bahasa, pengaturan antarmuka alat SEO, parameter pencarian tersimpan, dan input formulir yang diingat untuk pengguna B2B yang kembali.' : 'Enable personalised experiences across the YPYM platform - including language preferences, SEO tool interface settings, saved search parameters, and remembered form inputs for returning B2B users.'}</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Marketing Cookies */}
-              <div className="ck-cat">
-                <div className="ck-cat-row" onClick={() => setExpandedCat(prev => prev === 'ck3' ? null : 'ck3')}>
-                  <span className="ck-cat-expand-icon">{expandedCat === 'ck3' ? '−' : '+'}</span>
-                  <span className="ck-cat-name">{isId ? 'Cookie Pemasaran' : 'Marketing Cookies'}</span>
-                  <label className="ck-sw" onClick={(e) => e.stopPropagation()}>
-                    <input type="checkbox" className="ck-sw-input" checked={mktgConsent} onChange={(e) => setMktgConsent(e.target.checked)} />
-                    <span className="ck-sw-track"><span className="ck-sw-knob"></span></span>
-                  </label>
-                </div>
-                {expandedCat === 'ck3' && (
-                  <div className="ck-cat-body">
-                    <p>{isId ? 'Memungkinkan YPYM dan mitranya memahami keterlibatan konten di publikasi dan alat kami, serta menyampaikan komunikasi pemasaran B2B yang relevan. Cookie ini melacak interaksi di seluruh halaman layanan dan produk kami. Anda dapat memilih keluar tanpa memengaruhi akses platform, sesuai dengan hak subjek data berdasarkan UU PDP, PDPA, dan GDPR.' : 'Enable YPYM and its partners to understand content engagement across our publications and tools, and deliver relevant B2B marketing communications. These cookies track interactions across service and product pages. You may opt out without affecting platform access, in accordance with data subject rights under UU PDP, PDPA, and GDPR.'}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <button className="btn" id="ck-confirm" type="button" onClick={() => saveConsent({ necessary: true, performance: perfConsent, functional: funcConsent, marketing: mktgConsent })}>
-              {isId ? 'Konfirmasi Pilihan Saya' : 'Confirm My Choices'}
-            </button>
+          <div className="lang-search-wrapper">
+            <svg className="lang-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+            </svg>
+            <input
+              type="text"
+              className="lang-search-input"
+              id="v2-lang-search"
+              placeholder={isId ? "Cari negara atau bahasa..." : "Search country or language..."}
+              value={langSearch}
+              onChange={(e) => setLangSearch(e.target.value)}
+              autoComplete="off"
+            />
           </div>
-        )}
+          <div className="lang-list-container" id="v2-lang-list">
+            {filteredCountries.map((c) => (
+              <a key={c.name} href={c.url} className={`lang-list-item ${c.active ? 'active' : ''}`}>
+                <span dangerouslySetInnerHTML={{ __html: c.flag }} />
+                <span>{c.name}</span>
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
+
+      {/* MODERN FLOATING COOKIE CONSENT BANNER */}
+      <CookieConsent isId={isId} />
 
       {/* MOBILE BOTTOM FLOATING NAVIGATION BAR */}
       <nav className={`mweb-bottom-nav ${bottomNavVisible ? 'is-visible' : ''}`} id="mweb-bottom-nav" aria-label="Mobile Navigation">
