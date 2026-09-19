@@ -470,6 +470,7 @@ export default function Header() {
 
         {/* Right Group (Pricing + Contact Flip CTA + 2-line Hamburger) */}
         <div className="header-right">
+          <div className="header-pricing-delimiter" aria-hidden="true"></div>
           <a
             href={isId ? "https://ypym.app/id-id/investment/get-quote" : "https://ypym.app/investment/get-quote"}
             className="header-pricing-link"
