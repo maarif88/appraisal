@@ -120,6 +120,21 @@ export default function NewProjectPage() {
 
       const res = await createProject(projectData);
       
+      // Track with Mesa Analytics
+      if (typeof window !== 'undefined' && window.umami && typeof window.umami.track === 'function') {
+        try {
+          window.umami.track('Appraisal New Keyword Submitted', {
+            keyword: keyword.trim(),
+            sector: sector,
+            country: localeCountry,
+            language: localeLanguage,
+            currency: currency
+          });
+        } catch (trackErr) {
+          console.warn('Mesa tracking error:', trackErr);
+        }
+      }
+
       // 2. Trigger analysis background task
       await startAnalysis(res.id);
 
