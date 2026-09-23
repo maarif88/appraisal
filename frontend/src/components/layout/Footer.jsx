@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import MwebPreviewBanner from './MwebPreviewBanner.jsx';
 import './Footer.css';
 
 export default function Footer() {
@@ -7,38 +8,8 @@ export default function Footer() {
 
   return (
     <>
-      {/* ─── CTA SECTION ─── */}
-      <section className="cta-section">
-        <div className="container">
-          <div className="cta-card">
-            <div className="cta-avatars">
-              <div className="cta-avatar-row">
-                <div className="cta-av" style={{ background: '#ffffff' }}>RH</div>
-                <div className="cta-av" style={{ background: '#ffffff' }}>AS</div>
-                <div className="cta-av" style={{ background: '#ffffff' }}>BW</div>
-                <div className="cta-av" style={{ background: '#ffffff' }}>MT</div>
-                <div className="cta-av" style={{ background: '#ffffff' }}>DK</div>
-              </div>
-              <div className="cta-trust">
-                <span className="cta-trust-dot"></span>
-                20+ enterprise brands trust YPYM
-              </div>
-            </div>
-            <h2 className="cta-title">If you are looking for the most precise process, <em>this is where it starts.</em></h2>
-            <p className="cta-desc">We do not promise rankings. We build the conditions in which rankings become structurally inevitable. The engagement begins with a diagnostic.</p>
-            <a href="https://calendar.app.google/qxnKQSRehtsBW4S76" className="cta-btn" target="_blank" rel="noopener noreferrer">
-              15-30 min Virtual Meeting?
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── BUILT ON COMPOSURE STRIP ─── */}
-      <section className="lens-strip">
-        <div className="container">
-          <p className="lens-text">BUILT ON COMPOSURE.</p>
-        </div>
-      </section>
+      {/* ─── CALL TO ACTION BANNER ─── */}
+      <MwebPreviewBanner />
 
       {/* ─── SITE FOOTER ─── */}
       <footer className="site-footer">

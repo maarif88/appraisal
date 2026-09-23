@@ -1,0 +1,199 @@
+/* ═══════════════════════════════════════════════════════════════
+   MwebPreviewBanner.css — Call to Action with Submerged Mockup
+   ═══════════════════════════════════════════════════════════════ */
+
+.mweb-banner-section {
+  position: relative;
+  width: 100%;
+  margin-top: 0;
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.mweb-banner-card {
+  position: relative;
+  width: 100%;
+  background-color: #0B0F41;
+  background-image: url('/images/ypym from pexels-alicia-christin-gerald-1447380217-37880001.jpg');
+  background-size: cover;
+  background-position: center 30%;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.mweb-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #0B0F41 0%, rgba(11, 15, 65, 0) 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.mweb-banner-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  min-height: 456px;
+  padding: 48px 24px 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: end;
+  box-sizing: border-box;
+}
+
+@media (min-width: 1024px) {
+  .mweb-banner-inner {
+    grid-template-columns: 5fr 7fr;
+    gap: 56px;
+    padding: 80px 48px 0;
+  }
+}
+
+/* Phone Mockup Frame - Submerged into bottom line */
+.mweb-phone-col {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 100%;
+  order: 2;
+}
+
+@media (min-width: 1024px) {
+  .mweb-phone-col {
+    order: 1;
+  }
+}
+
+.mweb-phone-shell {
+  position: relative;
+  width: 300px;
+  height: 570px;
+  background: #0f121a;
+  border-radius: 44px 44px 0 0;
+  border: 7px solid #232936;
+  border-bottom: none;
+  box-shadow: 0 -15px 45px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+  overflow: hidden;
+  margin-bottom: -280px;
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.mweb-phone-shell:hover {
+  transform: translateY(-8px);
+}
+
+.mweb-phone-screen {
+  position: absolute;
+  inset: 0;
+  border-radius: 36px 36px 0 0;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.mweb-phone-loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.mweb-phone-loader.is-loading {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mweb-phone-iframe {
+  width: 375px;
+  height: 712px;
+  transform: scale(0.8);
+  transform-origin: top left;
+  border: none;
+  transition: opacity 0.3s ease;
+}
+
+/* Copy & CTA Column */
+.mweb-copy-col {
+  order: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+  padding-bottom: 48px;
+}
+
+@media (min-width: 1024px) {
+  .mweb-copy-col {
+    order: 2;
+    padding-bottom: 80px;
+  }
+}
+
+.mweb-banner-title {
+  color: #ffffff !important;
+  font-size: clamp(1.5rem, 3.2vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin: 0 0 14px 0;
+  line-height: 1.22;
+  font-family: inherit;
+}
+
+.mweb-banner-desc {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 24px 0;
+  max-width: 580px;
+}
+
+.mweb-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+.ypym-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.ypym-cta-btn--solid-white {
+  background-color: #ffffff;
+  color: #0b0f41;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.ypym-cta-btn--solid-white:hover {
+  background-color: #f1f5f9;
+  border-color: #f1f5f9;
+  color: #0b0f41;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
