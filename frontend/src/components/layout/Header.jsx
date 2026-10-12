@@ -52,7 +52,7 @@ export default function Header() {
   const [langModalOpen, setLangModalOpen] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
   const [activeSolDesc, setActiveSolDesc] = useState('sol-desc-bisnis');
-  const [activeMarDesc, setActiveMarDesc] = useState('mar-desc-flow');
+  const [activeMarDesc, setActiveMarDesc] = useState('mar-desc-mesa');
   const [langSearch, setLangSearch] = useState('');
   const [rotatorIndex, setRotatorIndex] = useState(0);
   const [bottomNavVisible, setBottomNavVisible] = useState(false);
@@ -339,19 +339,26 @@ export default function Header() {
                 <div className="drawer-right">
                   <div className="martech-grid">
                     <div className="drawer-link-list">
-                      <a href="https://ypym.app/radius" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-radius')}>Radius (API)</a>
-                      <a href="https://web-sitemap.ypym.app" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-sitemap')}>Web Sitemap</a>
-                      <a href="https://query-mapping.ypym.app" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-query')}>Appraisal</a>
-                      <a href="https://flow.ypym.app" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-flow')}>Flow</a>
+                      <a href="https://suite.ypym.app/mesa-analytics" target="_blank" rel="noopener noreferrer" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-mesa')}>Mesa Analytics<span className="menu-dot"></span></a>
+                      <a href="https://suite.ypym.app/radius" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-radius')}>Radius<span className="menu-dot"></span></a>
+                      <a href="https://web-sitemap.ypym.app" target="_blank" rel="noopener noreferrer" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-sitemap')}>Web Sitemap</a>
+                      <a href="https://suite.ypym.app/stream-e2ee" target="_blank" rel="noopener noreferrer" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-stream')}>Stream E2EE</a>
+                      <a href="https://query-mapping.ypym.app" target="_blank" rel="noopener noreferrer" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-query')}>Query Mapping</a>
                       <div className="drawer-divider"></div>
-                      <a href="https://ypym.app/stack-management" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-managed')}>Managed Services <span style={{ fontSize: '11px', opacity: 0.65, fontWeight: 'normal' }}>(for Organic Marketing Infra)</span></a>
+                      <a href="https://ypym.app/stack-management" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-managed')}>Managed Services <span style={{ fontSize: '11px', opacity: 0.65, fontWeight: 'normal' }}>(for Organic Marketing Infra)</span><span className="menu-dot"></span></a>
                       <a href="https://ypym.app/stack-management/integrations" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-integrations')}>Integrate with us</a>
                     </div>
                     <div className="mar-details-col">
+                      {activeMarDesc === 'mar-desc-mesa' && (
+                        <div className="mar-desc-item active">
+                          <h3 className="mar-desc-title">Mesa Analytics</h3>
+                          <p className="mar-desc-text">Next-generation privacy-first web & product analytics platform engineered for modern teams with sub-second queries and zero cookie-banner mandates.</p>
+                        </div>
+                      )}
                       {activeMarDesc === 'mar-desc-radius' && (
                         <div className="mar-desc-item active">
-                          <h3 className="mar-desc-title">Radius (API)</h3>
-                          <p className="mar-desc-text">Autonomous organic search visibility engine and enterprise MarTech intelligence API.</p>
+                          <h3 className="mar-desc-title">Radius</h3>
+                          <p className="mar-desc-text">Spatial intelligence and location-based discovery engine providing granular geocoding, coverage heatmaps, and geospatial analytics.</p>
                         </div>
                       )}
                       {activeMarDesc === 'mar-desc-sitemap' && (
@@ -360,16 +367,16 @@ export default function Header() {
                           <p className="mar-desc-text">Smart sitemap generator that manages crawl priority and indexing of large-scale dynamic web pages. Guarantees search engines crawl your latest pages instantly.</p>
                         </div>
                       )}
-                      {activeMarDesc === 'mar-desc-query' && (
+                      {activeMarDesc === 'mar-desc-stream' && (
                         <div className="mar-desc-item active">
-                          <h3 className="mar-desc-title">Appraisal</h3>
-                          <p className="mar-desc-text">Advanced analytics tool to map user search intent with your site's information architecture. Automatically discovers keyword gaps and recommends internal linking structures.</p>
+                          <h3 className="mar-desc-title">Stream E2EE</h3>
+                          <p className="mar-desc-text">Decentralized, zero-knowledge end-to-end encrypted team chat and collaborative messaging infrastructure built on open federation protocols.</p>
                         </div>
                       )}
-                      {activeMarDesc === 'mar-desc-flow' && (
+                      {activeMarDesc === 'mar-desc-query' && (
                         <div className="mar-desc-item active">
-                          <h3 className="mar-desc-title">Flow</h3>
-                          <p className="mar-desc-text">Unified marketing automation workflow platform to design, test, and launch massive B2B campaigns. Equipped with predictive analytics and real-time data integration.</p>
+                          <h3 className="mar-desc-title">Query Mapping</h3>
+                          <p className="mar-desc-text">Advanced analytics tool to map user search intent with your site's information architecture. Automatically discovers keyword gaps and recommends internal linking structures.</p>
                         </div>
                       )}
                       {activeMarDesc === 'mar-desc-managed' && (
@@ -562,12 +569,13 @@ export default function Header() {
             <div className="accordion-item">
               <span className="accordion-trigger-label">Software & APIs</span>
               <div className="accordion-links">
-                <a href="https://ypym.app/radius">Radius (API)</a>
-                <a href="https://web-sitemap.ypym.app">Web Sitemap</a>
-                <a href="https://query-mapping.ypym.app">Appraisal</a>
-                <a href="https://flow.ypym.app">Flow</a>
+                <a href="https://suite.ypym.app/mesa-analytics" target="_blank" rel="noopener noreferrer">Mesa Analytics<span className="menu-dot"></span></a>
+                <a href="https://suite.ypym.app/radius">Radius<span className="menu-dot"></span></a>
+                <a href="https://web-sitemap.ypym.app" target="_blank" rel="noopener noreferrer">Web Sitemap</a>
+                <a href="https://suite.ypym.app/stream-e2ee" target="_blank" rel="noopener noreferrer">Stream E2EE</a>
+                <a href="https://query-mapping.ypym.app" target="_blank" rel="noopener noreferrer">Query Mapping</a>
                 <div className="accordion-divider"></div>
-                <a href="https://ypym.app/stack-management">Managed Services</a>
+                <a href="https://ypym.app/stack-management">Managed Services<span className="menu-dot"></span></a>
                 <a href="https://ypym.app/stack-management/integrations">Integrate with us</a>
               </div>
             </div>
