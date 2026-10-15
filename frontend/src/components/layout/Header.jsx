@@ -341,6 +341,7 @@ export default function Header() {
                     <div className="drawer-link-list">
                       <a href="https://suite.ypym.app/mesa-analytics" target="_blank" rel="noopener noreferrer" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-mesa')}>Mesa Analytics<span className="menu-dot"></span></a>
                       <a href="https://suite.ypym.app/radius" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-radius')}>Radius<span className="menu-dot"></span></a>
+                      <a href="https://dbx.ypym.app/login" target="_blank" rel="noopener noreferrer" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-dbx')}>Digital Brand Experience<span className="menu-dot"></span></a>
                       <a href="https://web-sitemap.ypym.app" target="_blank" rel="noopener noreferrer" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-sitemap')}>Web Sitemap</a>
                       <a href="https://suite.ypym.app/stream-e2ee" target="_blank" rel="noopener noreferrer" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-stream')}>Stream E2EE</a>
                       <a href="https://query-mapping.ypym.app" target="_blank" rel="noopener noreferrer" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-query')}>Query Mapping</a>
@@ -359,6 +360,12 @@ export default function Header() {
                         <div className="mar-desc-item active">
                           <h3 className="mar-desc-title">Radius</h3>
                           <p className="mar-desc-text">Spatial intelligence and location-based discovery engine providing granular geocoding, coverage heatmaps, and geospatial analytics.</p>
+                        </div>
+                      )}
+                      {activeMarDesc === 'mar-desc-dbx' && (
+                        <div className="mar-desc-item active">
+                          <h3 className="mar-desc-title">Digital Brand Experience</h3>
+                          <p className="mar-desc-text">Enterprise digital brand experience platform for orchestrating unified identity, assets, and brand experiences.</p>
                         </div>
                       )}
                       {activeMarDesc === 'mar-desc-sitemap' && (
@@ -571,6 +578,7 @@ export default function Header() {
               <div className="accordion-links">
                 <a href="https://suite.ypym.app/mesa-analytics" target="_blank" rel="noopener noreferrer">Mesa Analytics<span className="menu-dot"></span></a>
                 <a href="https://suite.ypym.app/radius">Radius<span className="menu-dot"></span></a>
+                <a href="https://dbx.ypym.app/login" target="_blank" rel="noopener noreferrer">Digital Brand Experience</a>
                 <a href="https://web-sitemap.ypym.app" target="_blank" rel="noopener noreferrer">Web Sitemap</a>
                 <a href="https://suite.ypym.app/stream-e2ee" target="_blank" rel="noopener noreferrer">Stream E2EE</a>
                 <a href="https://query-mapping.ypym.app" target="_blank" rel="noopener noreferrer">Query Mapping</a>
