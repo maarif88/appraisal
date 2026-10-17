@@ -1,7 +1,7 @@
 > Function (EN): Appraisal private API, analysis limits, container security and QC.
 > Fungsi (ID): API privat Appraisal, batas analisis, keamanan container dan QC.
 > Created: 2026-10-17
-> Last Modified / Replaced: 2026-10-17T12:47:13.441+07:00
+> Last Modified / Replaced: 2026-10-17T13:05:48+07:00
 
 # Appraisal — laporan perbaikan
 
@@ -32,3 +32,14 @@ AUTH_USERNAME, AUTH_PASSWORD (unik minimal 12), AUTH_SESSION_SECRET (acak minima
 ## QC
 
 8 tes backend lulus pada Node24, termasuk persistensi sesi, rotasi password, expiry, logout, Origin, klaim analisis dan DFS nonaktif. Frontend build dan browser desktop/mobile lulus. Kegagalan native SQLite pada Docker pertama telah ditemukan dan diperbaiki dengan builder yang menyediakan compiler; runtime image berhasil start, membuka SQLite dan menjalankan create/list/delete proyek dengan autentikasi. Bukti pengujian HTTP/image terpusat akan menjadi acuan final.
+## Perbaikan kegagalan deployment Coolify
+
+Log deployment 17 Oktober 2026 menunjukkan commit `6eec49a09f28e3a429a97654717125a9843a645a` gagal saat `npm run build`: `sh: 1: vite: not found` (exit 127). Coolify memasukkan NODE_ENV=production saat build; npm ci default melewati devDependencies, padahal Vite ada di sana. QC image sebelumnya belum mencakup injeksi konfigurasi build ini. Purge cache Cloudflare tidak memperbaiki kegagalan build image.
+
+Dockerfile kini memakai `npm ci --include=dev` pada frontend-builder dan backend-builder agar Vite/TypeScript tersedia walaupun platform menyetel NODE_ENV=production atau npm omit=dev. Backend tetap menjalankan `npm prune --omit=dev` sebelum dependency disalin ke runner. [Dokumentasi npm](https://docs.npmjs.com/cli/v11/commands/npm-ci/#include).
+
+Regresi diuji dengan Dockerfile sementara yang menyimulasikan ARG NODE_ENV=production dan NPM_CONFIG_OMIT=dev pada tiap stage: Dockerfile lama menghasilkan error Vite yang sama; Dockerfile baru berhasil membangun image lengkap. Smoke test image pada Node24.22.0 lulus: health production, HTML/JS frontend, private API 401, login/cookie Secure HttpOnly Strict, create/list/delete SQLite, Origin asing 403 dan revokasi logout. PID1 UID1000; Vite, TypeScript, Vitest, tsx, compiler dan source/env tidak ada di runner. Container uji memakai network none dan telah dihapus; tidak ada provider berbayar yang dipanggil. Bukti lokal: `scratch/security-remediation-2026-10-17/appraisal-coolify-build/`.
+
+Di Coolify Appraisal, hapus DATAFORSEO_LOGIN dan DATAFORSEO_PASSWORD karena tidak dipakai aplikasi. AUTH_PASSWORD, AUTH_SESSION_SECRET dan credential provider lain yang dipakai backend harus runtime only (Build time: Not available during build; Runtime: Available in the container). NODE_ENV=production dapat dibuat runtime only; Dockerfile baru juga telah diuji ketika nilainya tersedia saat build. Peringatan SecretsUsedInArgOrEnv di log berasal dari argumen yang diinjeksi platform, bukan deklarasi credential di Dockerfile repo. [Dokumentasi scope Coolify](https://coolify.io/docs/applications/configuration/environment-variables#build-and-runtime-scope).
+
+Perbaikan build ini masih di workspace dan memerlukan commit/push serta redeploy Appraisal. Keberhasilan deployment DBX dan Query Mapping mengikuti laporan pengguna/screenshot; bukan hasil smoke test production baru oleh agen.

@@ -1,7 +1,9 @@
 FROM node:24-slim AS frontend-builder
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
-RUN npm ci
+# Coolify can inject NODE_ENV=production or npm omit settings during builds.
+# Vite is a build dependency and must still be installed in this stage.
+RUN npm ci --include=dev
 COPY frontend/ ./
 RUN npm run build
 
@@ -11,7 +13,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3 make g+
 WORKDIR /app/backend
 ENV NODE_ENV=development
 COPY backend/package*.json ./
-RUN npm ci
+# TypeScript is required here; dev dependencies are pruned before the runner.
+RUN npm ci --include=dev
 COPY backend/ ./
 RUN npm run build && npm prune --omit=dev
 
