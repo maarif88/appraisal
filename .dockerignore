@@ -11,3 +11,12 @@ scratch
 **/data/sent_emails
 **/data/auth*
 *.log
+
+# Private local credential files never enter images.
+**/.npmrc
+**/.netrc
+**/*.pem
+**/*.key
+**/*service-account*.json
+backend/data/*
+!backend/data/crawled_database.json
