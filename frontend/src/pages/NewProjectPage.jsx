@@ -538,6 +538,7 @@ export default function NewProjectPage() {
 
         {/* Right: Main Form Body */}
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <p role="note">Analyses and results are public. Do not submit confidential information. This browser can edit the analyses it creates.</p>
           
           {/* Step 1: Target Location & Language Panel */}
           {currentStep === 1 && (

@@ -1,3 +1,6 @@
+import { createPublicQuota, ensureVisitor, visitorHash, hashIdentity, publicProject, csvCell } from '../security/publicAccess.js';
+import { getCatalog } from '../services/catalog.service.js';
+import { keywordQuerySchema, mergeAssumptions } from '../utils/validators.js';
 import { createAnalysisGuard } from '../security/analysisGuard.js';
 import { env } from '../config/env.js';
 import { Router, Request, Response } from 'express';
@@ -15,7 +18,29 @@ import { reprojectSchema } from '../utils/validators.js';
 
 export const projectRouter = Router();
 let analysisGuard:ReturnType<typeof createAnalysisGuard>|undefined;
-function guard() { return analysisGuard ||= createAnalysisGuard(getDb(),env.ANALYSIS_MAX_PER_DAY,1); }
+function guard() { return analysisGuard ||= createAnalysisGuard(getDb(),env.ANALYSIS_MAX_PER_DAY,1,env.ANALYSIS_MAX_PER_CLIENT_DAY); }
+let publicQuota:ReturnType<typeof createPublicQuota>|undefined;
+function quota() { return publicQuota ||= createPublicQuota(getDb(),{global:env.PROJECTS_MAX_PER_DAY,perClient:env.PROJECTS_MAX_PER_CLIENT_DAY,stored:env.PROJECTS_MAX_STORED}); }
+projectRouter.param('id',(req,res,next,id) => {
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {res.status(400).json({error:'Invalid project ID'});return;}
+  if (!['GET','HEAD','OPTIONS'].includes(req.method)) {
+    const project=getDb().prepare('SELECT owner_hash,status FROM projects WHERE id=?').get(id) as any;
+    if(!project){res.status(404).json({error:'Project not found'});return;}
+    const owner=visitorHash(req);
+    if(!owner || !project.owner_hash || owner!==project.owner_hash){res.status(403).json({error:'Only the browser that created this analysis can change it. Create your own analysis to make changes.'});return;}
+    if(!['created','completed','failed'].includes(project.status)){res.status(409).json({error:'Analysis is running; please wait before making changes.'});return;}
+  }
+  next();
+});
+// Catalog aggregations are public and identical for all visitors. Bound repeated work.
+const catalogResponses=new Map<string,{expires:number;body:unknown}>();
+projectRouter.get(['/crawled-keywords','/sectors','/summary'],(req,res,next)=>{
+  const key=req.path, cached=catalogResponses.get(key);
+  if(cached && cached.expires>Date.now()){res.json(cached.body);return;}
+  const send=res.json.bind(res);
+  res.json=((body:unknown)=>{if(res.statusCode===200)catalogResponses.set(key,{expires:Date.now()+30000,body});return send(body);}) as typeof res.json;
+  next();
+});
 
 
 // ─── Create Project ────────────────────────────────────────
@@ -29,13 +54,15 @@ projectRouter.post('/', async (req: Request, res: Response) => {
 
     const input = parsed.data;
     const id = uuidv4();
-    const assumptions = { ...DEFAULT_ASSUMPTIONS, ...input.assumptions };
+    const assumptions = mergeAssumptions(DEFAULT_ASSUMPTIONS,input.assumptions);
+    const owner = ensureVisitor(req,res,env.NODE_ENV==='production');
+    if (!quota().claim(owner,hashIdentity(req.ip || req.socket.remoteAddress || 'unknown'))) {res.status(429).json({error:'The project creation limit has been reached. Please try again later.'});return;}
 
     const db = getDb();
     db.prepare(`
       INSERT INTO projects (id, seed_keyword, locale_country, locale_language,
-        currency_base, currency_display, assumptions, status, sector)
-      VALUES (?, ?, ?, ?, ?, ?, ?, 'created', ?)
+        currency_base, currency_display, assumptions, status, sector, owner_hash)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 'created', ?, ?)
     `).run(
       id,
       input.seed_keyword,
@@ -44,7 +71,7 @@ projectRouter.post('/', async (req: Request, res: Response) => {
       input.currency_base,
       JSON.stringify(input.currency_display),
       JSON.stringify(assumptions),
-      input.sector || 'General'
+      input.sector || 'General', owner
     );
 
     res.status(201).json({
@@ -65,14 +92,14 @@ projectRouter.get('/', (req: Request, res: Response) => {
   try {
     const db = getDb();
     const projects = db.prepare(`
-      SELECT id, seed_keyword, locale_country, locale_language, currency_base,
+      SELECT id, owner_hash, seed_keyword, locale_country, locale_language, currency_base,
         status, pipeline_step, pipeline_progress,
         raw_keyword_count, clustered_keyword_count, raw_sv_pool, effective_sv_pool,
         created_at, updated_at, sector
-      FROM projects ORDER BY created_at DESC
+      FROM projects ORDER BY created_at DESC LIMIT 1000
     `).all();
 
-    res.json({ projects });
+    res.json({ projects:projects.map(project=>publicProject(project,req)) });
   } catch (error: any) {
     console.error('[API] List projects error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -87,8 +114,7 @@ projectRouter.get('/crawled-keywords', (req: Request, res: Response) => {
       res.json({ keywords: [], sectors: [] });
       return;
     }
-    const content = fs.readFileSync(jsonPath, 'utf-8');
-    const database = JSON.parse(content);
+    const database = getCatalog();
     
     const adsList = database.ads || [];
     
@@ -129,8 +155,7 @@ projectRouter.get('/sectors', (req: Request, res: Response) => {
       res.json({ sectors: [] });
       return;
     }
-    const content = fs.readFileSync(jsonPath, 'utf-8');
-    const database = JSON.parse(content);
+    const database = getCatalog();
 
     const ads = database.ads || [];
     const suggestions = database.suggestions || [];
@@ -289,8 +314,7 @@ projectRouter.get('/summary', (req: Request, res: Response) => {
       });
       return;
     }
-    const content = fs.readFileSync(jsonPath, 'utf-8');
-    const database = JSON.parse(content);
+    const database = getCatalog();
 
     const ads = database.ads || [];
     const uniqueSectors = new Set<string>();
@@ -436,63 +460,6 @@ projectRouter.get('/:id', (req: Request, res: Response) => {
       SELECT * FROM projections WHERE project_id = ? ORDER BY horizon_months ASC
     `).all(req.params.id) as any[];
 
-    // Self-healing: if count is not 6, or has duplicates, recalculate all 6 horizons
-    const uniqueHorizons = new Set(projections.map(p => p.horizon_months));
-    if (project.status === 'completed' && (projections.length !== 6 || uniqueHorizons.size !== 6)) {
-      // Delete old ones
-      db.prepare('DELETE FROM projections WHERE project_id = ?').run(req.params.id);
-
-      // Get cost
-      const costLedgerRecord = db.prepare('SELECT total_cost_usd FROM cost_ledger WHERE project_id = ?').get(req.params.id) as any;
-      const totalCost = costLedgerRecord?.total_cost_usd || 0;
-
-      // Recalculate
-      const baseAssumptions = { ...DEFAULT_ASSUMPTIONS, ...project.assumptions };
-      const horizons = [1, 3, 6, 8, 12, 24];
-      
-      const updatedKeywords = keywords.map((kw: any) => ({
-        keyword: kw.keyword,
-        avg_monthly_sv: kw.avg_monthly_sv,
-        is_cluster_primary: !!kw.is_cluster_primary,
-        cluster_id: kw.cluster_id,
-        intent: kw.intent,
-        capture_rate_effective: kw.capture_rate_effective,
-        difficulty_score: kw.difficulty_score,
-      }));
-
-      const insertProjection = db.prepare(`
-        INSERT INTO projections (id, project_id, horizon_months, total_leads, total_conversions,
-          revenue_usd, revenue_idr, recommended_service_fee_usd, recommended_service_fee_idr,
-          net_margin_usd, assumptions_snapshot)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `);
-
-      for (const horizon of horizons) {
-        const p = calculateProjection(
-          updatedKeywords,
-          baseAssumptions,
-          horizon,
-          project.fx_rate_usd_idr || 16400,
-          totalCost,
-          baseAssumptions.overlap_discount_factor
-        );
-
-        insertProjection.run(
-          uuidv4(), req.params.id, horizon,
-          p.total_leads, p.total_conversions,
-          p.revenue_usd, p.revenue_idr,
-          p.recommended_service_fee_usd, p.recommended_service_fee_idr,
-          p.net_margin_usd,
-          JSON.stringify(baseAssumptions)
-        );
-      }
-
-      // Fetch again
-      projections = db.prepare(`
-        SELECT * FROM projections WHERE project_id = ? ORDER BY horizon_months ASC
-      `).all(req.params.id) as any[];
-    }
-
     for (const p of projections as any[]) {
       p.assumptions_snapshot = JSON.parse(p.assumptions_snapshot || '{}');
     }
@@ -501,7 +468,7 @@ projectRouter.get('/:id', (req: Request, res: Response) => {
     const costLedger = db.prepare('SELECT * FROM cost_ledger WHERE project_id = ?').get(req.params.id);
 
     res.json({
-      project,
+      project:publicProject(project,req),
       keywords,
       trends,
       projections,
@@ -541,12 +508,12 @@ projectRouter.post('/:id/analyze', async (req: Request, res: Response) => {
       return;
     }
 
-    if (project.status === 'running') {
+    if (!['created','completed','failed'].includes(project.status)) {
       res.status(409).json({ error: 'Analysis already running' });
       return;
     }
 
-    if(!guard().claim(req.params.id as string)){res.status(429).json({error:'Analysis is limited to one run per project per UTC day, one concurrent run, and the daily workspace quota.'});return;}
+    if(!guard().claim(req.params.id as string,hashIdentity(req.ip || req.socket.remoteAddress || 'unknown'))){res.status(429).json({error:'Analysis is limited to one run per project per UTC day, one concurrent run, and the daily workspace quota.'});return;}
     reserved = true;
     // Clear previous results if re-running
     db.prepare('DELETE FROM keywords WHERE project_id = ?').run(req.params.id);
@@ -583,6 +550,7 @@ projectRouter.get('/:id/status', (req: Request, res: Response) => {
       return;
     }
 
+    if(project.error_message)project.error_message='Analysis could not be completed. Please try a supported keyword later.';
     res.json(project);
   } catch (error: any) {
     console.error('[API] Status error:', error);
@@ -594,7 +562,9 @@ projectRouter.get('/:id/status', (req: Request, res: Response) => {
 projectRouter.get('/:id/keywords', (req: Request, res: Response) => {
   try {
     const db = getDb();
-    const { sort = 'avg_monthly_sv', order = 'DESC', intent, source } = req.query;
+    const parsed=keywordQuerySchema.safeParse(req.query);
+    if(!parsed.success){res.status(400).json({error:'Invalid keyword filters'});return;}
+    const {sort,order,intent,source}=parsed.data;
 
     let sql = 'SELECT * FROM keywords WHERE project_id = ?';
     const params: unknown[] = [req.params.id];
@@ -638,8 +608,8 @@ projectRouter.post('/:id/reproject', async (req: Request, res: Response) => {
       return;
     }
 
-    const baseAssumptions = { ...DEFAULT_ASSUMPTIONS, ...JSON.parse(project.assumptions || '{}') };
-    const newAssumptions = { ...baseAssumptions, ...parsed.data.assumptions };
+    const baseAssumptions = mergeAssumptions(DEFAULT_ASSUMPTIONS,JSON.parse(project.assumptions || '{}'));
+    const newAssumptions = mergeAssumptions(baseAssumptions,parsed.data.assumptions);
 
     // Recalculate difficulty and capture for all keywords with new assumptions
     const keywords = db.prepare('SELECT * FROM keywords WHERE project_id = ?').all(req.params.id) as any[];
@@ -737,16 +707,16 @@ projectRouter.get('/:id/export/:format', (req: Request, res: Response) => {
     const costLedger = db.prepare('SELECT * FROM cost_ledger WHERE project_id = ?').get(req.params.id);
 
     if (format === 'json') {
-      res.setHeader('Content-Disposition', `attachment; filename="seo-analysis-${project.seed_keyword}.json"`);
-      res.json({ project, keywords, projections, cost_ledger: costLedger });
+      res.setHeader('Content-Disposition', `attachment; filename="seo-analysis-${project.id}.json"`);
+      res.json({ project:publicProject(project,req), keywords, projections, cost_ledger: costLedger });
     } else if (format === 'csv') {
       const csvHeader = 'keyword,source,cluster_id,is_primary,avg_monthly_sv,intent,difficulty_score,capture_rate_effective,competition_index,trend_badge\n';
       const csvRows = (keywords as any[]).map(kw =>
-        `"${kw.keyword}","${kw.source}","${kw.cluster_id}",${kw.is_cluster_primary},${kw.avg_monthly_sv},"${kw.intent}",${kw.difficulty_score},${kw.capture_rate_effective},${kw.competition_index},"${kw.trend_badge}"`
+        [kw.keyword,kw.source,kw.cluster_id,kw.is_cluster_primary,kw.avg_monthly_sv,kw.intent,kw.difficulty_score,kw.capture_rate_effective,kw.competition_index,kw.trend_badge].map(csvCell).join(',')
       ).join('\n');
 
       res.setHeader('Content-Type', 'text/csv');
-      res.setHeader('Content-Disposition', `attachment; filename="seo-analysis-${project.seed_keyword}.csv"`);
+      res.setHeader('Content-Disposition', `attachment; filename="seo-analysis-${project.id}.csv"`);
       res.send(csvHeader + csvRows);
     }
   } catch (error: any) {

@@ -135,6 +135,10 @@ export function runMigrations(): void {
   const db = getDb();
   console.log('[Migration] Running database migrations...');
   db.exec(SCHEMA);
+  const projectColumns = db.prepare('PRAGMA table_info(projects)').all() as Array<{name:string}>;
+  if (!projectColumns.some(column => column.name === 'owner_hash')) {
+    db.exec('ALTER TABLE projects ADD COLUMN owner_hash TEXT');
+  }
   
   // Try adding sector column to projects table if it doesn't exist
   try {

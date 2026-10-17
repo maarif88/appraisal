@@ -1,3 +1,8 @@
+> Function (EN): Public Appraisal setup, visitor ownership and runtime configuration.
+> Fungsi (ID): Setup Appraisal publik, kepemilikan browser dan konfigurasi runtime.
+> Created: 2026-07-08
+> Last Modified / Replaced: 2026-10-17T13:34:17+07:00
+
 # YPYM Appraisal - Keyword-Level SEO Investment Calculator
 
 Sistem untuk menghitung proyeksi ROI, traffic (leads), konversi, revenue, serta rekomendasi biaya jasa SEO di tingkat kata kunci spesifik (keyword targeting).
@@ -6,7 +11,7 @@ Sistem untuk menghitung proyeksi ROI, traffic (leads), konversi, revenue, serta 
 
 ## 1. Persyaratan Sistem (Prerequisites)
 
-- **Node.js**: Gunakan versi **v20.20.0 (LTS)** (sesuai dengan standard ekosistem YPYM).
+- **Node.js**: Gunakan **Node24** untuk menyamakan ABI SQLite dengan image production.
 - **SQLite**: Otomatis dikonfigurasi melalui module `better-sqlite3` di Node.js (tidak perlu instalasi server database terpisah).
 
 ---
@@ -52,13 +57,17 @@ Sistem untuk menghitung proyeksi ROI, traffic (leads), konversi, revenue, serta 
 
 ## 3. Konfigurasi Lingkungan (`.env`)
 
-Backend berjalan dalam **Mock Mode** secara default jika API key pihak ketiga dikosongkan. Ini sangat memudahkan pengujian lokal tanpa biaya API.
+Appraisal adalah aplikasi publik tanpa login. Halaman, dashboard, daftar analisis dan hasil/ekspor dapat dibuka publik. Hanya browser pembuat yang dapat menghapus, menganalisis ulang atau mengubah proyek, melalui cookie HttpOnly yang dibuat otomatis. Proyek lama tanpa owner tetap dapat dibaca, tetapi tidak dapat diubah dari API publik. Jika cookie hilang/kedaluwarsa, buat analisis baru. Jangan memasukkan informasi rahasia ke hasil publik.
 
 File konfigurasi berada di `backend/.env`:
-- **GOOGLE_ADS_***: Kosongkan untuk menggunakan simulasi pencarian volume kata kunci dengan algoritma volume dinamis. Isi dengan Developer Token + Client Credentials untuk real Google Ads API.
-- **DATAFORSEO_***: Kosongkan untuk menggunakan tren visual demand 5 tahun ter-simulasi. Isi dengan akun DataForSEO Anda untuk penarikan live trends.
+- **GOOGLE_ADS_***: Tidak diperlukan oleh pipeline HTTP publik yang membaca katalog tersimpan. Pengumpulan data terpisah bukan bagian dari submit form publik.
+- **DATAFORSEO_*** dan **AUTH_***: Tidak diperlukan dan diabaikan. Submit publik tidak mengaktifkan DataForSEO. Login/logout Appraisal telah dihapus sesuai fungsi produk publik.
 - **PORT**: Default `3100`.
-- **CORS_ORIGIN**: Diarahkan ke URL frontend dev `http://localhost:5173`.
+- **CORS_ORIGIN**: URL frontend dev `http://localhost:5173`; production `https://appraisal.ypym.app`, tanpa wildcard.
+- **Batas default**: 10 analisis total/hari UTC, 3 per IP/hari, 1 analisis aktif per instance; 200 proyek baru total/hari, 10 per IP/browser/hari, maksimal 5000 proyek tersimpan. Nilai lengkap ada di `backend/.env.example`. Gunakan satu replika backend.
+- **Persistent storage**: Mount `/app/backend/data`; cookie kepemilikan berlaku 30 hari. Cadangkan SQLite sebelum deploy migrasi.
+- **Reverse proxy**: `TRUST_PROXY` menerima daftar IP/CIDR proxy tepercaya. Batasi port origin ke proxy Coolify, dan pastikan forwarding IP sesuai topologi Cloudflare agar kuota per IP tidak mengelompokkan pengunjung berbeda.
+- **Build**: Dockerfile memasang dependency build dengan `npm ci --include=dev`, lalu membuang devDependencies sebelum runner. Env production cukup runtime only.
 
 ---
 

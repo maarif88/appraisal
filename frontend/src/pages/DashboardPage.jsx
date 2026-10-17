@@ -129,6 +129,7 @@ export default function DashboardPage() {
 
   const handleReproject = async (e) => {
     e.preventDefault();
+    if (!data?.project.can_edit) return;
     setRecalculating(true);
     try {
       const assumptions = {
@@ -1643,6 +1644,7 @@ export default function DashboardPage() {
         {/* Floating Scenario & Audit Panel */}
         <div className={`floating-scenario-panel ${panelVisible ? 'visible' : ''} ${!panelExpanded ? 'collapsed' : ''}`}>
           <form onSubmit={handleReproject}>
+            {!project.can_edit && <p role="note">This is a public result. <Link to={`/query-planner/new?keyword=${encodeURIComponent(project.seed_keyword)}`}>Create your own analysis</Link> to change the assumptions.</p>}
             <div className="floating-header" onClick={() => setPanelExpanded(!panelExpanded)}>
               <h3>
                 <span>📊</span> Audit & Scenario Testing
@@ -1651,7 +1653,8 @@ export default function DashboardPage() {
                 <button 
                   type="submit" 
                   className="btn-header-recalc"
-                  disabled={recalculating}
+                  disabled={recalculating || !project.can_edit}
+                  title={project.can_edit ? 'Recalculate this analysis' : 'Create your own analysis to change the assumptions'}
                 >
                   {recalculating ? 'Recalculating...' : 'Recalculate ROI'}
                 </button>

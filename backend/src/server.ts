@@ -1,5 +1,3 @@
-import { createAuth } from './security/auth.js';
-import { getDb } from './config/database.js';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -15,6 +13,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+app.disable('x-powered-by');
+app.set('trust proxy', env.TRUST_PROXY.split(',').map(value => value.trim()).filter(Boolean));
 
 // ─── Security Middleware ───────────────────────────────────
 app.use(helmet({
@@ -47,9 +47,23 @@ const limiter = rateLimit({
   message: { error: 'Too many requests, please try again later.' },
 });
 app.use('/api/', limiter);
+const mutationLimiter = rateLimit({windowMs:60*1000,max:15,standardHeaders:true,legacyHeaders:false,
+  message:{error:'Too many submissions. Please try again later.'}});
 
 // ─── Body Parsing ──────────────────────────────────────────
-app.use(express.json({ limit: '10mb' }));
+app.use('/api', (req, res, next) => {
+  if (['GET','HEAD','OPTIONS'].includes(req.method)) return next();
+  const origin = req.get('origin');
+  const allowed = env.CORS_ORIGIN.split(',').map(value => value.trim());
+  if ((origin && !allowed.includes(origin)) || req.get('sec-fetch-site') === 'cross-site') {
+    res.status(403).json({error:'Origin not allowed'}); return;
+  }
+  if (req.method === 'POST' && !req.is('application/json')) {
+    res.status(415).json({error:'Use application/json'}); return;
+  }
+  next();
+});
+app.use(express.json({ limit: '16kb', strict: true }));
 
 // ─── Health Check ──────────────────────────────────────────
 app.get('/api/health', (_req, res) => {
@@ -63,12 +77,10 @@ app.get('/api/health', (_req, res) => {
 });
 
 // ─── API Routes ────────────────────────────────────────────
-const auth = createAuth(getDb(), {username:env.AUTH_USERNAME,password:env.AUTH_PASSWORD,secret:env.AUTH_SESSION_SECRET,production:env.NODE_ENV==='production',origins:env.CORS_ORIGIN.split(',').map(x=>x.trim())});
-const loginLimiter=rateLimit({windowMs:15*60*1000,max:5,standardHeaders:true,legacyHeaders:false});
-app.get('/api/auth/session',auth.session);
-app.post('/api/auth/login',loginLimiter,auth.login);
-app.post('/api/auth/logout',auth.logout);
-app.use('/api/v1/projects',auth.requireAuth,projectRouter);
+app.use('/api/v1/projects', (req,res,next) => {
+  if (['GET','HEAD','OPTIONS'].includes(req.method)) return next();
+  return mutationLimiter(req,res,next);
+}, projectRouter);
 
 // ─── 301 Redirects for Old URLs ───────────────────────────
 app.get('/projects', (req, res) => {
@@ -111,6 +123,12 @@ app.use('/api', (_req, res) => {
 
 // ─── Global Error Handler ──────────────────────────────────
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  if ((err as any).type === 'entity.too.large') {
+    res.status(413).json({error:'Request body is too large'}); return;
+  }
+  if ((err as any).type === 'entity.parse.failed') {
+    res.status(400).json({error:'Invalid JSON body'}); return;
+  }
   console.error('[Server] Unhandled error:', err);
   res.status(500).json({
     error: 'Internal server error',
@@ -140,7 +158,7 @@ async function start() {
   // Run database migrations
   runMigrations();
 
-  app.listen(env.PORT, () => {
+  const server = app.listen(env.PORT, () => {
     console.log('');
     console.log('  ╔══════════════════════════════════════════╗');
     console.log('  ║   YPYM Appraisal - API Server            ║');
@@ -154,6 +172,8 @@ async function start() {
     console.log(`  Health: http://localhost:${env.PORT}/api/health`);
     console.log('');
   });
+  server.requestTimeout = 30000;
+  server.headersTimeout = 15000;
 }
 
 start().catch(err => {

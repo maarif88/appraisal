@@ -19,54 +19,46 @@ export const DEFAULT_ASSUMPTIONS = {
   },
 };
 
+
+// Trim before validating; text is rendered by React, never interpreted as markup.
+const text = (max: number) => z.string().trim().min(1).max(max).regex(/^[^<>\x00-\x1F\x7F]*$/u, 'Use plain single-line text');
+const currency = z.enum(['USD','IDR']);
+const finite = (min: number, max: number) => z.number().finite().min(min).max(max);
+const assumptionsSchema = z.object({
+  capture_rate_target_pct: finite(0.1,100).optional(),
+  conversion_rate_pct: finite(0.1,100).optional(),
+  value_per_sale: z.object({amount:finite(0,1e9),currency}).strict().optional(),
+  ramp_up_months_to_target: finite(1,36).int().optional(),
+  projection_horizon_months: finite(1,60).int().optional(),
+  service_fee_pct: finite(0,100).optional(),
+  overlap_discount_factor: finite(0,1).optional(),
+  conversion_rate_multiplier: z.object({
+    transactional:finite(0,2).optional(), commercial:finite(0,2).optional(),
+    informational:finite(0,2).optional(), navigational:finite(0,2).optional(),
+  }).strict().optional(),
+}).strict();
 export const createProjectSchema = z.object({
-  seed_keyword: z.string().min(1).max(200).trim(),
-  locale_country: z.string().min(2).max(6).default('ID'),
-  locale_language: z.string().min(2).max(5).default('id'),
-  currency_base: z.string().length(3).default('USD'),
-  currency_display: z.array(z.string().length(3)).default(['USD', 'IDR']),
-  sector: z.string().min(1).max(100).optional().default('General'),
-  assumptions: z.object({
-    capture_rate_target_pct: z.number().min(0.1).max(100).optional(),
-    conversion_rate_pct: z.number().min(0.1).max(100).optional(),
-    value_per_sale: z.object({
-      amount: z.number().min(0),
-      currency: z.string().length(3),
-    }).optional(),
-    ramp_up_months_to_target: z.number().int().min(1).max(36).optional(),
-    projection_horizon_months: z.number().int().min(1).max(60).optional(),
-    service_fee_pct: z.number().min(0).max(100).optional(),
-    overlap_discount_factor: z.number().min(0).max(1).optional(),
-    conversion_rate_multiplier: z.object({
-      transactional: z.number().min(0).max(2).optional(),
-      commercial: z.number().min(0).max(2).optional(),
-      informational: z.number().min(0).max(2).optional(),
-      navigational: z.number().min(0).max(2).optional(),
-    }).optional(),
-  }).optional().default({}),
-});
-
-export const reprojectSchema = z.object({
-  assumptions: z.object({
-    capture_rate_target_pct: z.number().min(0.1).max(100).optional(),
-    conversion_rate_pct: z.number().min(0.1).max(100).optional(),
-    value_per_sale: z.object({
-      amount: z.number().min(0),
-      currency: z.string().length(3),
-    }).optional(),
-    ramp_up_months_to_target: z.number().int().min(1).max(36).optional(),
-    projection_horizon_months: z.number().int().min(1).max(60).optional(),
-    service_fee_pct: z.number().min(0).max(100).optional(),
-    overlap_discount_factor: z.number().min(0).max(1).optional(),
-    conversion_rate_multiplier: z.object({
-      transactional: z.number().min(0).max(2).optional(),
-      commercial: z.number().min(0).max(2).optional(),
-      informational: z.number().min(0).max(2).optional(),
-      navigational: z.number().min(0).max(2).optional(),
-    }).optional(),
-  }),
-});
-
+  seed_keyword: text(200),
+  locale_country: z.string().trim().max(6).transform(value=>value.toLowerCase()==='global'?'global':value.toUpperCase()).refine(value=>/^(?:[A-Z]{2}|global)$/.test(value),'Invalid country').default('ID'),
+  locale_language: z.string().trim().regex(/^[a-z]{2,3}(?:-[A-Z]{2})?$/).max(6).default('id'),
+  currency_base: currency.default('USD'),
+  currency_display: z.array(currency).min(1).max(2).refine(values=>new Set(values).size===values.length).default(['USD','IDR']),
+  sector: text(100).default('General'),
+  assumptions: assumptionsSchema.default({}),
+}).strict();
+export const reprojectSchema = z.object({assumptions:assumptionsSchema}).strict();
+export const keywordQuerySchema = z.object({
+  sort:z.enum(['avg_monthly_sv','difficulty_score','capture_rate_effective','keyword','intent','competition_index']).default('avg_monthly_sv'),
+  order:z.enum(['ASC','DESC']).default('DESC'),
+  intent:z.enum(['transactional','commercial','informational','navigational']).optional(),
+  source:z.enum(['seed','autocomplete','trends_top','trends_rising']).optional(),
+  _t:z.string().max(20).optional(),
+}).strict();
+export function mergeAssumptions(base: any, next: any) {
+  return {...base,...next,
+    value_per_sale:{...base.value_per_sale,...next.value_per_sale},
+    conversion_rate_multiplier:{...base.conversion_rate_multiplier,...next.conversion_rate_multiplier}};
+}
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;
 export type ReprojectInput = z.infer<typeof reprojectSchema>;
 export type Assumptions = typeof DEFAULT_ASSUMPTIONS;

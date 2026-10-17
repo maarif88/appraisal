@@ -1,16 +1,16 @@
+import { getCatalog } from './catalog.service.js';
+import { env } from '../config/env.js';
+import { mergeAssumptions } from '../utils/validators.js';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import path from 'path';
 import { getDb } from '../config/database.js';
-import { expandAutocomplete, generateMockAutocomplete } from './autocomplete.service.js';
-import { enrichKeywords } from './google-ads.service.js';
 import { clusterKeywords } from './clustering.service.js';
 import { classifyIntent } from './intent.service.js';
 import { calculateDifficultyScore, calculateCaptureRate } from './difficulty.service.js';
 import { calculateProjection } from './projection.service.js';
 import { getConversionMultiplier } from './intent.service.js';
 import { fetchFxRate } from './fx-rate.service.js';
-import { isGoogleAdsConfigured } from '../config/env.js';
 import { DEFAULT_ASSUMPTIONS, type Assumptions } from '../utils/validators.js';
 
 export type PipelineStatus = 'created' | 'running' | 'step_autocomplete' | 'step_enrichment' |
@@ -49,10 +49,7 @@ export async function runPipeline(
     const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(projectId) as any;
     if (!project) throw new Error('Project not found');
 
-    const assumptions: Assumptions = {
-      ...DEFAULT_ASSUMPTIONS,
-      ...JSON.parse(project.assumptions || '{}'),
-    };
+    const assumptions: Assumptions = mergeAssumptions(DEFAULT_ASSUMPTIONS,JSON.parse(project.assumptions || '{}'));
 
     report('running', 'Initializing', 5, 'Starting analysis pipeline...');
 
@@ -61,8 +58,7 @@ export async function runPipeline(
     if (!fs.existsSync(jsonPath)) {
       throw new Error("Crawled database file not found. Please run the crawling script first.");
     }
-    const dbContent = fs.readFileSync(jsonPath, 'utf-8');
-    const crawledDb = JSON.parse(dbContent);
+    const crawledDb = getCatalog();
     
     // Check if the seed keyword exists in the crawled database with matching location/language
     const seedKeywordLower = project.seed_keyword.toLowerCase().trim();
@@ -259,7 +255,7 @@ export async function runPipeline(
 
     // ─── Step 5: Intent Classification ─────────────────────────
     report('step_intent', 'Intent', 60, 'Classifying keyword intents...');
-    const keywordsWithIntent = trendEnrichedKeywords.map((kw: any) => ({
+    const keywordsWithIntent = trendEnrichedKeywords.slice(0,env.MAX_KEYWORDS_PER_RUN).map((kw: any) => ({
       ...kw,
       intent: classifyIntent(kw.keyword),
     }));
@@ -394,7 +390,8 @@ export async function runPipeline(
     report('completed', 'Done', 100, `Analysis complete! ${keywordsWithBadge.length} keywords, ${clusterResult.cluster_count} clusters`);
 
   } catch (error: any) {
-    const errMsg = error?.message || 'Unknown pipeline error';
+    const errMsg = 'Analysis could not be completed. Please try a supported keyword later.';
+    console.error('[Pipeline] Analysis failed for project',projectId);
     db.prepare('UPDATE projects SET status = ?, error_message = ?, updated_at = datetime(\'now\') WHERE id = ?')
       .run('failed', errMsg, projectId);
     report('failed', 'Error', 0, errMsg);

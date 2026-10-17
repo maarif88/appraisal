@@ -1,4 +1,9 @@
 const API_BASE = '/api/v1';
+async function checkResponse(res) {
+  if (res.ok) return;
+  const body = await res.json().catch(() => null);
+  throw new Error(body?.error || `Request failed (${res.status})`);
+}
 
 export async function createProject(data) {
   const res = await fetch(`${API_BASE}/projects`, {
@@ -6,44 +11,44 @@ export async function createProject(data) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error(await res.text());
+  await checkResponse(res);
   return res.json();
 }
 
 export async function listProjects() {
   const res = await fetch(`${API_BASE}/projects?_t=${Date.now()}`);
-  if (!res.ok) throw new Error(await res.text());
+  await checkResponse(res);
   return res.json();
 }
 
 export async function getProject(id) {
   const res = await fetch(`${API_BASE}/projects/${id}?_t=${Date.now()}`);
-  if (!res.ok) throw new Error(await res.text());
+  await checkResponse(res);
   return res.json();
 }
 
 export async function deleteProject(id) {
   const res = await fetch(`${API_BASE}/projects/${id}`, { method: 'DELETE' });
-  if (!res.ok) throw new Error(await res.text());
+  await checkResponse(res);
   return res.json();
 }
 
 export async function startAnalysis(id) {
-  const res = await fetch(`${API_BASE}/projects/${id}/analyze`, { method: 'POST' });
-  if (!res.ok) throw new Error(await res.text());
+  const res = await fetch(`${API_BASE}/projects/${id}/analyze`, { method: 'POST', headers: {'Content-Type':'application/json'} });
+  await checkResponse(res);
   return res.json();
 }
 
 export async function getStatus(id) {
   const res = await fetch(`${API_BASE}/projects/${id}/status?_t=${Date.now()}`);
-  if (!res.ok) throw new Error(await res.text());
+  await checkResponse(res);
   return res.json();
 }
 
 export async function getKeywords(id, params = {}) {
   const query = new URLSearchParams({ ...params, _t: Date.now() }).toString();
   const res = await fetch(`${API_BASE}/projects/${id}/keywords?${query}`);
-  if (!res.ok) throw new Error(await res.text());
+  await checkResponse(res);
   return res.json();
 }
 
@@ -53,13 +58,13 @@ export async function reproject(id, assumptions) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ assumptions }),
   });
-  if (!res.ok) throw new Error(await res.text());
+  await checkResponse(res);
   return res.json();
 }
 
 export async function exportProject(id, format) {
   const res = await fetch(`${API_BASE}/projects/${id}/export/${format}?_t=${Date.now()}`);
-  if (!res.ok) throw new Error(await res.text());
+  await checkResponse(res);
   if (format === 'csv') {
     return res.text();
   }
@@ -79,6 +84,6 @@ export function formatNumber(num) {
 
 export async function getCrawledKeywords() {
   const res = await fetch(`${API_BASE}/projects/crawled-keywords?_t=${Date.now()}`);
-  if (!res.ok) throw new Error(await res.text());
+  await checkResponse(res);
   return res.json();
 }

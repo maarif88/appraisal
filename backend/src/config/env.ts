@@ -4,10 +4,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const envSchema = z.object({
-  AUTH_USERNAME: z.string().default(''),
-  AUTH_PASSWORD: z.string().default(''),
-  AUTH_SESSION_SECRET: z.string().default(''),
   ANALYSIS_MAX_PER_DAY: z.coerce.number().int().min(1).max(100).default(10),
+  ANALYSIS_MAX_PER_CLIENT_DAY: z.coerce.number().int().min(1).max(20).default(3),
+  PROJECTS_MAX_PER_DAY: z.coerce.number().int().min(1).max(1000).default(200),
+  PROJECTS_MAX_PER_CLIENT_DAY: z.coerce.number().int().min(1).max(100).default(10),
+  PROJECTS_MAX_STORED: z.coerce.number().int().min(1).max(10000).default(5000),
+  TRUST_PROXY: z.string().default('loopback,linklocal,uniquelocal'),
   PORT: z.coerce.number().default(3100),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
@@ -29,7 +31,7 @@ const envSchema = z.object({
   DEFAULT_LOCALE_LANGUAGE: z.string().default('id'),
 
   // Pipeline limits
-  MAX_KEYWORDS_PER_RUN: z.coerce.number().default(500),
+  MAX_KEYWORDS_PER_RUN: z.coerce.number().int().min(1).max(500).default(500),
   AUTOCOMPLETE_DELAY_MIN_MS: z.coerce.number().default(300),
   AUTOCOMPLETE_DELAY_MAX_MS: z.coerce.number().default(800),
 });
