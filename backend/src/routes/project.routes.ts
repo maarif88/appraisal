@@ -1,3 +1,5 @@
+import { createAnalysisGuard } from '../security/analysisGuard.js';
+import { env } from '../config/env.js';
 import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { getDb } from '../config/database.js';
@@ -12,6 +14,9 @@ import { getConversionMultiplier, type IntentType } from '../services/intent.ser
 import { reprojectSchema } from '../utils/validators.js';
 
 export const projectRouter = Router();
+let analysisGuard:ReturnType<typeof createAnalysisGuard>|undefined;
+function guard() { return analysisGuard ||= createAnalysisGuard(getDb(),env.ANALYSIS_MAX_PER_DAY,1); }
+
 
 // ─── Create Project ────────────────────────────────────────
 projectRouter.post('/', async (req: Request, res: Response) => {
@@ -526,6 +531,7 @@ projectRouter.delete('/:id', (req: Request, res: Response) => {
 
 // ─── Trigger Analysis ──────────────────────────────────────
 projectRouter.post('/:id/analyze', async (req: Request, res: Response) => {
+  let reserved = false;
   try {
     const db = getDb();
     const project = db.prepare('SELECT id, status FROM projects WHERE id = ?').get(req.params.id) as any;
@@ -540,6 +546,8 @@ projectRouter.post('/:id/analyze', async (req: Request, res: Response) => {
       return;
     }
 
+    if(!guard().claim(req.params.id as string)){res.status(429).json({error:'Analysis is limited to one run per project per UTC day, one concurrent run, and the daily workspace quota.'});return;}
+    reserved = true;
     // Clear previous results if re-running
     db.prepare('DELETE FROM keywords WHERE project_id = ?').run(req.params.id);
     db.prepare('DELETE FROM trend_data WHERE project_id = ?').run(req.params.id);
@@ -552,11 +560,12 @@ projectRouter.post('/:id/analyze', async (req: Request, res: Response) => {
     res.json({ message: 'Analysis started', status: 'running' });
 
     // Fire and forget
-    runPipeline(req.params.id as string).catch(err => {
-      console.error(`[Pipeline] Failed for project ${req.params.id}:`, err);
-    });
+    runPipeline(req.params.id as string).catch(() => {
+      console.error('[Pipeline] Analysis failed');
+    }).finally(()=>guard().release());
   } catch (error: any) {
-    console.error('[API] Analyze error:', error);
+    if (reserved) guard().release();
+    console.error('[API] Analyze error');
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -747,46 +756,6 @@ projectRouter.get('/:id/export/:format', (req: Request, res: Response) => {
 });
 
 // ─── Send PDF to Email ─────────────────────────────────────
-projectRouter.post('/:id/email-report', async (req: Request, res: Response) => {
-  try {
-    const { email, pdfBase64 } = req.body;
-    if (!email || !pdfBase64) {
-      res.status(400).json({ error: 'Recipient email and PDF data are required' });
-      return;
-    }
-
-    const db = getDb();
-    const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id) as any;
-    if (!project) {
-      res.status(404).json({ error: 'Project not found' });
-      return;
-    }
-
-    // Convert base64 to buffer
-    const buffer = Buffer.from(pdfBase64, 'base64');
-    
-    // Ensure data/sent_emails directory exists
-    const dir = path.join(process.cwd(), 'data', 'sent_emails');
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
-    // Filename: timestamp_email_project.pdf
-    const safeEmail = email.replace(/[^a-zA-Z0-9]/g, '_');
-    const filename = `${Date.now()}_${safeEmail}_${project.seed_keyword.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
-    const filePath = path.join(dir, filename);
-    
-    fs.writeFileSync(filePath, buffer);
-
-    console.log(`[Email Service] PDF report generated and emailed to ${email}. Saved to: ${filePath}`);
-
-    res.status(200).json({
-      success: true,
-      message: `Appraisal report successfully emailed to ${email}!`,
-      saved_path: filePath
-    });
-  } catch (error: any) {
-    console.error('[API] Email report error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
+projectRouter.post('/:id/email-report', (_req:Request,res:Response) => {
+ res.status(501).json({error:'Email delivery is unavailable. Please download the report instead.'});
 });

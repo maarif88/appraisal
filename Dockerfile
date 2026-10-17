@@ -1,38 +1,31 @@
-# Stage 1: Build the frontend
-FROM node:20-slim AS frontend-builder
+FROM node:24-slim AS frontend-builder
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
-ENV NODE_ENV=development
 RUN npm ci
 COPY frontend/ ./
 RUN npm run build
 
-# Stage 2: Build and run the backend
-FROM node:20-slim
-WORKDIR /app
-
-COPY backend/package*.json ./backend/
-ENV NODE_ENV=development
-RUN cd backend && npm ci
-
-# Copy backend source
-COPY backend/ ./backend/
-# Copy built frontend assets
-COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
-
-# Backup crawled_database.json to prevent volume masking
-RUN cp /app/backend/data/crawled_database.json /app/backend/crawled_database.backup.json
-
+FROM node:24-slim AS backend-builder
+# Compile SQLite against the production Node ABI; keep build tools out of the runner.
+RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ && rm -rf /var/lib/apt/lists/*
 WORKDIR /app/backend
-RUN npm run build
-RUN npm prune --production
+ENV NODE_ENV=development
+COPY backend/package*.json ./
+RUN npm ci
+COPY backend/ ./
+RUN npm run build && npm prune --omit=dev
 
-# Create directory for SQLite persistent database
-RUN mkdir -p /app/backend/data
-
-ENV PORT=3100
-ENV NODE_ENV=production
-
+FROM node:24-slim AS runner
+RUN apt-get update && apt-get install -y --no-install-recommends gosu && rm -rf /var/lib/apt/lists/*
+WORKDIR /app/backend
+COPY --from=backend-builder /app/backend/dist ./dist
+COPY --from=backend-builder /app/backend/node_modules ./node_modules
+COPY --from=backend-builder /app/backend/package.json ./package.json
+COPY --from=backend-builder /app/backend/data/crawled_database.json ./crawled_database.backup.json
+COPY --from=frontend-builder /app/frontend/dist /app/frontend/dist
+RUN mkdir -p /app/backend/data && chown node:node /app/backend/data
+COPY entrypoint.sh /entrypoint.sh
+RUN sed -i 's/\r$//' /entrypoint.sh && chmod 755 /entrypoint.sh
+ENV PORT=3100 NODE_ENV=production
 EXPOSE 3100
-
-CMD ["npm", "start"]
+ENTRYPOINT ["/entrypoint.sh"]

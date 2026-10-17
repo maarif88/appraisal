@@ -1,3 +1,5 @@
+import { createAuth } from './security/auth.js';
+import { getDb } from './config/database.js';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -16,7 +18,7 @@ const app = express();
 
 // ─── Security Middleware ───────────────────────────────────
 app.use(helmet({
-  contentSecurityPolicy: false, // Disable for API
+  contentSecurityPolicy: {directives:{defaultSrc:["'self'"],scriptSrc:["'self'","'unsafe-inline'",'https://www.googletagmanager.com','https://analytics.ahrefs.com'],styleSrc:["'self'","'unsafe-inline'",'https://fonts.googleapis.com'],fontSrc:["'self'",'data:','https://fonts.gstatic.com'],imgSrc:["'self'",'data:','https:'],connectSrc:["'self'"],frameAncestors:["'none'"],objectSrc:["'none'"],formAction:["'self'"]}},
   crossOriginResourcePolicy: { policy: 'cross-origin' },
 }));
 
@@ -61,7 +63,12 @@ app.get('/api/health', (_req, res) => {
 });
 
 // ─── API Routes ────────────────────────────────────────────
-app.use('/api/v1/projects', projectRouter);
+const auth = createAuth(getDb(), {username:env.AUTH_USERNAME,password:env.AUTH_PASSWORD,secret:env.AUTH_SESSION_SECRET,production:env.NODE_ENV==='production',origins:env.CORS_ORIGIN.split(',').map(x=>x.trim())});
+const loginLimiter=rateLimit({windowMs:15*60*1000,max:5,standardHeaders:true,legacyHeaders:false});
+app.get('/api/auth/session',auth.session);
+app.post('/api/auth/login',loginLimiter,auth.login);
+app.post('/api/auth/logout',auth.logout);
+app.use('/api/v1/projects',auth.requireAuth,projectRouter);
 
 // ─── 301 Redirects for Old URLs ───────────────────────────
 app.get('/projects', (req, res) => {

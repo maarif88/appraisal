@@ -1,0 +1,13 @@
+**/node_modules
+**/dist
+.git
+scratch
+**/.env
+**/.env.*
+!**/.env.example
+**/*.db
+**/*.db-*
+**/*.sqlite*
+**/data/sent_emails
+**/data/auth*
+*.log

@@ -1023,9 +1023,9 @@ export default function DashboardPage() {
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M4 4h16c1.103 0 2 .897 2 2v12c0 1.103-.897 2-2 2H4c-1.103 0-2-.897-2-2V6c0-1.103.897-2 2-2zm16 14.002V6H4v12h16zM6 15h3v2H6v-2zm12-4-3 4H9l3-4 6 4z"/></svg>
                     <span>Download JPEG (5 Cards)</span>
                   </button>
-                  <button className="export-menu-item" onClick={() => { setEmailModalOpen(true); setExportDropdownOpen(false); }}>
+                  <button className="export-menu-item" disabled title="Email delivery is unavailable; use Download PDF">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                    <span>Send to Email (PDF)</span>
+                    <span>Email unavailable — download PDF</span>
                   </button>
                 </div>
               )}
