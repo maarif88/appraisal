@@ -4,7 +4,6 @@ import path from 'path';
 import { getDb } from '../config/database.js';
 import { expandAutocomplete, generateMockAutocomplete } from './autocomplete.service.js';
 import { enrichKeywords } from './google-ads.service.js';
-import { fetchTrends } from './dataforseo.service.js';
 import { clusterKeywords } from './clustering.service.js';
 import { classifyIntent } from './intent.service.js';
 import { calculateDifficultyScore, calculateCaptureRate } from './difficulty.service.js';

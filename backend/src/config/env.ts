@@ -16,10 +16,6 @@ const envSchema = z.object({
   GOOGLE_ADS_REFRESH_TOKEN: z.string().default(''),
   GOOGLE_ADS_LOGIN_CUSTOMER_ID: z.string().default(''),
 
-  // DataForSEO (optional - mock mode if empty)
-  DATAFORSEO_LOGIN: z.string().default(''),
-  DATAFORSEO_PASSWORD: z.string().default(''),
-
   // Exchange Rate
   FX_RATE_API_KEY: z.string().default(''),
 
@@ -40,6 +36,5 @@ export const env = envSchema.parse(process.env);
 export const isGoogleAdsConfigured = (): boolean =>
   !!(env.GOOGLE_ADS_DEVELOPER_TOKEN && env.GOOGLE_ADS_CLIENT_ID && env.GOOGLE_ADS_REFRESH_TOKEN);
 
-/** Check if DataForSEO is configured */
-export const isDataForSEOConfigured = (): boolean =>
-  !!(env.DATAFORSEO_LOGIN && env.DATAFORSEO_PASSWORD);
+/** DataForSEO access has been removed; stale environment values are ignored. */
+export const isDataForSEOConfigured = (): boolean => false;

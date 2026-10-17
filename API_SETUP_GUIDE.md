@@ -1,6 +1,10 @@
+> Function (EN): API configuration guide after DataForSEO removal.
+> Fungsi (ID): Panduan konfigurasi API setelah penghapusan DataForSEO.
+> Last Modified / Replaced: 2026-10-17T07:24:22.429+07:00
+
 # Panduan Mendapatkan API Key & Credentials
 
-Panduan langkah demi langkah ini akan membantu Anda mendapatkan API Key dan Credentials untuk **Google Ads API** dan **DataForSEO** guna mengaktifkan data riil pada sistem YPYM Appraisal.
+Panduan langkah demi langkah ini akan membantu Anda mendapatkan API Key dan Credentials untuk **Google Ads API** pada sistem YPYM Appraisal. DataForSEO sudah dinonaktifkan.
 
 ---
 
@@ -57,26 +61,6 @@ Berikut adalah langkah-langkah untuk mendapatkannya:
 
 ---
 
-## Bagian 2: Mendapatkan DataForSEO API Credentials
+## Bagian 2: DataForSEO dinonaktifkan
 
-DataForSEO digunakan untuk menarik data dari Google Trends secara aman dan cepat.
-Anda membutuhkan 2 parameter di `.env`:
-1. `DATAFORSEO_LOGIN`
-2. `DATAFORSEO_PASSWORD`
-
-Langkah mendapatkannya sangat mudah:
-
-### Langkah 2.1: Registrasi Akun
-1. Buka halaman registrasi [DataForSEO](https://dataforseo.com/).
-2. Buat akun baru (gratis).
-
-### Langkah 2.2: Dapatkan Credentials
-1. Buka dashboard DataForSEO Anda.
-2. Cari bagian **API Dashboard** -> **API Keys**.
-3. Di sana Anda akan melihat:
-   - **Login**: (Biasanya alamat email terdaftar Anda). Gunakan ini untuk `DATAFORSEO_LOGIN`.
-   - **Password (API Key)**: Token karakter panjang. Gunakan ini untuk `DATAFORSEO_PASSWORD`.
-
-### Langkah 2.3: Top Up Dana
-*Catatan: Setiap penarikan data Google Trends memakan biaya sebesar ~$0.00225.*
-1. Anda perlu melakukan top up saldo minimal $10 - $20 di menu Billing DataForSEO agar API call dapat berjalan dan mengembalikan data rill.
+Integrasi DataForSEO sudah dihapus dari konfigurasi Appraisal pada 17 Oktober 2026. Jangan memasang kredensial provider atau melakukan top up untuk aplikasi ini. Data tren yang tersedia berasal dari data impor atau mock lokal; tidak ada request DataForSEO berbayar.

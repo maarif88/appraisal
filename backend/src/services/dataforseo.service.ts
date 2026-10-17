@@ -1,5 +1,3 @@
-import { isDataForSEOConfigured } from '../config/env.js';
-
 export interface TrendResult {
   monthly_index_5y: Array<{ date: string; value: number }>;
   top_queries: Array<{ query: string; value: number }>;
@@ -7,22 +5,15 @@ export interface TrendResult {
 }
 
 /**
- * Fetch Google Trends data via DataForSEO API.
- * Spec section 2, step [4]: 5-year trend data.
- * Cost: ~$0.00225/task (Standard Queue).
+ * Return local development trend data. DataForSEO access has been removed.
+ * This function cannot make provider requests.
  */
 export async function fetchTrends(
   keyword: string,
   country: string = 'ID',
   language: string = 'id'
 ): Promise<{ data: TrendResult; cost: number }> {
-  if (!isDataForSEOConfigured()) {
-    console.log('[DataForSEO] Not configured, using mock trends');
-    return { data: generateMockTrends(keyword), cost: 0 };
-  }
-
-  // TODO: Implement real DataForSEO Trends API
-  console.log('[DataForSEO] API integration pending, using mock trends');
+  // Local mock only. No provider client, credentials, or paid requests.
   return { data: generateMockTrends(keyword), cost: 0 };
 }
 
