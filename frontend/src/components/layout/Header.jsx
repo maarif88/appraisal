@@ -341,7 +341,7 @@ export default function Header() {
                     <div className="drawer-link-list">
                       <a href="https://suite.ypym.app/mesa-analytics" target="_blank" rel="noopener noreferrer" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-mesa')}>Mesa Analytics<span className="menu-dot"></span></a>
                       <a href="https://suite.ypym.app/radius" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-radius')}>Radius<span className="menu-dot"></span></a>
-                      <a href="https://dbx.ypym.app/login" target="_blank" rel="noopener noreferrer" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-dbx')}>Digital Brand Experience<span className="menu-dot"></span></a>
+                      <a href="https://suite.ypym.app/dbx" target="_blank" rel="noopener noreferrer" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-dbx')} onFocus={() => setActiveMarDesc('mar-desc-dbx')}>Digital Brand Experience<span className="menu-dot"></span></a>
                       <a href="https://web-sitemap.ypym.app" target="_blank" rel="noopener noreferrer" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-sitemap')}>Web Sitemap</a>
                       <a href="https://suite.ypym.app/stream-e2ee" target="_blank" rel="noopener noreferrer" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-stream')}>Stream E2EE</a>
                       <a href="https://query-mapping.ypym.app" target="_blank" rel="noopener noreferrer" className="drawer-link-item" onMouseEnter={() => setActiveMarDesc('mar-desc-query')}>Query Mapping</a>
@@ -366,6 +366,11 @@ export default function Header() {
                         <div className="mar-desc-item active">
                           <h3 className="mar-desc-title">Digital Brand Experience</h3>
                           <p className="mar-desc-text">Enterprise digital brand experience platform for orchestrating unified identity, assets, and brand experiences.</p>
+                          <div className="dbx-menu-actions" role="group" aria-label="Digital Brand Experience">
+                            <a href="https://dbx.ypym.app/login" target="_blank" rel="noopener noreferrer">Platform ↗</a>
+                            <a href="https://suite.ypym.app/dbx" target="_blank" rel="noopener noreferrer">Product Page ↗</a>
+                            <a href="https://hub.ypym.app/platform/dbx" target="_blank" rel="noopener noreferrer">Docs ↗</a>
+                          </div>
                         </div>
                       )}
                       {activeMarDesc === 'mar-desc-sitemap' && (
@@ -578,7 +583,11 @@ export default function Header() {
               <div className="accordion-links">
                 <a href="https://suite.ypym.app/mesa-analytics" target="_blank" rel="noopener noreferrer">Mesa Analytics<span className="menu-dot"></span></a>
                 <a href="https://suite.ypym.app/radius">Radius<span className="menu-dot"></span></a>
-                <a href="https://dbx.ypym.app/login" target="_blank" rel="noopener noreferrer">Digital Brand Experience</a>
+                <div className="dbx-mobile-product"><a href="https://suite.ypym.app/dbx" target="_blank" rel="noopener noreferrer">Digital Brand Experience</a><div className="dbx-menu-actions" role="group" aria-label="Digital Brand Experience">
+                            <a href="https://dbx.ypym.app/login" target="_blank" rel="noopener noreferrer">Platform ↗</a>
+                            <a href="https://suite.ypym.app/dbx" target="_blank" rel="noopener noreferrer">Product Page ↗</a>
+                            <a href="https://hub.ypym.app/platform/dbx" target="_blank" rel="noopener noreferrer">Docs ↗</a>
+                          </div></div>
                 <a href="https://web-sitemap.ypym.app" target="_blank" rel="noopener noreferrer">Web Sitemap</a>
                 <a href="https://suite.ypym.app/stream-e2ee" target="_blank" rel="noopener noreferrer">Stream E2EE</a>
                 <a href="https://query-mapping.ypym.app" target="_blank" rel="noopener noreferrer">Query Mapping</a>

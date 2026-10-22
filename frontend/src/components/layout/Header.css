@@ -2140,3 +2140,10 @@
     padding: 4px 0 0 0;
   }
 }
+
+/* DBX destinations, shared by desktop and touch navigation. */
+.dbx-menu-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.dbx-menu-actions a, .accordion-links .dbx-menu-actions a { display: inline-flex; align-items: center; padding: 8px 12px; min-height: 44px; box-sizing: border-box; border-radius: 8px; color: inherit; font-size: 12px; font-weight: 600; text-decoration: none; }
+.dbx-menu-actions a:hover, .dbx-menu-actions a:focus-visible { text-decoration: underline; }
+.dbx-mobile-product { min-width: 0; }
+.dbx-mobile-product .dbx-menu-actions { margin-top: 0; }
