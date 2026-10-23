@@ -322,14 +322,13 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: color var(--transition-fast), padding-left var(--transition-fast);
+  transition: color var(--transition-fast);
   width: fit-content;
   text-align: left;
 }
 
 .drawer-link-item:hover {
   color: #1A4BFF;
-  padding-left: 4px;
 }
 
 .drawer-divider {
