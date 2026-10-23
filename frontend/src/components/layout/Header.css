@@ -2147,3 +2147,35 @@
 .dbx-menu-actions a:hover, .dbx-menu-actions a:focus-visible { text-decoration: underline; }
 .dbx-mobile-product { min-width: 0; }
 .dbx-mobile-product .dbx-menu-actions { margin-top: 0; }
+
+/* Product marks: desktop only; one clockwise quarter-turn per hover. */
+.drawer-link-item .product-menu-icon {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .drawer-link-item .product-menu-icon {
+    display: block;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+    object-fit: contain;
+    margin-right: 4px;
+    transform: rotate(0deg);
+    transform-origin: center;
+    transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+@media (min-width: 1024px) and (hover: hover) {
+  .drawer-link-item:hover .product-menu-icon {
+    transform: rotate(90deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .drawer-link-item .product-menu-icon {
+    transition: none;
+    transform: none;
+  }
+  .drawer-link-item:hover .product-menu-icon {
+    transform: none;
+  }
+}
